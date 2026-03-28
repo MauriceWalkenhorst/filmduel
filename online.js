@@ -53,6 +53,7 @@ window.confirmUsername = async function () {
 };
 
 window.onlineLogout = async function () {
+  clearInterval(window._localTimer);
   await signOut();
   show('s-start');
 };
@@ -169,22 +170,32 @@ window.setChallengeMode = function (mode) {
   updateChallengeStartBtn();
 };
 
-window.searchChallengeOpponent = async function (name) {
+let _searchTimeout;
+window.searchChallengeOpponent = function (name) {
   const results = document.getElementById('cs-opp-results');
   if (name.length < 2) { results.innerHTML = ''; return; }
-  try {
-    const found = await client.query('users:searchByName', { name });
-    const me = getCurrentUser()?._id;
-    const items = (found && found._id !== me) ? [found] : [];
-    results.innerHTML = items.map(u =>
-      `<button class="w-full text-left bg-c-card border border-c-border rounded-xl px-4 py-2 font-body text-sm text-c-text"
-               onclick="selectChallengeOpponent('${u._id}','${u.displayName.replace(/'/g, "\\'")}')">
-         ${u.displayName}
-       </button>`
-    ).join('') || '<p class="text-c-muted text-xs font-condensed px-1">Kein Nutzer gefunden</p>';
-  } catch (e) {
-    console.error(e);
-  }
+  clearTimeout(_searchTimeout);
+  _searchTimeout = setTimeout(async () => {
+    try {
+      const found = await client.query('users:searchByName', { name });
+      const me = getCurrentUser()?._id;
+      const items = Array.isArray(found) ? found.filter(u => u._id !== me) : [];
+      if (items.length === 0) {
+        results.innerHTML = '<p class="text-c-muted text-xs font-condensed px-1">Kein Nutzer gefunden</p>';
+        return;
+      }
+      results.innerHTML = '';
+      items.forEach(u => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left bg-c-card border border-c-border rounded-xl px-4 py-2 font-body text-sm text-c-text';
+        btn.textContent = u.displayName;
+        btn.onclick = () => selectChallengeOpponent(u._id, u.displayName);
+        results.appendChild(btn);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }, 300);
 };
 
 window.selectChallengeOpponent = function (id, name) {
@@ -293,13 +304,17 @@ function showOnlineQuestion() {
 
   const correct = q.a[q.c];
   const answers = shuffle([...q.a]);
-  document.getElementById('oq-answers').innerHTML = answers.map(ans =>
-    `<button class="w-full text-left bg-c-card border border-c-border rounded-2xl px-5 py-4
-                    font-body text-base text-c-text active:scale-95 transition-all"
-             onclick="pickOnlineAnswer(this,'${ans.replace(/'/g, "\\'")}','${correct.replace(/'/g, "\\'")}')">
-       ${ans}
-     </button>`
-  ).join('');
+  const container = document.getElementById('oq-answers');
+  container.innerHTML = '';
+  answers.forEach(ans => {
+    const btn = document.createElement('button');
+    btn.className = 'w-full text-left bg-c-card border border-c-border rounded-2xl px-5 py-4 font-body text-base text-c-text active:scale-95 transition-all';
+    btn.textContent = ans;
+    btn.dataset.ans = ans;
+    btn.dataset.correct = correct;
+    btn.onclick = function() { pickOnlineAnswer(this, this.dataset.ans, this.dataset.correct); };
+    container.appendChild(btn);
+  });
 
   makeFilmstrip('filmstrip-oq');
   show('s-online-q');

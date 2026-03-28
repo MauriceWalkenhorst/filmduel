@@ -53,6 +53,8 @@ export const createGame = mutation({
     if (!user) throw new Error("Nicht eingeloggt");
     const userId = user._id.toString();
 
+    if (args.opponentId === userId) throw new Error("Du kannst dich nicht selbst herausfordern");
+
     if (args.opponentId === "random") {
       const openGames = await ctx.db
         .query("games")

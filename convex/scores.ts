@@ -30,6 +30,10 @@ export const getLeaderboard = query({
       map[s.player_name].games++;
       map[s.player_name].totalScore += s.player_score;
       if (s.winner === s.player_name) map[s.player_name].wins++;
+
+      map[s.opponent_name].games++;
+      map[s.opponent_name].totalScore += s.opponent_score;
+      if (s.winner === s.opponent_name) map[s.opponent_name].wins++;
     }
 
     return Object.values(map)

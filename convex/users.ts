@@ -70,6 +70,7 @@ export const setDisplayName = mutation({
 
     const name = args.displayName.trim();
     if (name.length < 2 || name.length > 20) throw new Error("Name: 2–20 Zeichen");
+    if (!/^[a-zA-Z0-9_\-äöüÄÖÜß]+$/.test(name)) throw new Error("Nur Buchstaben, Zahlen, _ und - erlaubt");
 
     // Einzigartigkeit prüfen
     const existing = await ctx.db.query("users").collect();
@@ -101,16 +102,18 @@ export const getProfile = query({
 export const searchByName = query({
   args: { name: v.string() },
   handler: async (ctx, args) => {
-    if (args.name.length < 2) return null;
+    if (args.name.length < 2) return [];
     const users = await ctx.db.query("users").collect();
     const nameLower = args.name.toLowerCase();
-    const match = users.find((u: any) =>
-      (u.displayName || "").toLowerCase() === nameLower
-    );
-    if (match) {
-      return { _id: match._id.toString(), displayName: match.displayName };
-    }
-    return null;
+    const matches = users
+      .filter((u: any) =>
+        (u.displayName || "").toLowerCase().startsWith(nameLower)
+      )
+      .slice(0, 5);
+    return matches.map((u: any) => ({
+      _id: u._id.toString(),
+      displayName: u.displayName,
+    }));
   },
 });
 
