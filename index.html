@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#090909" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="FilmDuel" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>FilmDuel — Wer kennt Kino wirklich?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Oswald', 'sans-serif'],
+            body: ['Barlow', 'sans-serif'],
+            condensed: ['Barlow Condensed', 'sans-serif'],
+          },
+          colors: {
+            c: {
+              bg:     '#090909',
+              dark:   '#0f0f10',
+              card:   '#141416',
+              card2:  '#1a1a1e',
+              border: '#252528',
+              gold:   '#e8c84a',
+              amber:  '#d4960a',
+              red:    '#dc3535',
+              orange: '#d97316',
+              text:   '#e2ddd6',
+              muted:  '#706a62',
+              faint:  '#3a3830',
+            }
+          },
+          keyframes: {
+            'up':    { '0%': { transform: 'translateY(24px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+            'pop':   { '0%': { transform: 'scale(0.88)', opacity: '0' }, '65%': { transform: 'scale(1.03)' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+            'fade':  { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            'shake': { '0%,100%': { transform: 'translateX(0)' }, '25%': { transform: 'translateX(-6px)' }, '75%': { transform: 'translateX(6px)' } },
+            'glow':  { '0%,100%': { opacity: '0.6' }, '50%': { opacity: '1' } },
+            'scan':  { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(400%)' } },
+          },
+          animation: {
+            'up':    'up 0.42s cubic-bezier(0.16,1,0.3,1) both',
+            'pop':   'pop 0.48s cubic-bezier(0.16,1,0.3,1) both',
+            'fade':  'fade 0.3s ease both',
+            'shake': 'shake 0.35s ease',
+            'glow':  'glow 2.5s ease-in-out infinite',
+            'scan':  'scan 3s linear infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { overscroll-behavior: none; }
+    body {
+      background: #090909;
+      color: #e2ddd6;
+      font-family: 'Barlow', sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+    .screen { min-height: 100dvh; display: none; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* Safe area insets (iPhone Notch + Home-Bar) */
+    .safe-top    { padding-top:    max(0px, env(safe-area-inset-top)); }
+    .safe-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+    .filmstrip   { padding-top: env(safe-area-inset-top); }
+    ::-webkit-scrollbar { width: 0; }
+
+    /* Film strip top decoration */
+    .filmstrip {
+      height: 28px;
+      background: #0f0f10;
+      border-bottom: 1px solid #1e1e22;
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      gap: 4px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .filmstrip-hole {
+      width: 16px; height: 14px;
+      background: #090909;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    /* Answer buttons */
+    .btn-ans {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 16px;
+      padding: 15px 18px;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      cursor: pointer;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .btn-ans:active { transform: scale(0.975); }
+    .btn-ans .letter {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: #1e1e22;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px; font-weight: 700;
+      color: #706a62;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-ans.correct { background: #0d2218; border-color: #16a34a; }
+    .btn-ans.correct .letter { background: #16a34a; color: #fff; }
+    .btn-ans.wrong   { background: #1e0c0c; border-color: #dc3535; }
+    .btn-ans.wrong   .letter { background: #dc3535; color: #fff; }
+
+    /* Category cards */
+    .cat-card {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 18px;
+      padding: 16px;
+      min-height: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, transform 0.15s;
+      position: relative;
+      overflow: hidden;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .cat-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 99px;
+      background: var(--cat-color, #706a62);
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+    .cat-card:active { transform: scale(0.97); }
+    .cat-card.selected { border-color: var(--cat-color, #e8c84a); background: #1a1a1e; }
+    .cat-card.selected::before { opacity: 1; }
+    .cat-card.used { opacity: 0.25; pointer-events: none; }
+
+    .cat-abbr {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: var(--cat-color, #706a62);
+    }
+    .cat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2ddd6;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    /* Timer bar */
+    .timer-track { background: #1e1e22; border-radius: 99px; height: 3px; overflow: hidden; }
+    .timer-fill  { height: 100%; border-radius: 99px; transition: width 1s linear, background 1s; }
+
+    /* Score pill */
+    .score-pill {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 14px;
+      padding: 12px 16px;
+    }
+
+    /* Fact box */
+    .fact-box {
+      background: #1a1a1e;
+      border: 1px solid #252528;
+      border-left: 3px solid #e8c84a;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: #9a9488;
+      line-height: 1.5;
+      font-style: italic;
+      display: none;
+    }
+    .fact-box.show { display: block; animation: fade 0.3s ease; }
+
+    /* Difficulty dots */
+    .diff-dot {
+      width: 6px; height: 6px;
+      border-radius: 99px;
+      background: #252528;
+    }
+    .diff-dot.on { background: #e8c84a; }
+
+    /* Scan line animation overlay */
+    .scanlines {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+      );
+    }
+
+    /* Input */
+    input[type="text"] {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 20px;
+      color: #e2ddd6;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    input[type="text"]:focus { border-color: #e8c84a; }
+    input[type="text"]::placeholder { color: #3a3830; }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      background: #e8c84a;
+      color: #0a0a0b;
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 18px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .btn-primary:active { transform: scale(0.97); background: #d4960a; }
+    .btn-primary:disabled { opacity: 0.35; pointer-events: none; }
+
+    .btn-secondary {
+      width: 100%;
+      background: #141416;
+      color: #706a62;
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid #252528;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn-secondary:active { transform: scale(0.97); }
+
+    .round-btn {
+      flex: 1;
+      padding: 14px;
+      min-height: 52px;
+      border-radius: 14px;
+      border: 1px solid #252528;
+      background: #141416;
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      color: #706a62;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .round-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
+  </style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 1 — START
+════════════════════════════════════════ -->
+<div id="s-start" class="screen active">
+  <!-- Film strip decoration -->
+  <div class="filmstrip" id="filmstrip-top"></div>
+
+  <div class="flex flex-col justify-between flex-1 p-6 pt-10 safe-bottom">
+    <!-- Logo -->
+    <div class="animate-up" style="animation-delay:0ms">
+      <div class="font-condensed text-c-muted text-xs tracking-[0.3em] uppercase mb-3">Das Kino-Duell</div>
+      <div class="relative inline-block">
+        <h1 class="font-display text-[64px] font-bold text-c-gold leading-none tracking-tight">FILM<br>DUEL</h1>
+        <div class="absolute -bottom-1 right-0 font-condensed text-c-muted text-xs tracking-widest">.space</div>
+      </div>
+      <p class="mt-6 font-condensed text-c-muted text-sm leading-relaxed max-w-xs">
+        Für echte Cinephile — von Nouvelle Vague bis Neo-Noir.<br>Wer kennt Kino wirklich?
+      </p>
+    </div>
+
+    <!-- Players -->
+    <div class="flex flex-col gap-4 animate-up" style="animation-delay:80ms">
+      <div>
+        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Spieler 1</label>
+        <input id="p1" type="text" placeholder="Name" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" />
+      </div>
+      <div>
+        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Spieler 2</label>
+        <input id="p2" type="text" placeholder="Name" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" />
+      </div>
+    </div>
+
+    <!-- Rounds -->
+    <div class="animate-up" style="animation-delay:130ms">
+      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Runden</label>
+      <div class="flex gap-2">
+        <button class="round-btn" data-r="3" onclick="setRounds(3)">3</button>
+        <button class="round-btn active" data-r="5" onclick="setRounds(5)">5</button>
+        <button class="round-btn" data-r="7" onclick="setRounds(7)">7</button>
+      </div>
+    </div>
+
+    <!-- Start -->
+    <div class="flex flex-col gap-3 animate-up" style="animation-delay:180ms">
+      <button class="btn-primary" onclick="startGame()">DUELL STARTEN</button>
+      <p class="text-center font-condensed text-c-muted text-xs tracking-wide">Handy nach jeder Runde weitergeben</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 2 — KATEGORIE
+════════════════════════════════════════ -->
+<div id="s-cat" class="screen flex-col">
+  <div class="filmstrip flex-shrink-0" id="filmstrip-cat"></div>
+  <div class="flex flex-col flex-1 p-6 pt-8 gap-5 safe-bottom overflow-y-auto">
+
+    <!-- Header -->
+    <div class="animate-up">
+      <div id="cat-round" class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-1">Runde 1 von 5</div>
+      <h2 id="cat-player" class="font-display text-3xl font-bold text-c-gold">SPIELER 1</h2>
+      <p class="font-condensed text-c-muted text-sm mt-1">Wähle deine Kategorie</p>
+    </div>
+
+    <!-- Score bar -->
+    <div class="score-pill animate-up" style="animation-delay:50ms">
+      <div class="flex justify-between items-center mb-2">
+        <span id="s-p1-name" class="font-condensed text-xs uppercase tracking-wide text-c-muted"></span>
+        <span id="s-p2-name" class="font-condensed text-xs uppercase tracking-wide text-c-muted"></span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="s-p1-val" class="font-display text-xl font-bold text-c-gold w-7">0</span>
+        <div class="flex-1 timer-track">
+          <div id="s-bar" class="timer-fill bg-c-gold" style="width:50%; transition: width 0.6s cubic-bezier(0.16,1,0.3,1)"></div>
+        </div>
+        <span id="s-p2-val" class="font-display text-xl font-bold text-c-gold w-7 text-right">0</span>
+      </div>
+    </div>
+
+    <!-- Categories grid -->
+    <div id="cat-grid" class="grid grid-cols-2 gap-3 animate-up" style="animation-delay:90ms"></div>
+
+    <!-- Confirm -->
+    <button id="cat-btn" class="btn-primary mt-auto" onclick="confirmCat()" disabled>WEITER</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 3 — FRAGE
+════════════════════════════════════════ -->
+<div id="s-q" class="screen flex-col">
+  <div class="filmstrip flex-shrink-0" id="filmstrip-q"></div>
+  <div class="flex flex-col flex-1 p-6 pt-7 gap-4 safe-bottom overflow-y-auto">
+
+    <!-- Top bar -->
+    <div class="flex justify-between items-start animate-up">
+      <div>
+        <div id="q-round" class="font-condensed text-c-muted text-xs uppercase tracking-widest">Runde 1</div>
+        <div id="q-player" class="font-display text-xl font-bold text-c-gold mt-0.5"></div>
+      </div>
+      <div id="q-cat-badge" class="font-condensed text-xs uppercase tracking-widest bg-c-card border border-c-border rounded-full px-4 py-2 text-c-muted"></div>
+    </div>
+
+    <!-- Timer -->
+    <div>
+      <div class="timer-track mb-1.5">
+        <div id="timer-fill" class="timer-fill bg-c-gold" style="width:100%"></div>
+      </div>
+      <div class="flex justify-between">
+        <div class="flex gap-1.5 items-center">
+          <div id="diff-1" class="diff-dot"></div>
+          <div id="diff-2" class="diff-dot"></div>
+          <div id="diff-3" class="diff-dot"></div>
+          <span class="font-condensed text-c-muted text-xs ml-1 uppercase tracking-wider" id="diff-label">Leicht</span>
+        </div>
+        <span id="timer-num" class="font-display text-c-gold text-sm font-bold">20</span>
+      </div>
+    </div>
+
+    <!-- Question meta -->
+    <div id="q-num" class="font-condensed text-c-muted text-xs uppercase tracking-widest animate-up" style="animation-delay:40ms"></div>
+
+    <!-- Question text -->
+    <div id="q-text" class="font-display text-[22px] font-medium leading-tight text-c-text animate-up" style="animation-delay:70ms"></div>
+
+    <!-- Answers -->
+    <div id="ans-grid" class="flex flex-col gap-2.5 animate-up" style="animation-delay:100ms"></div>
+
+    <!-- Fun fact -->
+    <div id="fact-box" class="fact-box"></div>
+
+    <!-- Next -->
+    <button id="next-btn" class="btn-secondary mt-auto" onclick="nextQ()" style="display:none">WEITER →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 4 — HANDY ÜBERGEBEN
+════════════════════════════════════════ -->
+<div id="s-hand" class="screen flex-col items-center justify-center p-8 gap-6 text-center safe-bottom safe-top">
+  <div class="animate-pop">
+    <div id="hand-pts" class="font-display text-7xl font-bold text-c-gold">+3</div>
+    <div id="hand-txt" class="font-condensed text-c-muted text-sm uppercase tracking-widest mt-1">Punkte</div>
+  </div>
+
+  <div class="w-full bg-c-card border border-c-border rounded-2xl p-5 animate-pop" style="animation-delay:70ms">
+    <div class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-4">Zwischenstand</div>
+    <div id="hand-scores" class="flex flex-col gap-3"></div>
+  </div>
+
+  <div class="w-full animate-pop" style="animation-delay:140ms">
+    <div class="font-condensed text-c-muted text-sm mb-3 uppercase tracking-widest">Handy weitergeben an</div>
+    <div id="hand-next" class="font-display text-3xl font-bold text-c-gold mb-6"></div>
+    <button class="btn-primary" onclick="handConfirm()">ICH BIN BEREIT</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 5 — ERGEBNIS
+════════════════════════════════════════ -->
+<div id="s-result" class="screen flex-col">
+  <div class="filmstrip flex-shrink-0" id="filmstrip-r"></div>
+  <div class="flex flex-col flex-1 p-6 pt-10 pb-10 gap-6 overflow-y-auto">
+
+    <div class="animate-up">
+      <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-2">Spielende</div>
+      <h2 id="res-winner" class="font-display text-4xl font-bold text-c-gold leading-tight"></h2>
+    </div>
+
+    <div id="res-scores" class="flex flex-col gap-3 animate-up" style="animation-delay:70ms"></div>
+
+    <div class="bg-c-card border border-c-border rounded-2xl p-5 animate-up" style="animation-delay:120ms">
+      <div class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-4">Kategorien</div>
+      <div id="res-cats" class="flex flex-col gap-2.5"></div>
+    </div>
+
+    <div class="flex flex-col gap-3 mt-auto animate-up" style="animation-delay:170ms">
+      <button class="btn-primary" onclick="rematch()">REVANCHE</button>
+      <button class="btn-secondary" onclick="goHome()">NEUES SPIEL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// CATEGORIES
+// ═══════════════════════════════════════
+const CATS = [
+  { id:'arthouse',  label:'Arthouse',   abbr:'ART',  color:'#c084fc' },
+  { id:'directors', label:'Regie',      abbr:'REG',  color:'#e8c84a' },
+  { id:'world',     label:'Weltklasse', abbr:'WLD',  color:'#34d399' },
+  { id:'noir',      label:'Neo-Noir',   abbr:'NOIR', color:'#94a3b8' },
+  { id:'cult',      label:'Kult',       abbr:'KULT', color:'#fb923c' },
+  { id:'tech',      label:'Kamera',     abbr:'CAM',  color:'#38bdf8' },
+  { id:'horror',    label:'Horror',     abbr:'HOR',  color:'#f87171' },
+  { id:'indie',     label:'Indie/A24',  abbr:'IND',  color:'#a3e635' },
+];
+
+// ═══════════════════════════════════════
+// QUESTIONS
+// q = Frage, a = Antworten, c = korrekter Index (0-basiert)
+// d = Schwierigkeit (1=leicht, 2=mittel, 3=schwer)
+// f = Fun Fact nach Antwort
+// ═══════════════════════════════════════
+const Q = {
+  arthouse: [
+    { q:'In welchem Ingmar Bergman Film spielt ein Ritter Schach gegen den Tod?', a:['Das Siebente Siegel','Wilde Erdbeeren','Schreie und Flüstern','Szenen einer Ehe'], c:0, d:2, f:'Der Film erschien 1957 und gilt als eines der einflussreichsten Werke der Filmgeschichte.' },
+    { q:'Welcher Andrei Tarkovsky Film handelt von einem sowjetischen Soldaten und seiner surrealen Kindheitserinnerung?', a:['Solaris','Andrei Rublev','Iwans Kindheit','Der Spiegel'], c:2, d:2, f:'Tarkovskys Debütfilm (1962) basiert auf der Novelle von Wladimir Bogomolow.' },
+    { q:'Wer führte Regie bei dem Stummfilmklassiker "La Passion de Jeanne d\'Arc" (1928)?', a:['F.W. Murnau','Carl Theodor Dreyer','Fritz Lang','Abel Gance'], c:1, d:3, f:'Dreyer nutzte extreme Nahaufnahmen von Renée Falconettis Gesicht — ohne Make-up.' },
+    { q:'In "8½" (1963) von Federico Fellini — mit welchem Regisseur hat der Protagonist eine Kreativblockade?', a:['Ein Filmkritiker','Ein Produzent','Einem anderen Regisseur','Sich selbst'], c:3, d:2, f:'Fellini drehte den Film über seine eigene kreative Krise — semi-autobiografisch.' },
+    { q:'Robert Bressons Konzept, keine "Schauspieler" einzusetzen, bezeichnet er als...', a:['Naturalisten','Modelle','Amateure','Instrumente'], c:1, d:3, f:'Bresson wollte keine theatralischen Gesten — seine "Modelle" sollten natürlich, fast leer reagieren.' },
+    { q:'Jean-Luc Godards "À bout de souffle" (1960) gilt als Gründungsdokument der...', a:['Dogma 95 Bewegung','Neuen Sachlichkeit','Nouvelle Vague','Britischen New Wave'], c:2, d:1, f:'Godard drehte den Film mit einer Handkamera und erfand so den modernen Jump Cut.' },
+    { q:'Welcher Film von Michelangelo Antonioni endet am Äolischen Vulkan, ohne die verschwundene Protagonistin zu erklären?', a:["L'Eclisse",'La Notte',"L'Avventura",'Il Deserto Rosso'], c:2, d:3, f:'Bei der Premiere in Cannes 1960 wurde "L\'Avventura" ausgebuht — heute gilt er als Meisterwerk.' },
+    { q:'Welcher Chantal Akerman Film zeigt 3 Stunden lang den Alltag einer Hausfrau in Echtzeit?', a:['Je Tu Il Elle','News from Home','Jeanne Dielman','Toute une Nuit'], c:2, d:3, f:'"Jeanne Dielman" (1975) wurde 2022 zum besten Film aller Zeiten gewählt (Sight & Sound).' },
+    { q:'"Persona" (1966) von Bergman — was passiert in der berühmten Mittelsequenz des Films?', a:['Der Film reißt ab','Eine Figur stirbt','Das Bild gefriert','Der Ton bricht weg'], c:0, d:3, f:'Bergman ließ den Film buchstäblich "reißen" und zeigt das Filmband — eine radikale Metaebene.' },
+    { q:'Abbas Kiarostamis "Der Geschmack der Kirschen" (1997) — womit endet der Film unerwartet?', a:['Dem Tod des Protagonisten','Einem Zeitsprung','Behind-the-Scenes Footage','Schwarzer Stille'], c:2, d:3, f:'Die berühmte Schlusssequenz bricht die Fiktion vollständig auf — bis heute rätselhaft.' },
+    { q:'Welches ist Tarkovskys letzter Film, gedreht kurz vor seinem Tod 1986?', a:['Nostalghia','Das Opfer','Stalker','Die Zeitreise'], c:1, d:2, f:'Tarkovsky drehte "Das Opfer" in Schweden mit Ingmar Bergmans Stammkameramann Sven Nykvist.' },
+    { q:'Roy Andersson ist bekannt für seinen Stil der...', a:['Handkamera-Doku','Langen Plansequenzen','Tableau-Einstellungen ohne Kamerabewegung','Extremen Nahaufnahmen'], c:2, d:3, f:'Jede Einstellung in Anderssons Filmen ist ein statisches Tableau — oft mit surrealem Humor.' },
+    { q:'In welchem Land entstanden die Filme der "Romanian New Wave" (Cristi Puiu, Cristian Mungiu)?', a:['Bulgarien','Ungarn','Rumänien','Polen'], c:2, d:2, f:'"4 Monate, 3 Wochen und 2 Tage" (Mungiu) gewann 2007 die Goldene Palme.' },
+    { q:'Welcher Film von Pier Paolo Pasolini adaptiert das Evangelium nach Matthäus?', a:['Accattone','Mama Roma','Il Vangelo secondo Matteo','Teorema'], c:2, d:2, f:'Pasolini, überzeugter Marxist, drehte den Film als Hommage an das Leben Jesu.' },
+    { q:'Carlos Saura ist bekannt für seine Flamenco-Trilogie — welches war der erste Film?', a:['Carmen','El Amor Brujo','Bodas de Sangre','Flamenco'], c:2, d:3, f:'"Bodas de Sangre" (1981) basiert auf Federico García Lorcas gleichnamigem Theaterstück.' },
+  ],
+
+  directors: [
+    { q:'Paul Thomas Andersons Spielfilmdebüt (1996) ist bekannt unter zwei Titeln — der ursprüngliche lautet...', a:['Boogie Nights','Hard Eight / Sydney','Punch-Drunk Love','Magnolia'], c:1, d:3, f:'Der Produzent ließ den Film nachträglich umbenennen — PTA hasste den neuen Titel "Hard Eight".' },
+    { q:'Stanley Kubrick gewann in seiner gesamten Karriere genau einen Oscar — für was?', a:['2001 (Spezialeffekte)','A Clockwork Orange (Regie)','Barry Lyndon (Regie)','Er gewann nie einen Oscar'], c:3, d:3, f:'Kubrick war 13x nominiert und gewann nie einen Oscar. Nur sein Spezialeffekte-Team für "2001" gewann.' },
+    { q:'Terrence Malick verschwand nach "Days of Heaven" (1978) für wie viele Jahre?', a:['5 Jahre','12 Jahre','20 Jahre','28 Jahre'], c:2, d:2, f:'Malick kehrte 1998 mit "Der schmale Grat" zurück — nach 20 Jahren Hollywood-Abwesenheit.' },
+    { q:'David Lynchs Spielfilmdebüt "Eraserhead" wurde über wie viele Jahre gedreht?', a:['2 Jahre','5 Jahre','8 Jahre','10 Jahre'], c:1, d:2, f:'Lynch drehte "Eraserhead" von 1971 bis 1977 — oft nur am Wochenende, wegen Geldmangel.' },
+    { q:'Wong Kar-wai dreht seine Filme bekanntermaßen ohne...', a:['Drehbuch','Schauspieler','Musik','Schnitt'], c:0, d:2, f:'Wong improvisiert am Set — "In the Mood for Love" entstand aus Tausenden Stunden Footage.' },
+    { q:'Welcher Kameramann drehte fast alle Filme von Roger Deakins\'s Lieblings-Regisseur-Duo, den Coen Brothers?', a:['Emmanuel Lubezki','Barry Sonnenfeld + später Roger Deakins selbst','Rodrigo Prieto','Darius Khondji'], c:1, d:3, f:'Barry Sonnenfeld war zuerst ihr DoP — dann übernahm Deakins ab "Barton Fink" (1991).' },
+    { q:'Für welchen Film gewann Roger Deakins endlich seinen ersten Oscar nach 14 Nominierungen?', a:['No Country for Old Men','Sicario','Blade Runner 2049','1917'], c:2, d:2, f:'Deakins wartete 24 Jahre — von seiner ersten Nominierung für "The Shawshank Redemption" bis zum Sieg.' },
+    { q:'Wes Andersons Stammkameramann bei fast allen seinen Filmen ist...', a:['Robert Elswit','Emmanuel Lubezki','Robert Yeoman','Bruno Delbonnel'], c:2, d:3, f:'Yeoman hat seit "Bottle Rocket" (1996) fast jeden Wes Anderson Film fotografiert.' },
+    { q:'Welcher Filmemacher ist bekannt für ungeschnittene "One-Shot" Produktionen und drehte "Victoria" (2015)?', a:['Alfonso Cuarón','Sebastian Schipper','Sam Mendes','Alejandro González Iñárritu'], c:1, d:2, f:'"Victoria" (2015) wurde in einer einzigen 2-stündigen Take gedreht — durch Berlin.' },
+    { q:'Alfonso Cuarón drehte "Gravity" mit welchem DoP, bekannt als "El Chivo"?', a:['Roger Deakins','Wally Pfister','Emmanuel Lubezki','Rodrigo Prieto'], c:2, d:2, f:'Lubezkis Arbeit mit Cuarón und später Iñárritu brachte ihm drei Oscar-Siege in Folge.' },
+    { q:'Spike Lee nennt seine Werke nie "Filme" sondern...', a:['Projects','Joints','Works','Pieces'], c:1, d:3, f:'Spike Lee bezeichnet all seine Werke als "Joints" — seit "She\'s Gotta Have It" (1986).' },
+    { q:'"Barry Lyndon" (1974) wurde mit Linsen gedreht, die ursprünglich für welchen Zweck entwickelt wurden?', a:['Astronomie','NASA-Missionen','Medizinische Endoskopie','Militäraufklärung'], c:1, d:3, f:'Die Zeiss-f/0.7-Linsen ermöglichten Kerzenlicht-Aufnahmen — ursprünglich für NASA gebaut.' },
+    { q:'Wer führte Regie bei "Mulholland Drive" — und was war das ursprüngliche Format des Projekts?', a:['David Lynch — TV-Pilot für ABC','David Fincher — TV-Serie','David Lynch — Kurzfilm','John Cassavetes — Theaterproduktion'], c:0, d:2, f:'ABC lehnte den Piloten ab — Lynch drehte ihn zu einem Film um, gewann die Goldene Palme.' },
+    { q:'Michael Haneke gewann die Goldene Palme zweimal — für welche Filme?', a:['Cache & Funny Games','Das Weiße Band & Liebe','Caché & Das Weiße Band','Funny Games & Liebe'], c:1, d:2, f:'2009 für "Das Weiße Band", 2012 für "Liebe (Amour)" — erst der vierte Regisseur mit zwei Palmen.' },
+    { q:'Bong Joon-hos erster englischsprachiger Film ist...', a:['Snowpiercer','Okja','The Host','Mother'], c:0, d:1, f:'"Snowpiercer" (2013) wurde nachträglich von Harvey Weinstein mit mehr Schnitt-Auflagen belegt — Bong kämpfte dagegen.' },
+  ],
+
+  world: [
+    { q:'Park Chan-wooks "Oldboy" (2003) ist Teil welcher Trilogie?', a:['Korea-Trilogie','Die Rache-Trilogie','Sympathy Trilogie','Seoul-Trilogie'], c:1, d:2, f:'Die drei Filme sind "Sympathy for Mr. Vengeance", "Oldboy" und "Lady Vengeance".' },
+    { q:'Wer spielt die weibliche Hauptrolle in Wong Kar-wais "In the Mood for Love" (2000)?', a:['Zhang Ziyi','Gong Li','Maggie Cheung','Lucy Liu'], c:2, d:2, f:'Maggie Cheung trägt im Film 20 verschiedene Cheongsan-Kleider — eine per Szene.' },
+    { q:'Welcher iranische Film von Asghar Farhadi gewann 2012 den Oscar für Besten ausländischen Film?', a:['The Salesman','A Separation','About Elly','Nader and Simin'], c:1, d:2, f:'"A Separation" war der erste iranische Film, der den Oscar für besten fremdsprachigen Film gewann.' },
+    { q:'Béla Tarrs "Sátántangó" (1994) dauert wie lange?', a:['3 Stunden','4,5 Stunden','7,5 Stunden','12 Stunden'], c:2, d:3, f:'Der Film läuft 7,5 Stunden und wurde von Susan Sontag als "Ereignis, nicht Film" beschrieben.' },
+    { q:'Hirokazu Kore-edas "Shoplifters" gewann 2018 welchen Preis?', a:['Grand Prix Cannes','Goldene Palme','Oscar für Besten Film','Silberner Bär'], c:1, d:2, f:'Kore-eda ist bekannt für seine feinfühligen Familienporträts — oft mit Laiendarstellern.' },
+    { q:'Andrei Zvyagintsevs "Leviathan" (2014) gewann den Golden Globe — aus welchem Land?', a:['Ukraine','Russland','Belarus','Georgien'], c:1, d:2, f:'Putin-kritisch interpretiert, wurde der Film in Russland kaum gezeigt.' },
+    { q:'Welcher Regisseur drehte das südkoreanische Sozialdrama "Burning" (2018), basierend auf Murakami?', a:['Bong Joon-ho','Park Chan-wook','Lee Chang-dong','Hong Sang-soo'], c:2, d:3, f:'"Burning" wurde bei Metacritic zur höchst-bewerteten Cannes-Einreichung aller Zeiten.' },
+    { q:'Yasujiro Ozus "Tokyo Story" (1953) nutzt konsequent eine Kamera-Technik — welche?', a:['Hochformat','Tatami-Perspektive (sehr tief)','Dutch Angle','Handkamera'], c:1, d:3, f:'Ozu filmte immer in Augenhöhe von sitzenden Personen — die sogenannte "Tatami-Shot".' },
+    { q:'Wie heißt die berühmte iranische Filmschule, die Abbas Kiarostami prägte?', a:['Tehran Film Institute','Kanun','New Iranian Wave','Persian School'], c:1, d:3, f:'"Kanun" (Institut für geistige Entwicklung von Kindern) produzierte Kiarostamis frühe Meisterwerke.' },
+    { q:'"Y Tu Mamá También" (2001) ist bekannt für seinen Einsatz von...', a:['CGI-Effekten','Voice-over Kommentar','Stop-Motion','Schwarzweiß-Fotografie'], c:1, d:2, f:'Cuaróns Voice-over-Kommentator beschreibt ruhig die soziale Realität Mexikos — abseits der Handlung.' },
+    { q:'Welcher schwedische Regisseur drehte "The Square" (2017, Goldene Palme)?', a:['Roy Andersson','Ruben Östlund','Lukas Moodysson','Thomas Vinterberg'], c:1, d:2, f:'Östlunds Folgefilm "Triangle of Sadness" gewann 2022 ebenfalls die Goldene Palme.' },
+    { q:'Nuri Bilge Ceylan ist bekannt für seine langen, meditativenDialog-Szenen und kommt aus...', a:['Griechenland','Iran','Türkei','Armenien'], c:2, d:2, f:'"Once Upon a Time in Anatolia" und "Winter Sleep" sind seine bekanntesten Werke.' },
+    { q:'Welcher japanische Film über drei Schwestern, die eine vierte aufnehmen, lief 2015 in Cannes?', a:['Nobody Knows','Like Father Like Son','Our Little Sister','Shoplifters'], c:2, d:3, f:'Kore-edas "Unsere kleine Schwester" (Umimachi Diary) mit Haruka Ayase und Suzu Hirose.' },
+    { q:'Pedro Almodóvars Stammschauspielerin — wer ist sie?', a:['Penélope Cruz','Carmen Maura','Blanca Portillo','Elena Anaya'], c:1, d:2, f:'Carmen Maura spielte in Almodóvars frühen Werken — Penélope Cruz übernahm später diese Rolle.' },
+    { q:'Der Begriff "Slow Cinema" beschreibt Regisseure wie Tarr, Akerman und...', a:['Lav Diaz','Quentin Tarantino','Christopher Nolan','Paul Verhoeven'], c:0, d:3, f:'Der philippinische Regisseur Lav Diaz dreht Filme, die oft 8–12 Stunden lang sind.' },
+  ],
+
+  noir: [
+    { q:'Wer führte Regie bei "Chinatown" (1974)?', a:['John Huston','Roman Polanski','Sidney Lumet','Howard Hawks'], c:1, d:1, f:'Jack Nicholson sollte in "Chinatown" ursprünglich Regie führen, entschied sich aber nur zu schauspielern.' },
+    { q:'In "Drive" (2011) hat Ryan Goslings Charakter...', a:['Den Namen Ryan','Keinen Namen — nur "The Driver"','Den Namen Miles','Den Namen Driver Cole'], c:1, d:2, f:'Goslings Charakter ist bewusst namenlos — eine archetypische Noir-Figur ohne Hintergrundgeschichte.' },
+    { q:'"L.A. Confidential" (1997) basiert auf einem Roman von...', a:['Raymond Chandler','Elmore Leonard','James Ellroy','James M. Cain'], c:2, d:2, f:'James Ellroys L.A.-Quartett gilt als Höhepunkt des amerikanischen Noir-Romans.' },
+    { q:'"Double Indemnity" (1944) gilt als einer der definierenden Film-Noir Klassiker — Regie führte...', a:['Howard Hawks','John Huston','Billy Wilder','Orson Welles'], c:2, d:2, f:'Billy Wilder und Raymond Chandler schrieben das Drehbuch gemeinsam — trotz gegenseitiger Abneigung.' },
+    { q:'In "Mulholland Drive" — welche Farbe hat die geheimnisvolle Box, die das Narrativ auflöst?', a:['Rot','Blau','Gold','Schwarz'], c:1, d:2, f:'Die blaue Box ist eines der rätselhaftesten Symbole in Lynchs Werk — bis heute ungeklärt.' },
+    { q:'"The Third Man" (1949) — wer spielt Harry Lime mit nur 8 Minuten Screentime?', a:['Joseph Cotten','James Mason','Orson Welles','Trevor Howard'], c:2, d:2, f:'Welles improvisierte den berühmten "Kuckucksuhr"-Monolog selbst am Set.' },
+    { q:'Welcher Film gilt als einer der ersten "Neo-Noir" Filme der 1970er?', a:['The Godfather','Chinatown','Taxi Driver','Night Moves'], c:1, d:2, f:'"Chinatown" (1974) dekonstruierte den klassischen Noir — mit einem pessimistischen Ende.' },
+    { q:'Denis Villeneuves "Sicario" — wer führte die Kamera?', a:['Roger Deakins','Emmanuel Lubezki','Rodrigo Prieto','Bradford Young'], c:0, d:3, f:'Deakins schuf mit seiner Draufsicht-Einstellung auf die Grenze eine der bekanntesten Szenen des Jahrzehnts.' },
+    { q:'"Gone Girl" basiert auf dem Roman von welcher Autorin?', a:['Gillian Flynn','Tana French','Megan Abbott','Laura Lippman'], c:0, d:1, f:'Gillian Flynn schrieb auch das Drehbuch zur Verfilmung — gemeinsam mit Fincher.' },
+    { q:'Wer spielt in "Blade Runner 2049" (2017) die weibliche Hauptfigur Joi?', a:['Robin Wright','Ana de Armas','Sylvia Hoeks','Mackenzie Davis'], c:1, d:2, f:'Ana de Armas wurde nach "Blade Runner 2049" und "Knives Out" zum neuen Noir-Star.' },
+    { q:'In "Collateral" (2004) — wer spielt den Killer Vincent?', a:['Brad Pitt','Tom Cruise','Javier Bardem','Colin Farrell'], c:1, d:1, f:'Michael Manns "Collateral" wurde digital auf Videokameras gedreht — ein Meilenstein.' },
+    { q:'Welcher Coen-Brothers-Film gilt als Neo-Noir Meisterwerk mit Anton Chigurh als Villain?', a:['Blood Simple','Fargo','No Country for Old Men','Miller\'s Crossing'], c:2, d:1, f:'Javier Bardem gewann für Anton Chigurh den Oscar — und die Frisur wurde ikonisch.' },
+    { q:'"Se7en" — was ist im berühmten Paket am Ende wirklich drin?', a:['Eine Pistole','Nichts — es ist leer','Der Kopf von Mills\' Frau','Eine Bombe'], c:2, d:1, f:'David Fincher kämpfte hart für dieses Ende — die Studios wollten einen anderen Schluss.' },
+    { q:'Wer spielt in "Prisoners" (2013) den Ermittler Detective Loki?', a:['Hugh Jackman','Jake Gyllenhaal','Michael Shannon','Joel Edgerton'], c:1, d:2, f:'Gyllenhaals Loki blinzelt im Film nie — eine bewusste Entscheidung des Schauspielers.' },
+    { q:'"Night of the Hunter" (1955) war das einzige Regiewerk von...', a:['John Huston','Charles Laughton','Orson Welles','Elia Kazan'], c:1, d:3, f:'Laughton, selbst Schauspieler, drehte dieses einzige Mal Regie — der Film war ein Flop, gilt heute als Meisterwerk.' },
+  ],
+
+  cult: [
+    { q:'Welcher Jodorowsky-Film von 1970 gilt als erster "Midnight Movie"?', a:['Holy Mountain','El Topo','Fando y Lis','Santa Sangre'], c:1, d:3, f:'John Lennon finanzierte den internationalen Verleih von "El Topo" nach einer privaten Vorführung.' },
+    { q:'"The Rocky Horror Picture Show" läuft seit 1975 ununterbrochen in Kinos — welcher Begriff beschreibt das?', a:['Eternal Release','Longest-running theatrical release','Forever Screening','Cult Loop'], c:1, d:2, f:'Das Publikum wirft Reiskörner, ruft Texte mit und bringt Zeitungen — eine lebendige Ritual-Erfahrung.' },
+    { q:'In "Blue Velvet" (1986) — wer singt "In Dreams" in der berühmten Szene?', a:['Roy Orbison (per Tonträger, gesungen von Dean Stockwell)','Dennis Hopper live','Isabella Rossellini','Roy Orbison live'], c:0, d:3, f:'Dean Stockwell lip-synct Orbisons Song mit einem Garagentor-Dimmer als Mikrofon.' },
+    { q:'Terry Gilliams "Brazil" (1985) — was machte Harvey Weinstein mit dem Film gegen Gilliams Willen?', a:['Er ließ ihn kolorieren','Er ließ ein alternatives Happy-End schneiden','Er strich 45 Minuten','Er veränderte den Score'], c:1, d:3, f:'Gilliams Version läuft 142 Minuten — Universals "Love Conquers All"-Version nur 94 Minuten.' },
+    { q:'In welchem Jahr spielt "Donnie Darko" (2001)?', a:['1984','1986','1988','1990'], c:2, d:2, f:'Der Film spielt exakt im Oktober/November 1988 — kurz vor der US-Präsidentschaftswahl.' },
+    { q:'"The Room" (2003) von Tommy Wiseau gilt als...', a:['Größter Independent-Erfolg','Bestes B-Movie','Eines der schlechtesten Filme ever — und daher Kult','Misverstandenes Kunstwerk'], c:2, d:1, f:'Tommy Wiseau gab Millionen eigenes Geld aus — die Herkunft des Geldes ist bis heute ein Geheimnis.' },
+    { q:'Welcher Kubrick Film wurde bei seiner Premiere verbotet, dann im Kult auferstanden?', a:['Lolita','A Clockwork Orange','Barry Lyndon','Spartacus'], c:1, d:2, f:'Kubrick zog "A Clockwork Orange" nach Copycat-Vorfällen selbst aus dem britischen Verleih.' },
+    { q:'"Pink Flamingos" (1972) von John Waters endet mit John Waters Muse, die...', a:['Eine Kirche anzündet','Echten Hundekot isst','Sich selbst erschießt','Tanzt und stirbt'], c:1, d:2, f:'Divine isst in einer echten Schlussszene Hundekot — Waters ließ es mit einer 16mm-Kamera filmen.' },
+    { q:'Welcher Film von Paul Verhoeven wurde ursprünglich als Satire konzipiert, aber als Ernst genommen?', a:['Robocop','Total Recall','Starship Troopers','Basic Instinct'], c:2, d:2, f:'Viele US-Militär-Rekruten meldeten sich nach "Starship Troopers" — Verhoevens Satire wurde nicht erkannt.' },
+    { q:'"Repo Man" (1984) — wer führte Regie und machte damit ein Kultdebüt?', a:['John Carpenter','Alex Cox','Joe Dante','Walter Hill'], c:1, d:3, f:'Alex Cox drehte den Film für $1,5 Mio — mit einer Punk-Energie, die bis heute einzigartig ist.' },
+    { q:'Welcher Lynch Film zeigt ein abgetrenntes Ohr auf einem Rasen als Opening?', a:['Eraserhead','Wild at Heart','Blue Velvet','Lost Highway'], c:2, d:1, f:'Das Ohr ist von Ameisen umgeben — Lynchs Einstieg in die Abgründe der amerikanischen Suburbs.' },
+    { q:'"Hausu" (1977) — aus welchem Land kommt dieses psychedelische Horrorfilm-Kunstwerk?', a:['Korea','Hong Kong','Japan','Taiwan'], c:2, d:2, f:'"Hausu" von Nobuhiko Obayashi wurde von den Zeichnungen und Träumen seiner Tochter inspiriert.' },
+    { q:'Wer spielt Frank Booth in "Blue Velvet" — und was benutzt er als Requisite?', a:['Dennis Hopper — einen Sauerstofftank','Jack Nicholson — eine Flasche Bourbon','Willem Dafoe — ein Messer','Christopher Walken — ein Radio'], c:0, d:2, f:'Hopper bestand darauf, selbst eine Version von Bobbys Maske für echte Stunt-Szenen zu tragen.' },
+    { q:'"Naked Lunch" (1991) wurde verfilmt von...', a:['David Cronenberg','David Lynch','Gus Van Sant','Abel Ferrara'], c:0, d:2, f:'Cronenberg fusionierte Burroughs\' Roman mit der Biografie des Autors — unverfilmbar verfilmt.' },
+    { q:'"Natural Born Killers" (1994) nutzte Footage aus wie vielen verschiedenen Filmformaten?', a:['2','5','8','Über 10'], c:3, d:3, f:'Oliver Stone nutzte 35mm, 16mm, 8mm, Hi8, Super-8 und Video — als visuelle Medien-Satire.' },
+  ],
+
+  tech: [
+    { q:'Wer führte die Kamera für "Apocalypse Now" (1979)?', a:['Gordon Willis','Vilmos Zsigmond','Vittorio Storaro','Haskell Wexler'], c:2, d:2, f:'Storaro gewann für "Apocalypse Now" seinen ersten von drei Oscars.' },
+    { q:'"1917" (2019) von Sam Mendes wurde so gedreht, dass es wie ein einziger Take wirkt — wer war der DoP?', a:['Emmanuel Lubezki','Roger Deakins','Janusz Kaminski','Bradford Young'], c:1, d:1, f:'Deakins gewann für "1917" seinen zweiten Oscar — nach "Blade Runner 2049".' },
+    { q:'Thelma Schoonmaker ist seit Jahrzehnten die Stammcutterin von...', a:['Steven Spielberg','Francis Ford Coppola','Martin Scorsese','Brian De Palma'], c:2, d:2, f:'Schoonmaker hat drei Oscars gewonnen — für "Raging Bull", "The Aviator" und "The Departed".' },
+    { q:'Welcher DoP ist bekannt als "El Chivo" und gewann drei Oscars in Folge?', a:['Roger Deakins','Rodrigo Prieto','Emmanuel Lubezki','Janusz Kaminski'], c:2, d:2, f:'Lubezki gewann 2014 ("Gravity"), 2015 ("Birdman") und 2016 ("The Revenant") in Folge.' },
+    { q:'Der Einsatz von natürlichem Kerzenlicht in "Barry Lyndon" erforderte spezielle Linsen von...', a:['Canon','Leica','Zeiss (NASA)','Nikon'], c:2, d:3, f:'Die Zeiss f/0.7 Linsen wurden für Apollo-Mondmissionen entwickelt — Kubrick kaufte drei Stück.' },
+    { q:'Ennio Morricone komponierte für Sergio Leones "Dollar-Trilogie" — welche Technik nutzte er?', a:['Er schrieb die Musik nach dem Dreh','Er schrieb die Musik vor dem Dreh, Leone drehte danach','Er improvierte am Set','Er sampelte Volksmusik'], c:1, d:3, f:'Leone ließ die Musik am Set spielen — Schauspieler reagierten auf Morricones Rhythmen.' },
+    { q:'"Birdman" (2014) wurde wie "1917" als One-Shot inszeniert — wer war DoP?', a:['Roger Deakins','Emmanuel Lubezki','Rodrigo Prieto','Reed Morano'], c:1, d:2, f:'Lubezki und Iñárritu planten jeden "Cut" als Zoom in dunkle Ecken oder Schwenks.' },
+    { q:'Das "Dutch Angle" (schräge Kamera) ist ein Stilmittel, das... vermittelt.', a:['Stabilität','Romanrik','Psychologische Spannung oder Desorientierung','Größe von Figuren'], c:2, d:2, f:'Der Begriff "Dutch" stammt wahrscheinlich von "Deutsch" — Weimar-Kino nutzte es für Expressionismus.' },
+    { q:'Jonny Greenwood (Radiohead) komponierte den Score für welchen PTA Film?', a:['Boogie Nights','Magnolia','There Will Be Blood','The Master'], c:2, d:2, f:'Greenwoods atonale, beunruhigende Musik für "There Will Be Blood" revolutionierte Filmmusik.' },
+    { q:'Welche Editing-Technik ist nach einem sowjetischen Filmemacher benannt und beschreibt die Wirkung zweier Bilder zusammen?', a:['Godard-Schnitt','Eisenstein-Montage / Kuleshov-Effekt','Welles-Cut','Lang-Überblendung'], c:1, d:3, f:'Lew Kuleshovs Experiment zeigte: dasselbe Gesicht wirkt anders je nach dem Bild davor.' },
+    { q:'Welcher Cinematographer führte die Kamera in Kubricks "Eyes Wide Shut"?', a:['Gordon Willis','Larry Smith','John Alcott','Douglas Milsome'], c:1, d:3, f:'Larry Smith und Kubrick nutzten ausschließlich vorhandenes Licht und Kerzenlicht in "Eyes Wide Shut".' },
+    { q:'Christopher Nolans Stammcutter seit "Batman Begins" ist...', a:['Thelma Schoonmaker','Lee Smith','Walter Murch','Pietro Scalia'], c:1, d:3, f:'Lee Smith hat keinen Oscar — obwohl seine Arbeit für "Dunkirk" und "Interstellar" revolutionär war.' },
+    { q:'Was ist eine "Plansequenz"?', a:['Eine geplante Szene','Eine lange ungeschnittene Einstellung','Ein Storyboard-Element','Ein Kameratyp'], c:1, d:2, f:'Orson Welles\' Eröffnung von "Touch of Evil" (1958) gilt als eine der bekanntesten Plansequenzen.' },
+    { q:'Welcher Filmkomponist gilt als Vater des "Leitmotivs" im modernen Kino?', a:['Bernard Herrmann','John Williams','Ennio Morricone','Max Steiner'], c:3, d:3, f:'Max Steiner gilt als Erfinder des modernen Filmscores — sein "King Kong" (1933) war revolutionär.' },
+    { q:'Die "Depth of Field" (Schärfentiefe) in "Citizen Kane" wurde durch was erreicht?', a:['Computertechnik','Kleine Blende + starke Beleuchtung','Spezielle Linsen aus Japan','Mehrfachbelichtung'], c:1, d:3, f:'Gregg Toland und Welles nutzten f/16-Blende und extrem starke Lichter — neu für 1941.' },
+  ],
+
+  horror: [
+    { q:'"The Witch" (2015) — in welchem Jahrhundert spielt der Film?', a:['17. Jahrhundert','18. Jahrhundert','19. Jahrhundert','16. Jahrhundert'], c:0, d:2, f:'Robert Eggers recherchierte jahrelang historische Dokumente für den authentischen Dialekt und die Kulissen.' },
+    { q:'Welcher Dämon wird in "Hereditary" (2018) angebetet?', a:['Baal','Asmodeus','Paimon','Belial'], c:2, d:2, f:'Paimon ist in der Goetia (Dämonologie) der König des Westens — Aster recherchierte echte Ritualtexte.' },
+    { q:'Wer führte Regie beim Original "Suspiria" (1977) — und wer bei der Neuverfilmung (2018)?', a:['Argento / Guadagnino','Fulci / Argento','Bava / Eggers','Argento / Eggers'], c:0, d:2, f:'Lukas Guadagninos Remake dauert 2,5 Stunden — doppelt so lang wie Argentos Original.' },
+    { q:'In Nicolas Roegs "Don\'t Look Now" (1973) — welche Farbe wird als düsteres Symbol eingesetzt?', a:['Schwarz','Weiß','Rot','Gelb'], c:2, d:3, f:'Das rote Regenmantel-Motiv zieht sich durch den Film — bis zur schockierenden Schlussszene.' },
+    { q:'Welches Konzept beschreibt Horrorfilme, die gesellschaftliche Themen verarbeiten (Get Out, Hereditary, Midsommar)?', a:['Art House Horror','Post-Horror','Elevated Horror','Social Horror'], c:2, d:2, f:'Der Begriff "Elevated Horror" ist umstritten — viele Kritiker lehnen ihn als elitär ab.' },
+    { q:'"It Follows" (2014) — was ist die Entität konzeptuell?', a:['Ein Virus','Eine sexuell übertragbare Verfluchung','Ein Geist aus der Vergangenheit','Eine Massenhysterie'], c:1, d:2, f:'Regisseur David Robert Mitchell sagte, der Film basiert auf einem Albtraum, den er als Kind hatte.' },
+    { q:'"Midsommar" (2019) spielt in welcher Region Schwedens?', a:['Dalarna','Hälsingland','Lappland','Skåne'], c:1, d:3, f:'Ari Aster baute das Dorf "Hårga" komplett auf Studiogelände in Ungarn nach.' },
+    { q:'Wer spielt in "The Shining" Jack Torrance — und welche Darstellerin spielte Wendy?', a:['Jack Nicholson / Shelley Duvall','Jack Nicholson / Sissy Spacek','Robert De Niro / Shelley Duvall','Gene Hackman / Diane Ladd'], c:0, d:1, f:'Kubrick behandelte Shelley Duvall am Set sehr hart — um ihre Zerbrechen-Reaktionen zu bekommen.' },
+    { q:'"Rosemary\'s Baby" (1968) — wer führte Regie?', a:['Roman Polanski','William Friedkin','George Romero','John Carpenter'], c:0, d:1, f:'Polanski drehte den Film im "Dakota Building" NYC — wo John Lennon 1980 erschossen wurde.' },
+    { q:'Michael Hanekes "Funny Games" — was bricht dieser Film bewusst?', a:['Das Budget','Die vierte Wand','Den Ton','Die Kontinuität'], c:1, d:2, f:'Haneke lässt den Killer direkt in die Kamera schauen — und per "Rückspul-Trick" eine Szene wiederholen.' },
+    { q:'"The Others" (2001) — wer führte Regie?', a:['Guillermo del Toro','J.A. Bayona','Alejandro Amenábar','Juan Antonio Bayona'], c:2, d:2, f:'Amenábar schrieb auch den Score und das Drehbuch — in nur drei Wochen.' },
+    { q:'"Audition" (1999) von Takashi Miike — womit beginnt der Film täuschend?', a:['Einem Horrorfilm-Clip','Einer Liebesgeschichte','Einem Dokumentarfilm','Einer Komödie'], c:1, d:3, f:'Miike täuschte das Publikum mit einer romantischen ersten Stunde — bevor der Film abbricht.' },
+    { q:'Wer ist der Autor von "The Haunting of Hill House" (1959), auf dem der Film basiert?', a:['Shirley Jackson','Henry James','Richard Matheson','Peter Straub'], c:0, d:2, f:'Shirley Jackson gilt als Erfinderin des psychologischen Horrors — ihr Werk inspirierte King, Aster und Flanagan.' },
+    { q:'"Possession" (1981) von Andrzej Zulawski — welches Land spielte als Drehort?', a:['Polen','West-Berlin','Paris','London'], c:1, d:3, f:'Der Film wurde an der Berliner Mauer gedreht — die geteilte Stadt als Metapher für eine zerbrechende Beziehung.' },
+    { q:'"Mandy" (2018) — wer spielt Hauptdarsteller Red Miller in diesem Psychedelic-Horror-Film?', a:['Nicolas Cage','Joel Edgerton','Tom Hardy','Oscar Isaac'], c:0, d:1, f:'Nicolas Cages Ausbruch in der Badezimmerszene wurde mehrfach als bestes Schauspiel des Jahres gelobt.' },
+  ],
+
+  indie: [
+    { q:'Welche Produktionsfirma produzierte Moonlight, Hereditary, Midsommar und Everything Everywhere All at Once?', a:['Neon','Blumhouse','A24','Focus Features'], c:2, d:1, f:'A24 wurde 2012 gegründet und gilt heute als prägendste Independent-Marke Hollywoods.' },
+    { q:'Bei der Oscar-Verleihung 2017 wurde "La La Land" fälschlicherweise als Bester Film verkündet — welcher Film gewann wirklich?', a:['Manchester by the Sea','Fences','Moonlight','Hell or High Water'], c:2, d:1, f:'Warren Beatty und Faye Dunaway hatten den falschen Umschlag bekommen — La La Land-Crew stand schon auf der Bühne.' },
+    { q:'"Boyhood" (2014) wurde von Richard Linklater über wie viele Jahre gedreht?', a:['5 Jahre','9 Jahre','12 Jahre','16 Jahre'], c:2, d:1, f:'Linklater drehte jährlich ein paar Tage mit denselben Schauspielern — von 2002 bis 2013.' },
+    { q:'"Everything Everywhere All at Once" wurde von welchem Regie-Duo inszeniert?', a:['The Russo Brothers','The Daniels (Kwan & Scheinert)','The Safdie Brothers','The Duplass Brothers'], c:1, d:1, f:'Daniel Kwan und Daniel Scheinert gewannen sieben Oscars — darunter Bester Film und Regie.' },
+    { q:'Der Film "Good Time" (2017) von den Safdie Brothers zeigt New York als...', a:['Idyllischen Ort','Bedrohlichen Dschungel','Romantische Metropole','Touristen-Postkarte'], c:1, d:2, f:'Die Safdies drehen ihren New York-Stil nah, hektisch und ohne Netz — quasi dokumentarisch.' },
+    { q:'"Aftersun" (2022) — wer führte Regie bei diesem A24 Debütfilm?', a:['Celine Song','Charlotte Wells','Mia Hansen-Løve','Kelly Reichardt'], c:1, d:2, f:'"Aftersun" ist Charlotte Wells\' Spielfilmdebüt — und stieg sofort auf Platz 1 der Letterboxd-Bestenliste.' },
+    { q:'"Past Lives" (2023) ist das Debüt von...', a:['Charlotte Wells','Celine Song','Kogonada','Ari Aster'], c:1, d:2, f:'Celine Song basierte den Film auf ihrer eigenen Erfahrung als Koreanerin in New York.' },
+    { q:'Welcher Gus Van Sant Film wurde komplett ohne Dialoge gedreht?', a:['My Own Private Idaho','Gerry','Elephant','Milk'], c:1, d:3, f:'"Gerry" (2002) mit Matt Damon und Casey Affleck — fast keine Worte, nur Wüste und Wandern.' },
+    { q:'"Tangerine" (2015) wurde komplett auf welchem Gerät gedreht?', a:['iPhone 5S','GoPro','iPhone 5','Samsung Galaxy'], c:0, d:2, f:'Regisseur Sean Baker nutzte das iPhone 5S mit einem Anamorphic-Adapter für das Kinobild.' },
+    { q:'"The Florida Project" (2017) endet mit einem Formatwechsel — von 35mm zu...', a:['Schwarzweiß','iPhone-Footage','16mm','Animation'], c:1, d:3, f:'Baker drehte die letzte Szene spontan auf einem iPhone, als das 35mm-Budget aufgebraucht war.' },
+    { q:'Kelly Reichardt ist bekannt für ihren "Slow Cinema" Stil — welcher ihrer Filme handelt von drei Frauen auf einem Roadtrip?', a:['Meek\'s Cutoff','Wendy and Lucy','Certain Women','Night Moves'], c:2, d:3, f:'"Certain Women" (2016) basiert auf Kurzgeschichten von Maile Meloy — Reichardts stärkstes Ensemble.' },
+    { q:'Welches Studio hinter "Parasite" (2019) ist südkoreanisch?', a:['CJ Entertainment','Showbox','Barunson E&A','Lotte Entertainment'], c:2, d:3, f:'Barunson E&A co-produzierte "Parasite" — CJ ENM war Hauptfinancier und Vertreiber.' },
+    { q:'"Minari" (2020) — in welcher Sprache wird hauptsächlich gesprochen?', a:['Englisch','Koreanisch','Englisch und Koreanisch','Japanisch'], c:1, d:2, f:'Der Golden Globe entschied: "Minari" ist kein englischsprachiger Film — was die Academy anders sah.' },
+    { q:'Wer spielt in "The Lighthouse" (2019) die zwei Figuren?', a:['Casey Affleck & Matt Damon','Robert Pattinson & Willem Dafoe','Tom Hardy & Karl Urban','Oscar Isaac & Javier Bardem'], c:1, d:1, f:'Eggers drehte in 1.19:1 Format auf 35mm Schwarzweiß-Ortho-Film — für den Look von 1890er-Fotos.' },
+    { q:'"Saint Maud" (2019) ist ein A24-Horrorfilm aus...', a:['USA','Australien','Großbritannien','Kanada'], c:2, d:2, f:'Rose Glass\' Debüt über religiösen Wahn wurde in Scarborough, England gedreht.' },
+  ],
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+const QPR = 3; // questions per round
+const TSEC = 20; // timer seconds
+
+let G = {
+  p1:'', p2:'',
+  rounds: 5,
+  round: 1,
+  player: 1,
+  scores: {1:0, 2:0},
+  rndPts: {1:0, 2:0},
+  usedCats: {1:[], 2:[]},
+  selCat: null,
+  qs: [],
+  qi: 0,
+  answered: false,
+  timer: null,
+  timeLeft: TSEC,
+  history: [],
+};
+
+// ═══════════════════════════════════════
+// FILM STRIP INIT
+// ═══════════════════════════════════════
+function makeFilmstrip(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const h = document.createElement('div');
+    h.className = 'filmstrip-hole';
+    el.appendChild(h);
+  }
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function pname(n) { return n===1 ? G.p1 : G.p2; }
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ═══════════════════════════════════════
+// START SCREEN
+// ═══════════════════════════════════════
+function setRounds(n) {
+  G.rounds = n;
+  document.querySelectorAll('.round-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.r) === n);
+  });
+}
+
+function startGame() {
+  G.p1 = document.getElementById('p1').value.trim() || 'Spieler 1';
+  G.p2 = document.getElementById('p2').value.trim() || 'Spieler 2';
+  G.scores = {1:0, 2:0};
+  G.usedCats = {1:[], 2:[]};
+  G.round = 1;
+  G.player = 1;
+  G.history = [];
+  showCat();
+}
+
+// ═══════════════════════════════════════
+// CATEGORY SCREEN
+// ═══════════════════════════════════════
+function showCat() {
+  G.selCat = null;
+  G.rndPts[G.player] = 0;
+  makeFilmstrip('filmstrip-cat');
+
+  document.getElementById('cat-round').textContent = `Runde ${G.round} von ${G.rounds}`;
+  document.getElementById('cat-player').textContent = pname(G.player).toUpperCase();
+
+  // Score bar — 50% when tied at 0
+  const s1 = G.scores[1], s2 = G.scores[2];
+  const tot = s1 + s2 || 2;
+  const pct = ((s1 / tot) * 100).toFixed(1);
+  document.getElementById('s-p1-name').textContent = G.p1;
+  document.getElementById('s-p2-name').textContent = G.p2;
+  document.getElementById('s-p1-val').textContent = s1;
+  document.getElementById('s-p2-val').textContent = s2;
+  document.getElementById('s-bar').style.width = `${pct}%`;
+
+  // Build grid — per player used cats
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = '';
+  CATS.forEach(cat => {
+    const used = G.usedCats[G.player].includes(cat.id);
+    const d = document.createElement('div');
+    d.className = 'cat-card' + (used ? ' used' : '');
+    d.style.setProperty('--cat-color', cat.color);
+    d.innerHTML = `
+      <div class="cat-abbr">${cat.abbr}</div>
+      <div class="cat-label">${cat.label}</div>
+    `;
+    if (!used) d.onclick = () => selCat(cat.id, d);
+    grid.appendChild(d);
+  });
+
+  const btn = document.getElementById('cat-btn');
+  btn.disabled = true;
+  show('s-cat');
+}
+
+function selCat(id, el) {
+  document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  G.selCat = id;
+  document.getElementById('cat-btn').disabled = false;
+}
+
+function confirmCat() {
+  if (!G.selCat) return;
+  G.usedCats[G.player].push(G.selCat);
+  const pool = shuffle(Q[G.selCat]);
+  G.qs = pool.slice(0, QPR).map(q => {
+    const indexed = q.a.map((text, i) => ({text, ok: i===q.c}));
+    const sh = shuffle(indexed);
+    return { q:q.q, a:sh.map(x=>x.text), c:sh.findIndex(x=>x.ok), d:q.d, f:q.f };
+  });
+  G.qi = 0;
+  showQ();
+}
+
+// ═══════════════════════════════════════
+// QUESTION SCREEN
+// ═══════════════════════════════════════
+function showQ() {
+  const q = G.qs[G.qi];
+  G.answered = false;
+  clearInterval(G.timer);
+  G.timeLeft = TSEC;
+  makeFilmstrip('filmstrip-q');
+
+  document.getElementById('q-round').textContent = `Runde ${G.round} von ${G.rounds}`;
+  document.getElementById('q-player').textContent = pname(G.player);
+  const cat = CATS.find(c => c.id === G.selCat);
+  document.getElementById('q-cat-badge').textContent = cat?.abbr || '';
+  document.getElementById('q-num').textContent = `Frage ${G.qi+1} von ${QPR}`;
+  document.getElementById('q-text').textContent = q.q;
+
+  // Difficulty
+  for (let i=1;i<=3;i++) {
+    document.getElementById(`diff-${i}`).classList.toggle('on', i<=q.d);
+  }
+  document.getElementById('diff-label').textContent = q.d===1?'Leicht':q.d===2?'Mittel':'Schwer';
+
+  // Answers
+  const grid = document.getElementById('ans-grid');
+  grid.innerHTML = '';
+  q.a.forEach((ans,i) => {
+    const btn = document.createElement('button');
+    btn.className = 'btn-ans';
+    btn.innerHTML = `<span class="letter">${'ABCD'[i]}</span><span class="font-body text-sm text-c-text leading-snug">${ans}</span>`;
+    btn.onclick = () => pick(i, btn);
+    grid.appendChild(btn);
+  });
+
+  // Fact box
+  const fb = document.getElementById('fact-box');
+  fb.textContent = '';
+  fb.classList.remove('show');
+
+  document.getElementById('next-btn').style.display = 'none';
+  const tf = document.getElementById('timer-fill');
+  tf.style.background = '#e8c84a';
+  show('s-q');
+  startTimer();
+}
+
+function startTimer() {
+  const fill = document.getElementById('timer-fill');
+  const num = document.getElementById('timer-num');
+  G.timeLeft = TSEC;
+  fill.style.transition = 'none';
+  fill.style.width = '100%';
+  fill.style.background = '#e8c84a';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fill.style.transition = `width ${TSEC}s linear`;
+      fill.style.width = '0%';
+    });
+  });
+
+  G.timer = setInterval(() => {
+    G.timeLeft--;
+    num.textContent = G.timeLeft;
+    // Color change
+    if (G.timeLeft <= 5) {
+      fill.style.background = '#dc3535';
+      num.style.color = '#dc3535';
+    } else if (G.timeLeft <= 10) {
+      fill.style.background = '#d97316';
+      num.style.color = '#d97316';
+    }
+    if (G.timeLeft <= 0) {
+      clearInterval(G.timer);
+      if (!G.answered) timeUp();
+    }
+  }, 1000);
+}
+
+function pick(i, btn) {
+  if (G.answered) return;
+  G.answered = true;
+  clearInterval(G.timer);
+
+  const q = G.qs[G.qi];
+  const ok = i === q.c;
+
+  document.querySelectorAll('.btn-ans').forEach((b, idx) => {
+    b.onclick = null;
+    if (idx === q.c) b.classList.add('correct');
+    else if (idx === i && !ok) b.classList.add('wrong');
+  });
+
+  if (ok) {
+    const pts = G.timeLeft > 14 ? 3 : G.timeLeft > 7 ? 2 : 1;
+    G.rndPts[G.player] = (G.rndPts[G.player]||0) + pts;
+    // Haptic feedback: short pulse
+    if (navigator.vibrate) navigator.vibrate([30]);
+    // Green flash
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;background:rgba(22,163,74,0.08);pointer-events:none;z-index:9997;animation:fade 0.5s ease forwards';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 500);
+  } else {
+    // Haptic: double buzz for wrong
+    if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+  }
+
+  // Show fun fact
+  if (q.f) {
+    const fb = document.getElementById('fact-box');
+    fb.textContent = q.f;
+    fb.classList.add('show');
+  }
+
+  const isLast = G.qi >= QPR-1;
+  const nb = document.getElementById('next-btn');
+  nb.style.display = '';
+  nb.textContent = isLast ? 'RUNDE BEENDEN →' : 'NÄCHSTE FRAGE →';
+
+  // Reset timer color
+  document.getElementById('timer-num').style.color = '';
+}
+
+function timeUp() {
+  G.answered = true;
+  const q = G.qs[G.qi];
+  document.querySelectorAll('.btn-ans').forEach((b,i) => {
+    b.onclick = null;
+    if (i===q.c) b.classList.add('correct');
+  });
+  if (q.f) {
+    const fb = document.getElementById('fact-box');
+    fb.textContent = q.f;
+    fb.classList.add('show');
+  }
+  const isLast = G.qi >= QPR-1;
+  const nb = document.getElementById('next-btn');
+  nb.style.display = '';
+  nb.textContent = isLast ? 'RUNDE BEENDEN →' : 'NÄCHSTE FRAGE →';
+  document.getElementById('timer-num').style.color = '';
+}
+
+function nextQ() {
+  G.qi++;
+  if (G.qi < QPR) showQ();
+  else endRound();
+}
+
+// ═══════════════════════════════════════
+// ROUND TRANSITIONS
+// ═══════════════════════════════════════
+function endRound() {
+  const pts = G.rndPts[G.player] || 0;
+  G.scores[G.player] += pts;
+
+  G.history.push({
+    round: G.round,
+    player: G.player,
+    cat: G.selCat,
+    pts,
+  });
+
+  const bothPlayed = G.history.filter(h => h.round === G.round).length >= 2;
+
+  if (!bothPlayed) {
+    G.player = G.player===1 ? 2 : 1;
+    showHandover();
+  } else {
+    G.round++;
+    if (G.round > G.rounds) showResult();
+    else {
+      G.player = G.player===1 ? 2 : 1;
+      showHandover();
+    }
+  }
+}
+
+function showHandover() {
+  const justEntry = G.history.at(-1);
+  const justPts = justEntry?.pts || 0;
+  const justPlayer = justEntry?.player;
+  document.getElementById('hand-pts').textContent = `+${justPts}`;
+  document.getElementById('hand-txt').textContent = justPts > 0
+    ? `${pname(justPlayer)} — ${justPts} Punkt${justPts > 1 ? 'e' : ''}`
+    : `${pname(justPlayer)} — kein Treffer`;
+
+  const el = document.getElementById('hand-scores');
+  el.innerHTML = `
+    <div class="flex justify-between items-center">
+      <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p1}</span>
+      <span class="font-display text-2xl font-bold text-c-gold">${G.scores[1]}</span>
+    </div>
+    <div class="h-px bg-c-border"></div>
+    <div class="flex justify-between items-center">
+      <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p2}</span>
+      <span class="font-display text-2xl font-bold text-c-gold">${G.scores[2]}</span>
+    </div>
+  `;
+
+  document.getElementById('hand-next').textContent = pname(G.player).toUpperCase();
+  show('s-hand');
+}
+
+function handConfirm() {
+  showCat();
+}
+
+// ═══════════════════════════════════════
+// RESULT SCREEN
+// ═══════════════════════════════════════
+function showResult() {
+  makeFilmstrip('filmstrip-r');
+  const s1=G.scores[1], s2=G.scores[2];
+  const winner = s1===s2 ? 'Unentschieden — Rematch!' : `${s1>s2?G.p1:G.p2} gewinnt!`;
+  document.getElementById('res-winner').textContent = winner;
+
+  const max = Math.max(s1,s2,1);
+  document.getElementById('res-scores').innerHTML = [1,2].map(p => `
+    <div class="score-pill">
+      <div class="flex justify-between mb-2">
+        <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${p===1?G.p1:G.p2}</span>
+        <span class="font-display text-xl font-bold text-c-gold">${G.scores[p]}</span>
+      </div>
+      <div class="timer-track">
+        <div class="timer-fill bg-c-gold" style="width:${((G.scores[p]/max)*100).toFixed(0)}%;transition:width 0.8s cubic-bezier(0.16,1,0.3,1)"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Category breakdown
+  const catMap = {};
+  G.history.forEach(h => {
+    if (!catMap[h.cat]) catMap[h.cat] = {p1:0, p2:0};
+    catMap[h.cat][`p${h.player}`] += h.pts;
+  });
+  document.getElementById('res-cats').innerHTML = Object.entries(catMap).map(([cid, pts]) => {
+    const cat = CATS.find(c=>c.id===cid);
+    return `
+      <div class="flex justify-between items-center py-1">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full" style="background:${cat?.color}"></div>
+          <span class="font-condensed text-xs uppercase tracking-wide text-c-muted">${cat?.label}</span>
+        </div>
+        <span class="font-condensed text-xs text-c-text">${G.p1} <span class="text-c-gold font-bold">${pts.p1}</span> — <span class="text-c-gold font-bold">${pts.p2}</span> ${G.p2}</span>
+      </div>
+    `;
+  }).join('');
+
+  show('s-result');
+}
+
+function rematch() {
+  G.scores={1:0,2:0};
+  G.usedCats={1:[],2:[]};
+  G.round=1;
+  G.player=1;
+  G.history=[];
+  showCat();
+}
+
+function goHome() {
+  show('s-start');
+}
+
+// Init filmstrips on load
+document.addEventListener('DOMContentLoaded', () => {
+  makeFilmstrip('filmstrip-top');
+});
+</script>
+</body>
+</html>
