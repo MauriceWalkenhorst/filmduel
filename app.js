@@ -287,14 +287,12 @@ window.showRes = function() {
   }
   rc.innerHTML = rows.join('');
   
-  // Im Lokalen Modus blenden wir den direkten Score-Eintragen-Button vllt aus, falls er für Online war, oder lassen ihn
-  document.getElementById('submit-online-btn').style.display = 'block';
-
   show('s-result');
 };
 
 window.rematch = function() {
   G.scores = {1:0, 2:0};
+  G.rndPts = {1:0, 2:0};
   G.usedCats = {1:[], 2:[]};
   G.round = 1;
   G.player = 1;

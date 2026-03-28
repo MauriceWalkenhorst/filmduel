@@ -1,5 +1,5 @@
 // online.js — Online-Multiplayer-Modus
-import { client, initAuth, signInWithGoogle, signOut, getCurrentUser } from './auth.js';
+import { client, initAuth, renderGoogleButton, signOut, getCurrentUser, updateCurrentUser } from './auth.js';
 import { CATS, Q } from './categories.js';
 import { shuffle } from './app.js';
 
@@ -7,12 +7,49 @@ import { shuffle } from './app.js';
 // Auth-Handlers
 // ───────────────────────────────────────────
 
-window.onlineLogin = async function () {
-  const btn = document.getElementById('google-btn');
-  const hint = document.getElementById('login-hint');
+window.showLoginScreen = function () {
+  makeFilmstrip('filmstrip-login');
+  show('s-login');
+  renderGoogleButton('google-btn-container', async (user) => {
+    if (!user) return;
+    if (!user.displayNameSet) {
+      makeFilmstrip('filmstrip-username');
+      document.getElementById('username-input').value = '';
+      document.getElementById('username-error').classList.add('hidden');
+      document.getElementById('username-btn').disabled = true;
+      show('s-username-setup');
+    } else {
+      await loadDashboard();
+    }
+  });
+};
+
+window.updateUsernameBtn = function () {
+  const val = document.getElementById('username-input').value.trim();
+  document.getElementById('username-btn').disabled = val.length < 2;
+};
+
+window.confirmUsername = async function () {
+  const btn = document.getElementById('username-btn');
+  const input = document.getElementById('username-input');
+  const errEl = document.getElementById('username-error');
+  const name = input.value.trim();
+
   btn.disabled = true;
-  hint.classList.remove('hidden');
-  await signInWithGoogle();
+  btn.textContent = '…';
+  errEl.classList.add('hidden');
+
+  try {
+    const profile = await client.mutation('users:setDisplayName', { displayName: name });
+    // Profil in localStorage aktualisieren
+    localStorage.setItem('filmduel_user', JSON.stringify(profile));
+    await loadDashboard();
+  } catch (e) {
+    errEl.textContent = e.message || 'Fehler — bitte erneut versuchen';
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = 'WEITER →';
+  }
 };
 
 window.onlineLogout = async function () {
@@ -25,7 +62,16 @@ window.onlineLogout = async function () {
 // ───────────────────────────────────────────
 
 window.loadDashboard = async function () {
-  const user = getCurrentUser();
+  if (!getCurrentUser()) { show('s-login'); return; }
+
+  // Immer frisches Profil von Convex holen → aktuellen Namen + ID sicherstellen
+  let user;
+  try {
+    user = await client.query('users:getProfile', {});
+    if (user) updateCurrentUser(user);
+  } catch (_) {
+    user = getCurrentUser();
+  }
   if (!user) { show('s-login'); return; }
 
   document.getElementById('dash-name').textContent = user.displayName;
@@ -245,11 +291,12 @@ function showOnlineQuestion() {
   document.getElementById('oq-cat').textContent = cat?.label ?? '';
   document.getElementById('oq-question').textContent = q.q;
 
-  const answers = shuffle([q.a, ...q.wrong]);
+  const correct = q.a[q.c];
+  const answers = shuffle([...q.a]);
   document.getElementById('oq-answers').innerHTML = answers.map(ans =>
     `<button class="w-full text-left bg-c-card border border-c-border rounded-2xl px-5 py-4
                     font-body text-base text-c-text active:scale-95 transition-all"
-             onclick="pickOnlineAnswer(this,'${ans.replace(/'/g, "\\'")}','${q.a.replace(/'/g, "\\'")}')">
+             onclick="pickOnlineAnswer(this,'${ans.replace(/'/g, "\\'")}','${correct.replace(/'/g, "\\'")}')">
        ${ans}
      </button>`
   ).join('');
@@ -329,12 +376,8 @@ async function showOnlineResult(game, myId) {
 // App-Start: Auth prüfen (nach OAuth-Redirect)
 // ───────────────────────────────────────────
 
+// App-Start: gespeichertes Token → direkt ins Dashboard
 (async () => {
   const user = await initAuth();
-  if (user) {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('code') || params.has('token')) {
-      await loadDashboard();
-    }
-  }
+  if (user) await loadDashboard();
 })();

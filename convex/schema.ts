@@ -1,28 +1,18 @@
 import { defineSchema, defineTable } from "convex/server";
-import { authTables } from "@convex-dev/auth/server";
 import { v } from "convex/values";
 
-const { users, ...otherAuthTables } = authTables;
-
 export default defineSchema({
-  ...otherAuthTables,
-
   users: defineTable({
+    tokenIdentifier: v.string(),
     name: v.optional(v.string()),
-    image: v.optional(v.string()),
     email: v.optional(v.string()),
-    emailVerificationTime: v.optional(v.number()),
-    phone: v.optional(v.string()),
-    phoneVerificationTime: v.optional(v.number()),
-    isAnonymous: v.optional(v.boolean()),
-    
-    // Custom Fields
-    googleId: v.optional(v.string()),
+    pictureUrl: v.optional(v.string()),
     displayName: v.optional(v.string()),
+    displayNameSet: v.optional(v.boolean()),
     wins: v.optional(v.number()),
     games: v.optional(v.number()),
     totalScore: v.optional(v.number()),
-  }).index("email", ["email"])
+  }).index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_displayName", ["displayName"]),
 
   games: defineTable({
@@ -40,7 +30,8 @@ export default defineSchema({
     winnerId: v.union(v.string(), v.null()),
   })
     .index("by_opponentId", ["opponentId"])
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .index("by_challengerId", ["challengerId"]),
 
   scores: defineTable({
     player_name: v.string(),

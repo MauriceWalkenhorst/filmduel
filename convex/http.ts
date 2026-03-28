@@ -1,11 +1,8 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
-import { auth } from "./auth";
 
 const http = httpRouter();
-
-auth.addHttpRoutes(http);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +10,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// POST /scores — Score einreichen
+// POST /scores
 http.route({
   path: "/scores",
   method: "POST",
@@ -26,7 +23,7 @@ http.route({
   }),
 });
 
-// GET /leaderboard — Rangliste abrufen
+// GET /leaderboard
 http.route({
   path: "/leaderboard",
   method: "GET",
@@ -38,7 +35,6 @@ http.route({
   }),
 });
 
-// OPTIONS preflight
 http.route({
   path: "/scores",
   method: "OPTIONS",
