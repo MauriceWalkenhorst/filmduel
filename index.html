@@ -293,6 +293,78 @@
       user-select: none;
     }
     .round-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
+
+    /* Leaderboard tabs */
+    .lb-tab {
+      flex: 1;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #252528;
+      background: #141416;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #706a62;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .lb-tab.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
+
+    /* Leaderboard rows */
+    .lb-row {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .lb-rank {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #706a62;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .lb-rank.gold   { color: #e8c84a; }
+    .lb-rank.silver { color: #94a3b8; }
+    .lb-rank.bronze { color: #fb923c; }
+    .lb-name {
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: #e2ddd6;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .lb-stat {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      color: #706a62;
+      text-align: right;
+    }
+    .lb-stat strong {
+      font-family: 'Oswald', sans-serif;
+      font-size: 18px;
+      color: #e8c84a;
+      display: block;
+      line-height: 1;
+    }
+
+    /* Game row */
+    .lb-game-row {
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
   </style>
 </head>
 <body>
@@ -343,6 +415,7 @@
     <!-- Start -->
     <div class="flex flex-col gap-3 animate-up" style="animation-delay:180ms">
       <button class="btn-primary" onclick="startGame()">DUELL STARTEN</button>
+      <button class="btn-secondary" onclick="showLeaderboard('players')">RANGLISTE</button>
       <p class="text-center font-condensed text-c-muted text-xs tracking-wide">Handy nach jeder Runde weitergeben</p>
     </div>
   </div>
@@ -476,7 +549,40 @@
 
     <div class="flex flex-col gap-3 mt-auto animate-up" style="animation-delay:170ms">
       <button class="btn-primary" onclick="rematch()">REVANCHE</button>
+      <button class="btn-secondary" onclick="showLeaderboard('players')">RANGLISTE</button>
       <button class="btn-secondary" onclick="goHome()">NEUES SPIEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCREEN 6 — RANGLISTE
+════════════════════════════════════════ -->
+<div id="s-leaderboard" class="screen flex-col">
+  <div class="filmstrip flex-shrink-0" id="filmstrip-lb"></div>
+  <div class="flex flex-col flex-1 p-6 pt-8 gap-5 safe-bottom overflow-y-auto">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between animate-up">
+      <div>
+        <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-1">FilmDuel</div>
+        <h2 class="font-display text-3xl font-bold text-c-gold">RANGLISTE</h2>
+      </div>
+      <button onclick="goHome()" class="font-condensed text-xs uppercase tracking-widest text-c-muted bg-c-card border border-c-border rounded-full px-4 py-2">← Zurück</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-2 animate-up" style="animation-delay:50ms">
+      <button class="lb-tab active" data-tab="players" onclick="showLeaderboard('players')">Spieler</button>
+      <button class="lb-tab" data-tab="games" onclick="showLeaderboard('games')">Partien</button>
+    </div>
+
+    <!-- Content -->
+    <div id="lb-content" class="flex flex-col gap-3 animate-up" style="animation-delay:90ms"></div>
+
+    <!-- Clear button -->
+    <div class="mt-auto animate-up" style="animation-delay:130ms">
+      <button onclick="clearStats()" class="w-full font-condensed text-xs uppercase tracking-widest text-c-muted py-3">Statistiken zurücksetzen</button>
     </div>
   </div>
 </div>
@@ -1032,6 +1138,7 @@ function showResult() {
     `;
   }).join('');
 
+  saveStats();
   show('s-result');
 }
 
@@ -1046,6 +1153,139 @@ function rematch() {
 
 function goHome() {
   show('s-start');
+}
+
+// ═══════════════════════════════════════
+// RANGLISTE (localStorage)
+// ═══════════════════════════════════════
+const STATS_KEY = 'filmduel_stats';
+
+function loadStats() {
+  try {
+    return JSON.parse(localStorage.getItem(STATS_KEY)) || { players: {}, games: [] };
+  } catch(e) {
+    return { players: {}, games: [] };
+  }
+}
+
+function saveStats() {
+  const stats = loadStats();
+  const s1 = G.scores[1], s2 = G.scores[2];
+  const isDraw = s1 === s2;
+  const winnerName = isDraw ? null : (s1 > s2 ? G.p1 : G.p2);
+
+  [G.p1, G.p2].forEach((name, idx) => {
+    if (!stats.players[name]) {
+      stats.players[name] = { wins: 0, losses: 0, draws: 0, totalPts: 0, gamesPlayed: 0, catPts: {} };
+    }
+    const p = stats.players[name];
+    const myScore = idx === 0 ? s1 : s2;
+    p.gamesPlayed++;
+    p.totalPts += myScore;
+    if (isDraw) p.draws++;
+    else if (winnerName === name) p.wins++;
+    else p.losses++;
+
+    // Category points per player
+    G.history.filter(h => h.player === idx + 1).forEach(h => {
+      if (!p.catPts[h.cat]) p.catPts[h.cat] = 0;
+      p.catPts[h.cat] += h.pts;
+    });
+  });
+
+  stats.games.unshift({
+    p1: G.p1, p2: G.p2,
+    s1, s2,
+    winner: winnerName || 'Unentschieden',
+    rounds: G.rounds,
+    date: new Date().toISOString(),
+  });
+  if (stats.games.length > 100) stats.games = stats.games.slice(0, 100);
+
+  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+}
+
+function showLeaderboard(tab) {
+  tab = tab || 'players';
+  const stats = loadStats();
+  makeFilmstrip('filmstrip-lb');
+
+  // Update tab buttons
+  document.querySelectorAll('.lb-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+
+  const container = document.getElementById('lb-content');
+
+  if (tab === 'players') {
+    const players = Object.entries(stats.players)
+      .map(([name, d]) => ({ name, ...d }))
+      .sort((a, b) => b.wins - a.wins || b.totalPts - a.totalPts);
+
+    if (players.length === 0) {
+      container.innerHTML = '<p class="text-center text-c-muted font-condensed text-sm py-12 uppercase tracking-wide">Noch keine Spiele gespeichert</p>';
+    } else {
+      const rankClass = i => i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const rankLabel = i => i === 0 ? '1.' : i === 1 ? '2.' : i === 2 ? '3.' : `${i+1}.`;
+
+      container.innerHTML = players.map((p, i) => {
+        const winRate = p.gamesPlayed ? Math.round((p.wins / p.gamesPlayed) * 100) : 0;
+        const favCatEntry = Object.entries(p.catPts || {}).sort((a, b) => b[1] - a[1])[0];
+        const favCat = favCatEntry ? CATS.find(c => c.id === favCatEntry[0]) : null;
+        return `
+          <div class="lb-row">
+            <div class="lb-rank ${rankClass(i)}">${rankLabel(i)}</div>
+            <div class="flex-1 min-w-0">
+              <div class="lb-name">${p.name}</div>
+              <div class="flex items-center gap-3 mt-1">
+                <span class="font-condensed text-xs text-c-muted">${p.wins}S ${p.losses}N${p.draws ? ` ${p.draws}U` : ''}</span>
+                ${favCat ? `<span class="font-condensed text-xs" style="color:${favCat.color}">${favCat.abbr}</span>` : ''}
+              </div>
+            </div>
+            <div class="lb-stat">
+              <strong>${winRate}%</strong>
+              Siegquote
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  } else {
+    // Games tab
+    if (stats.games.length === 0) {
+      container.innerHTML = '<p class="text-center text-c-muted font-condensed text-sm py-12 uppercase tracking-wide">Noch keine Partien gespeichert</p>';
+    } else {
+      const fmt = iso => {
+        const d = new Date(iso);
+        return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}`;
+      };
+      container.innerHTML = stats.games.map(g => {
+        const isDraw = g.winner === 'Unentschieden';
+        const winnerLabel = isDraw ? 'Unentschieden' : `${g.winner} gewinnt`;
+        return `
+          <div class="lb-game-row">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">${fmt(g.date)} · ${g.rounds} Runden</span>
+              <span class="font-condensed text-xs text-c-gold">${winnerLabel}</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="font-display text-base font-medium text-c-text">${g.p1}</span>
+              <span class="font-display text-xl font-bold text-c-gold">${g.s1} : ${g.s2}</span>
+              <span class="font-display text-base font-medium text-c-text">${g.p2}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  show('s-leaderboard');
+}
+
+function clearStats() {
+  if (!confirm('Alle Statistiken löschen?')) return;
+  localStorage.removeItem(STATS_KEY);
+  showLeaderboard(document.querySelector('.lb-tab.active')?.dataset.tab || 'players');
 }
 
 // Init filmstrips on load
