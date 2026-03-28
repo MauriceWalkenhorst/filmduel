@@ -1,7 +1,7 @@
 // auth.js — Google Identity Services + Convex JWT Auth
 import { ConvexClient } from "https://esm.sh/convex@1.34.1/browser";
 
-export const CONVEX_URL = "https://shiny-setter-795.eu-west-1.convex.cloud";
+export const CONVEX_URL = "https://formal-bee-819.eu-west-1.convex.cloud";
 export const client = new ConvexClient(CONVEX_URL);
 
 const CLIENT_ID = "766900712587-5mf6f7iiee4klsqsq0s0r7crh03ofp9d.apps.googleusercontent.com";
