@@ -72,14 +72,14 @@ export const setDisplayName = mutation({
     if (name.length < 2 || name.length > 20) throw new Error("Name: 2–20 Zeichen");
     if (!/^[a-zA-Z0-9_\-äöüÄÖÜß]+$/.test(name)) throw new Error("Nur Buchstaben, Zahlen, _ und - erlaubt");
 
-    // Einzigartigkeit prüfen
-    const existing = await ctx.db.query("users").collect();
-    const taken = existing.some(
-      (u: any) =>
-        u._id.toString() !== user._id.toString() &&
-        (u.displayName || "").toLowerCase() === name.toLowerCase()
-    );
-    if (taken) throw new Error("Name bereits vergeben");
+    // Einzigartigkeit prüfen (per Index, nicht collect())
+    const existing = await ctx.db
+      .query("users")
+      .withIndex("by_displayName", (q: any) => q.eq("displayName", name))
+      .first();
+    if (existing && existing._id.toString() !== user._id.toString()) {
+      throw new Error("Name bereits vergeben");
+    }
 
     await ctx.db.patch(user._id, {
       displayName: name,

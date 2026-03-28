@@ -45,8 +45,10 @@ window.confirmUsername = async function () {
     localStorage.setItem('filmduel_user', JSON.stringify(profile));
     await loadDashboard();
   } catch (e) {
-    errEl.textContent = e.message || 'Fehler — bitte erneut versuchen';
+    const msg = e.message || 'Fehler — bitte erneut versuchen';
+    errEl.textContent = msg;
     errEl.classList.remove('hidden');
+    showToast(msg, 'error');
     btn.disabled = false;
     btn.textContent = 'WEITER →';
   }
@@ -76,19 +78,25 @@ window.loadDashboard = async function () {
   if (!user) { show('s-login'); return; }
 
   document.getElementById('dash-name').textContent = user.displayName;
-  document.getElementById('dash-stats').textContent =
-    `${user.wins ?? 0} Siege · ${user.games ?? 0} Spiele · ${user.totalScore ?? 0} Punkte`;
+  document.getElementById('dash-wins').textContent  = user.wins ?? 0;
+  document.getElementById('dash-games').textContent = user.games ?? 0;
+  document.getElementById('dash-score').textContent = user.totalScore ?? 0;
 
   makeFilmstrip('filmstrip-dash');
 
-  const list = document.getElementById('dash-games');
+  const list = document.getElementById('dash-duels');
   list.innerHTML = '<div class="font-condensed text-c-muted text-sm text-center py-6">Lädt…</div>';
 
   try {
     const games = await client.query('games:getOpenGames', {});
     renderGamesList(games, user._id);
   } catch (e) {
-    console.error('Fehler beim Laden der Spiele:', e);
+    if (e?.message?.includes('auth') || e?.message?.includes('token') || e?.message?.includes('Unauthorized')) {
+      showToast('Sitzung abgelaufen — bitte neu einloggen', 'warning');
+      setTimeout(() => show('s-login'), 1500);
+      return;
+    }
+    showToast('Duelle konnten nicht geladen werden', 'error');
     list.innerHTML = '<div class="font-condensed text-c-muted text-sm text-center py-6">Fehler beim Laden</div>';
   }
 
@@ -96,7 +104,7 @@ window.loadDashboard = async function () {
 };
 
 function renderGamesList(games, myId) {
-  const list = document.getElementById('dash-games');
+  const list = document.getElementById('dash-duels');
   if (!games || !games.length) {
     list.innerHTML = '<div class="font-condensed text-c-muted text-sm text-center py-6">Keine aktiven Duelle</div>';
     return;
@@ -254,7 +262,7 @@ window.confirmChallenge = async function () {
     await openOnlineGame(gameId);
   } catch (e) {
     console.error('Fehler beim Erstellen:', e);
-    alert('Fehler: ' + e.message);
+    showToast(e.message || 'Duell konnte nicht erstellt werden', 'error');
     startBtn.disabled = false;
     startBtn.textContent = 'HERAUSFORDERN ⚔️';
   }
@@ -343,6 +351,11 @@ window.pickOnlineAnswer = async function (btn, chosen, correct) {
     });
   } catch (e) {
     console.error('Fehler beim Speichern:', e);
+    showToast('Antwort konnte nicht gespeichert werden', 'error');
+    document.querySelectorAll('#oq-answers button').forEach(b => b.disabled = false);
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    return;
   }
 
   await new Promise(r => setTimeout(r, 700));

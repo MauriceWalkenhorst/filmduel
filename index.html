@@ -302,10 +302,63 @@
       user-select: none;
     }
     .round-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
+
+    /* Toast Notifications */
+    #toast-container {
+      position: fixed;
+      bottom: max(24px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+      pointer-events: none;
+      width: calc(100% - 32px);
+      max-width: 360px;
+    }
+    .toast {
+      background: #1a1a1e;
+      border: 1px solid #252528;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #e2ddd6;
+      animation: up 0.3s cubic-bezier(0.16,1,0.3,1) both;
+      border-left: 3px solid #706a62;
+    }
+    .toast.success { border-left-color: #22c55e; }
+    .toast.error   { border-left-color: #ef4444; }
+    .toast.info    { border-left-color: #60a5fa; }
+    .toast.warning { border-left-color: #e8c84a; }
+
+    /* Dashboard Stat-Karten */
+    .stat-card {
+      flex: 1;
+      background: #141416;
+      border: 1px solid #252528;
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 <div class="scanlines"></div>
+<div id="toast-container"></div>
+<script>
+function showToast(msg, type = 'info', duration = 3500) {
+  const container = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  container.appendChild(t);
+  setTimeout(() => t.remove(), duration);
+}
+</script>
 
 <!-- ═══════════════════════════════════════
      SCREEN 1 — START
@@ -1256,12 +1309,25 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="animate-up" style="animation-delay:40ms">
       <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-1">Eingeloggt als</div>
       <h2 id="dash-name" class="font-display text-2xl font-bold text-c-gold"></h2>
-      <p id="dash-stats" class="font-condensed text-c-muted text-xs mt-1"></p>
+      <div class="flex gap-2 mt-3">
+        <div class="stat-card">
+          <div id="dash-wins" class="font-display text-xl font-bold text-c-gold">0</div>
+          <div class="font-condensed text-c-muted text-[10px] uppercase tracking-widest mt-0.5">Siege</div>
+        </div>
+        <div class="stat-card">
+          <div id="dash-games" class="font-display text-xl font-bold text-c-text">0</div>
+          <div class="font-condensed text-c-muted text-[10px] uppercase tracking-widest mt-0.5">Spiele</div>
+        </div>
+        <div class="stat-card">
+          <div id="dash-score" class="font-display text-xl font-bold text-c-text">0</div>
+          <div class="font-condensed text-c-muted text-[10px] uppercase tracking-widest mt-0.5">Punkte</div>
+        </div>
+      </div>
     </div>
 
     <div class="animate-up" style="animation-delay:60ms">
       <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-3">Deine Duelle</div>
-      <div id="dash-games" class="flex flex-col gap-2"></div>
+      <div id="dash-duels" class="flex flex-col gap-2"></div>
     </div>
 
     <div class="mt-auto flex flex-col gap-3 animate-up" style="animation-delay:120ms">
