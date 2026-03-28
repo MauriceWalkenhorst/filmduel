@@ -294,6 +294,69 @@
     }
     .round-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
 
+    /* Progress dots */
+    .prog-dot {
+      width: 28px; height: 6px;
+      border-radius: 99px;
+      background: #252528;
+      transition: background 0.25s;
+    }
+    .prog-dot.correct { background: #16a34a; }
+    .prog-dot.wrong   { background: #dc3535; }
+    .prog-dot.active  { background: #e8c84a; animation: glow 1.2s ease-in-out infinite; }
+
+    /* Joker buttons */
+    .joker-btn {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #e8c84a;
+      background: #1a1a18;
+      border: 1px solid #e8c84a40;
+      border-radius: 99px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: opacity 0.2s, background 0.2s;
+    }
+    .joker-btn:active { background: #2a2a20; }
+    .joker-btn:disabled { opacity: 0.25; pointer-events: none; }
+
+    /* Solo/Duel mode toggle */
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #252528;
+      background: #141416;
+      font-family: 'Oswald', sans-serif;
+      font-size: 16px;
+      color: #706a62;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+    .mode-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
+
+    /* Points flash badge */
+    .pts-badge {
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Oswald', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #e8c84a;
+      pointer-events: none;
+      z-index: 9999;
+      animation: up 0.4s cubic-bezier(0.16,1,0.3,1) both;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
     /* Leaderboard tabs */
     .lb-tab {
       flex: 1;
@@ -378,9 +441,12 @@
   <div class="filmstrip" id="filmstrip-top"></div>
 
   <div class="flex flex-col justify-between flex-1 p-6 pt-10 safe-bottom">
-    <!-- Logo -->
+    <!-- Logo + sound toggle -->
     <div class="animate-up" style="animation-delay:0ms">
-      <div class="font-condensed text-c-muted text-xs tracking-[0.3em] uppercase mb-3">Das Kino-Duell</div>
+      <div class="flex justify-between items-start">
+        <div class="font-condensed text-c-muted text-xs tracking-[0.3em] uppercase mb-3">Das Kino-Duell</div>
+        <button id="sound-btn" onclick="toggleSound()" class="font-condensed text-xs uppercase tracking-widest text-c-muted bg-c-card border border-c-border rounded-full px-3 py-1.5">TON AN</button>
+      </div>
       <div class="relative inline-block">
         <h1 class="font-display text-[64px] font-bold text-c-gold leading-none tracking-tight">FILM<br>DUEL</h1>
         <div class="absolute -bottom-1 right-0 font-condensed text-c-muted text-xs tracking-widest">.space</div>
@@ -412,11 +478,20 @@
       </div>
     </div>
 
+    <!-- Mode toggle -->
+    <div class="animate-up" style="animation-delay:160ms">
+      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Modus</label>
+      <div class="flex gap-2">
+        <button class="mode-btn active" data-m="duel" onclick="setMode('duel')">DUELL</button>
+        <button class="mode-btn" data-m="solo" onclick="setMode('solo')">SOLO</button>
+      </div>
+    </div>
+
     <!-- Start -->
-    <div class="flex flex-col gap-3 animate-up" style="animation-delay:180ms">
-      <button class="btn-primary" onclick="startGame()">DUELL STARTEN</button>
+    <div class="flex flex-col gap-3 animate-up" style="animation-delay:200ms">
+      <button class="btn-primary" onclick="startGame()">STARTEN</button>
       <button class="btn-secondary" onclick="showLeaderboard('players')">RANGLISTE</button>
-      <p class="text-center font-condensed text-c-muted text-xs tracking-wide">Handy nach jeder Runde weitergeben</p>
+      <p id="mode-hint" class="text-center font-condensed text-c-muted text-xs tracking-wide">Handy nach jeder Runde weitergeben</p>
     </div>
   </div>
 </div>
@@ -490,8 +565,11 @@
       </div>
     </div>
 
-    <!-- Question meta -->
-    <div id="q-num" class="font-condensed text-c-muted text-xs uppercase tracking-widest animate-up" style="animation-delay:40ms"></div>
+    <!-- Progress dots + Joker -->
+    <div class="flex items-center justify-between animate-up" style="animation-delay:40ms">
+      <div id="prog-dots" class="flex gap-2"></div>
+      <div id="joker-bar" class="flex gap-2"></div>
+    </div>
 
     <!-- Question text -->
     <div id="q-text" class="font-display text-[22px] font-medium leading-tight text-c-text animate-up" style="animation-delay:70ms"></div>
@@ -765,6 +843,7 @@ let G = {
   rounds: 5,
   round: 1,
   player: 1,
+  mode: 'duel',
   scores: {1:0, 2:0},
   rndPts: {1:0, 2:0},
   usedCats: {1:[], 2:[]},
@@ -775,6 +854,11 @@ let G = {
   timer: null,
   timeLeft: TSEC,
   history: [],
+  roundResults: [],
+  jokers: {1:{fifty:1, time:1}, 2:{fifty:1, time:1}},
+  streak: {1:0, 2:0},
+  soundOn: true,
+  audioCtx: null,
 };
 
 // ═══════════════════════════════════════
@@ -816,14 +900,27 @@ function setRounds(n) {
   });
 }
 
+function setMode(m) {
+  G.mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.m === m));
+  const p2wrap = document.getElementById('p2').closest('div');
+  p2wrap.style.display = m === 'solo' ? 'none' : '';
+  document.getElementById('mode-hint').textContent = m === 'solo'
+    ? 'Spiele alleine gegen deinen Highscore'
+    : 'Handy nach jeder Runde weitergeben';
+}
+
 function startGame() {
+  initAudio();
   G.p1 = document.getElementById('p1').value.trim() || 'Spieler 1';
-  G.p2 = document.getElementById('p2').value.trim() || 'Spieler 2';
+  G.p2 = G.mode === 'solo' ? '' : (document.getElementById('p2').value.trim() || 'Spieler 2');
   G.scores = {1:0, 2:0};
   G.usedCats = {1:[], 2:[]};
   G.round = 1;
   G.player = 1;
   G.history = [];
+  G.jokers = {1:{fifty:1, time:1}, 2:{fifty:1, time:1}};
+  G.streak = {1:0, 2:0};
   showCat();
 }
 
@@ -886,6 +983,7 @@ function confirmCat() {
     return { q:q.q, a:sh.map(x=>x.text), c:sh.findIndex(x=>x.ok), d:q.d, f:q.f };
   });
   G.qi = 0;
+  G.roundResults = [];
   showQ();
 }
 
@@ -903,7 +1001,6 @@ function showQ() {
   document.getElementById('q-player').textContent = pname(G.player);
   const cat = CATS.find(c => c.id === G.selCat);
   document.getElementById('q-cat-badge').textContent = cat?.abbr || '';
-  document.getElementById('q-num').textContent = `Frage ${G.qi+1} von ${QPR}`;
   document.getElementById('q-text').textContent = q.q;
 
   // Difficulty
@@ -922,6 +1019,39 @@ function showQ() {
     btn.onclick = () => pick(i, btn);
     grid.appendChild(btn);
   });
+
+  // Progress dots
+  const dots = document.getElementById('prog-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < QPR; i++) {
+    const d = document.createElement('div');
+    d.className = 'prog-dot' + (i < G.roundResults.length
+      ? (G.roundResults[i].correct ? ' correct' : ' wrong')
+      : i === G.qi ? ' active' : '');
+    dots.appendChild(d);
+  }
+
+  // Joker buttons
+  const jbar = document.getElementById('joker-bar');
+  jbar.innerHTML = '';
+  const j = G.jokers[G.player];
+  if (G.mode === 'duel' || G.mode === 'solo') {
+    const bf = document.createElement('button');
+    bf.className = 'joker-btn';
+    bf.id = 'j-fifty';
+    bf.textContent = '50:50';
+    bf.disabled = !j.fifty;
+    bf.onclick = useJokerFifty;
+    jbar.appendChild(bf);
+
+    const bt = document.createElement('button');
+    bt.className = 'joker-btn';
+    bt.id = 'j-time';
+    bt.textContent = '+5s';
+    bt.disabled = !j.time;
+    bt.onclick = useJokerTime;
+    jbar.appendChild(bt);
+  }
 
   // Fact box
   const fb = document.getElementById('fact-box');
@@ -957,6 +1087,7 @@ function startTimer() {
     if (G.timeLeft <= 5) {
       fill.style.background = '#dc3535';
       num.style.color = '#dc3535';
+      sndTick();
     } else if (G.timeLeft <= 10) {
       fill.style.background = '#d97316';
       num.style.color = '#d97316';
@@ -983,8 +1114,12 @@ function pick(i, btn) {
   });
 
   if (ok) {
-    const pts = G.timeLeft > 14 ? 3 : G.timeLeft > 7 ? 2 : 1;
+    const basePts = G.timeLeft > 14 ? 3 : G.timeLeft > 7 ? 2 : 1;
+    const pts = basePts * q.d;
     G.rndPts[G.player] = (G.rndPts[G.player]||0) + pts;
+    G.streak[G.player] = (G.streak[G.player]||0) + 1;
+    G.roundResults.push({ correct: true, pts });
+    sndCorrect();
     // Haptic feedback: short pulse
     if (navigator.vibrate) navigator.vibrate([30]);
     // Green flash
@@ -992,9 +1127,25 @@ function pick(i, btn) {
     flash.style.cssText = 'position:fixed;inset:0;background:rgba(22,163,74,0.08);pointer-events:none;z-index:9997;animation:fade 0.5s ease forwards';
     document.body.appendChild(flash);
     setTimeout(() => flash.remove(), 500);
+    // Points badge
+    const badge = document.createElement('div');
+    badge.className = 'pts-badge';
+    badge.textContent = `+${pts}`;
+    document.body.appendChild(badge);
+    setTimeout(() => { badge.style.opacity = '1'; }, 10);
+    setTimeout(() => { badge.style.opacity = '0'; setTimeout(() => badge.remove(), 300); }, 700);
   } else {
+    G.streak[G.player] = 0;
+    G.roundResults.push({ correct: false, pts: 0 });
+    sndWrong();
     // Haptic: double buzz for wrong
     if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+  }
+  // Update progress dot for current question
+  const dotEl = document.getElementById('prog-dots')?.children[G.qi];
+  if (dotEl) {
+    dotEl.classList.remove('active');
+    dotEl.classList.add(ok ? 'correct' : 'wrong');
   }
 
   // Show fun fact
@@ -1015,11 +1166,16 @@ function pick(i, btn) {
 
 function timeUp() {
   G.answered = true;
+  G.streak[G.player] = 0;
+  G.roundResults.push({ correct: false, pts: 0 });
+  sndWrong();
   const q = G.qs[G.qi];
   document.querySelectorAll('.btn-ans').forEach((b,i) => {
     b.onclick = null;
     if (i===q.c) b.classList.add('correct');
   });
+  const dotEl = document.getElementById('prog-dots')?.children[G.qi];
+  if (dotEl) { dotEl.classList.remove('active'); dotEl.classList.add('wrong'); }
   if (q.f) {
     const fb = document.getElementById('fact-box');
     fb.textContent = q.f;
@@ -1052,6 +1208,13 @@ function endRound() {
     pts,
   });
 
+  if (G.mode === 'solo') {
+    G.round++;
+    if (G.round > G.rounds) showResult();
+    else showHandover();
+    return;
+  }
+
   const bothPlayed = G.history.filter(h => h.round === G.round).length >= 2;
 
   if (!bothPlayed) {
@@ -1077,19 +1240,31 @@ function showHandover() {
     : `${pname(justPlayer)} — kein Treffer`;
 
   const el = document.getElementById('hand-scores');
-  el.innerHTML = `
-    <div class="flex justify-between items-center">
-      <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p1}</span>
-      <span class="font-display text-2xl font-bold text-c-gold">${G.scores[1]}</span>
-    </div>
-    <div class="h-px bg-c-border"></div>
-    <div class="flex justify-between items-center">
-      <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p2}</span>
-      <span class="font-display text-2xl font-bold text-c-gold">${G.scores[2]}</span>
-    </div>
-  `;
+  if (G.mode === 'solo') {
+    el.innerHTML = `
+      <div class="flex justify-between items-center">
+        <span class="font-condensed text-xs uppercase tracking-wide text-c-text">Punkte</span>
+        <span class="font-display text-2xl font-bold text-c-gold">${G.scores[1]}</span>
+      </div>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="flex justify-between items-center">
+        <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p1}</span>
+        <span class="font-display text-2xl font-bold text-c-gold">${G.scores[1]}</span>
+      </div>
+      <div class="h-px bg-c-border"></div>
+      <div class="flex justify-between items-center">
+        <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${G.p2}</span>
+        <span class="font-display text-2xl font-bold text-c-gold">${G.scores[2]}</span>
+      </div>
+    `;
+  }
 
-  document.getElementById('hand-next').textContent = pname(G.player).toUpperCase();
+  const nextLabel = G.mode === 'solo' ? G.p1 : pname(G.player);
+  document.getElementById('hand-next').textContent = nextLabel.toUpperCase();
+  document.querySelector('#s-hand .font-condensed.text-c-muted').textContent = G.mode === 'solo'
+    ? 'Nächste Runde' : 'Handy weitergeben an';
   show('s-hand');
 }
 
@@ -1102,12 +1277,22 @@ function handConfirm() {
 // ═══════════════════════════════════════
 function showResult() {
   makeFilmstrip('filmstrip-r');
+  sndGameOver();
   const s1=G.scores[1], s2=G.scores[2];
-  const winner = s1===s2 ? 'Unentschieden — Rematch!' : `${s1>s2?G.p1:G.p2} gewinnt!`;
+  let winner;
+  if (G.mode === 'solo') {
+    const hi = parseInt(localStorage.getItem('fd_solo_hi') || '0');
+    if (s1 > hi) { localStorage.setItem('fd_solo_hi', s1); }
+    const best = Math.max(s1, hi);
+    winner = s1 >= hi ? `${G.p1}: ${s1} Punkte — Neuer Rekord!` : `${G.p1}: ${s1} Punkte (Rekord: ${best})`;
+  } else {
+    winner = s1===s2 ? 'Unentschieden — Rematch!' : `${s1>s2?G.p1:G.p2} gewinnt!`;
+  }
   document.getElementById('res-winner').textContent = winner;
 
-  const max = Math.max(s1,s2,1);
-  document.getElementById('res-scores').innerHTML = [1,2].map(p => `
+  const max = Math.max(s1, s2, 1);
+  const scorePlayers = G.mode === 'solo' ? [1] : [1, 2];
+  document.getElementById('res-scores').innerHTML = scorePlayers.map(p => `
     <div class="score-pill">
       <div class="flex justify-between mb-2">
         <span class="font-condensed text-xs uppercase tracking-wide text-c-text">${p===1?G.p1:G.p2}</span>
@@ -1127,13 +1312,16 @@ function showResult() {
   });
   document.getElementById('res-cats').innerHTML = Object.entries(catMap).map(([cid, pts]) => {
     const cat = CATS.find(c=>c.id===cid);
+    const label = G.mode === 'solo'
+      ? `<span class="text-c-gold font-bold">${pts.p1}</span> Pkt`
+      : `${G.p1} <span class="text-c-gold font-bold">${pts.p1}</span> — <span class="text-c-gold font-bold">${pts.p2}</span> ${G.p2}`;
     return `
       <div class="flex justify-between items-center py-1">
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full" style="background:${cat?.color}"></div>
           <span class="font-condensed text-xs uppercase tracking-wide text-c-muted">${cat?.label}</span>
         </div>
-        <span class="font-condensed text-xs text-c-text">${G.p1} <span class="text-c-gold font-bold">${pts.p1}</span> — <span class="text-c-gold font-bold">${pts.p2}</span> ${G.p2}</span>
+        <span class="font-condensed text-xs text-c-text">${label}</span>
       </div>
     `;
   }).join('');
@@ -1148,11 +1336,105 @@ function rematch() {
   G.round=1;
   G.player=1;
   G.history=[];
+  G.jokers={1:{fifty:1,time:1},2:{fifty:1,time:1}};
+  G.streak={1:0,2:0};
   showCat();
 }
 
 function goHome() {
   show('s-start');
+}
+
+// ═══════════════════════════════════════
+// SOUND (Web Audio API)
+// ═══════════════════════════════════════
+function initAudio() {
+  if (!G.audioCtx) {
+    try { G.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+}
+
+function playTone(freq, duration, type = 'sine', vol = 0.15) {
+  if (!G.soundOn || !G.audioCtx) return;
+  try {
+    const osc = G.audioCtx.createOscillator();
+    const gain = G.audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, G.audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, G.audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(G.audioCtx.destination);
+    osc.start();
+    osc.stop(G.audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+function sndCorrect() {
+  playTone(523, 0.12);
+  setTimeout(() => playTone(659, 0.12), 90);
+  setTimeout(() => playTone(784, 0.18), 180);
+}
+function sndWrong() {
+  playTone(330, 0.12);
+  setTimeout(() => playTone(247, 0.22), 100);
+}
+function sndTick() { playTone(880, 0.05, 'square', 0.08); }
+function sndGameOver() {
+  playTone(784, 0.18);
+  setTimeout(() => playTone(988, 0.18), 140);
+  setTimeout(() => playTone(1175, 0.35), 280);
+}
+
+function toggleSound() {
+  G.soundOn = !G.soundOn;
+  localStorage.setItem('fd_sound', G.soundOn ? '1' : '0');
+  document.getElementById('sound-btn').textContent = G.soundOn ? 'TON AN' : 'TON AUS';
+}
+
+// ═══════════════════════════════════════
+// JOKER-SYSTEM
+// ═══════════════════════════════════════
+function useJokerFifty() {
+  const j = G.jokers[G.player];
+  if (!j.fifty || G.answered) return;
+  j.fifty = 0;
+  document.getElementById('j-fifty').disabled = true;
+  const q = G.qs[G.qi];
+  const btns = document.querySelectorAll('.btn-ans');
+  const wrongIdxs = [...btns.keys()].filter(i => i !== q.c);
+  const toHide = wrongIdxs.sort(() => Math.random() - 0.5).slice(0, 2);
+  toHide.forEach(i => { btns[i].style.opacity = '0.15'; btns[i].style.pointerEvents = 'none'; });
+  playTone(440, 0.1);
+}
+
+function useJokerTime() {
+  const j = G.jokers[G.player];
+  if (!j.time || G.answered) return;
+  j.time = 0;
+  document.getElementById('j-time').disabled = true;
+  G.timeLeft = Math.min(G.timeLeft + 5, TSEC);
+
+  // Reset timer fill animation to reflect new time
+  const fill = document.getElementById('timer-fill');
+  const num = document.getElementById('timer-num');
+  fill.style.transition = 'none';
+  fill.style.width = `${(G.timeLeft / TSEC) * 100}%`;
+  if (G.timeLeft > 10) {
+    fill.style.background = '#e8c84a';
+    num.style.color = '';
+  } else if (G.timeLeft > 5) {
+    fill.style.background = '#d97316';
+    num.style.color = '#d97316';
+  }
+  num.textContent = G.timeLeft;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      fill.style.transition = `width ${G.timeLeft}s linear`;
+      fill.style.width = '0%';
+    });
+  });
+  playTone(660, 0.1);
 }
 
 // ═══════════════════════════════════════
@@ -1291,6 +1573,8 @@ function clearStats() {
 // Init filmstrips on load
 document.addEventListener('DOMContentLoaded', () => {
   makeFilmstrip('filmstrip-top');
+  G.soundOn = localStorage.getItem('fd_sound') !== '0';
+  document.getElementById('sound-btn').textContent = G.soundOn ? 'TON AN' : 'TON AUS';
 });
 </script>
 </body>
