@@ -10,6 +10,7 @@
 
 import type * as games from "../games.js";
 import type * as http from "../http.js";
+import type * as push from "../push.js";
 import type * as scores from "../scores.js";
 import type * as users from "../users.js";
 
@@ -22,6 +23,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   games: typeof games;
   http: typeof http;
+  push: typeof push;
   scores: typeof scores;
   users: typeof users;
 }>;

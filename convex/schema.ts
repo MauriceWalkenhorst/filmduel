@@ -12,6 +12,8 @@ export default defineSchema({
     wins: v.optional(v.number()),
     games: v.optional(v.number()),
     totalScore: v.optional(v.number()),
+    streak: v.optional(v.number()),
+    lastGameDate: v.optional(v.string()),
   }).index("by_tokenIdentifier", ["tokenIdentifier"])
     .index("by_displayName", ["displayName"]),
 
@@ -32,6 +34,11 @@ export default defineSchema({
     .index("by_opponentId", ["opponentId"])
     .index("by_status", ["status"])
     .index("by_challengerId", ["challengerId"]),
+
+  pushSubscriptions: defineTable({
+    userId: v.string(),
+    subscription: v.any(),
+  }).index("by_userId", ["userId"]),
 
   scores: defineTable({
     player_name: v.string(),

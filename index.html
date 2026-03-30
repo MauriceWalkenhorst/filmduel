@@ -9,6 +9,8 @@
   <meta name="apple-mobile-web-app-title" content="FilmDuel" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/png" href="/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
   <title>FilmDuel — Wer kennt Kino wirklich?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
@@ -371,14 +373,18 @@ function showToast(msg, type = 'info', duration = 3500) {
     <!-- Logo -->
     <div class="flex flex-col items-center text-center animate-up">
       <div class="font-condensed text-c-muted text-xs tracking-[0.35em] uppercase mb-4">Das Kino-Duell</div>
+      <img src="/icon-192.png" alt="FilmDuel" class="w-20 h-20 rounded-2xl mb-4 mx-auto" style="box-shadow:0 0 32px #e8c84a33" />
       <h1 class="font-display text-[80px] font-bold text-c-gold leading-none tracking-tight">FILM<br>DUEL</h1>
       <p class="mt-5 font-condensed text-c-muted text-sm tracking-wide">Wer kennt Kino wirklich?</p>
     </div>
 
     <!-- Mode buttons -->
     <div class="w-full flex flex-col gap-4 animate-up" style="animation-delay:120ms">
-      <button class="btn-primary text-xl py-5" onclick="show('s-local-setup')">
-        LOKAL SPIELEN
+      <button class="btn-primary text-xl py-5" onclick="show('s-solo-setup')">
+        SOLO MODUS
+      </button>
+      <button class="btn-secondary text-xl py-5" onclick="show('s-local-setup')">
+        DUO LOKAL
       </button>
       <button class="btn-secondary text-xl py-5" onclick="showLoginScreen()" style="border-color:#e8c84a;color:#e8c84a">
         ONLINE SPIELEN
@@ -436,6 +442,49 @@ function showToast(msg, type = 'info', duration = 3500) {
 </div>
 
 <!-- ═══════════════════════════════════════
+     SCREEN 1c — SOLO SETUP
+════════════════════════════════════════ -->
+<div id="s-solo-setup" class="screen flex-col">
+  <div class="filmstrip flex-shrink-0"></div>
+
+  <div class="flex flex-col justify-between flex-1 p-6 pt-10 safe-bottom">
+
+    <!-- Header -->
+    <div class="animate-up">
+      <button onclick="show('s-start')" class="font-condensed text-c-muted text-xs tracking-widest uppercase mb-6 flex items-center gap-2">
+        ← ZURÜCK
+      </button>
+      <h2 class="font-display text-3xl font-bold text-c-gold">SOLO SPIELEN</h2>
+      <p class="font-condensed text-c-muted text-sm mt-1">Teste dein Kinowissen alleine</p>
+    </div>
+
+    <!-- Player -->
+    <div class="flex flex-col gap-4 animate-up" style="animation-delay:60ms">
+      <div>
+        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Dein Name</label>
+        <input id="solo-p1" type="text" placeholder="Name" maxlength="16" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" />
+      </div>
+    </div>
+
+    <!-- Rounds -->
+    <div class="animate-up" style="animation-delay:110ms">
+      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Runden</label>
+      <div class="flex gap-2">
+        <button class="round-btn" data-sr="3" onclick="setSoloRounds(3)">3</button>
+        <button class="round-btn active" data-sr="5" onclick="setSoloRounds(5)">5</button>
+        <button class="round-btn" data-sr="7" onclick="setSoloRounds(7)">7</button>
+      </div>
+    </div>
+
+    <!-- Start -->
+    <div class="animate-up" style="animation-delay:160ms">
+      <button class="btn-primary" onclick="startSolo()">SOLO STARTEN 🎬</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
      SCREEN 2 — KATEGORIE
 ════════════════════════════════════════ -->
 <div id="s-cat" class="screen flex-col">
@@ -450,7 +499,7 @@ function showToast(msg, type = 'info', duration = 3500) {
     </div>
 
     <!-- Score bar -->
-    <div class="score-pill animate-up" style="animation-delay:50ms">
+    <div id="score-pill" class="score-pill animate-up" style="animation-delay:50ms">
       <div class="flex justify-between items-center mb-2">
         <span id="s-p1-name" class="font-condensed text-xs uppercase tracking-wide text-c-muted"></span>
         <span id="s-p2-name" class="font-condensed text-xs uppercase tracking-wide text-c-muted"></span>
@@ -461,6 +510,14 @@ function showToast(msg, type = 'info', duration = 3500) {
           <div id="s-bar" class="timer-fill bg-c-gold" style="width:50%; transition: width 0.6s cubic-bezier(0.16,1,0.3,1)"></div>
         </div>
         <span id="s-p2-val" class="font-display text-xl font-bold text-c-gold w-7 text-right">0</span>
+      </div>
+    </div>
+
+    <!-- Solo score display -->
+    <div id="solo-score-pill" class="score-pill animate-up" style="animation-delay:50ms; display:none">
+      <div class="flex justify-between items-center">
+        <span id="solo-score-label" class="font-condensed text-xs uppercase tracking-wide text-c-muted">Dein Score</span>
+        <span id="solo-score-val" class="font-display text-xl font-bold text-c-gold">0</span>
       </div>
     </div>
 
@@ -1322,7 +1379,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <div id="dash-score" class="font-display text-xl font-bold text-c-text">0</div>
           <div class="font-condensed text-c-muted text-[10px] uppercase tracking-widest mt-0.5">Punkte</div>
         </div>
+        <div class="stat-card">
+          <div id="dash-streak" class="font-display text-xl font-bold" style="color:#f97316">0🔥</div>
+          <div class="font-condensed text-c-muted text-[10px] uppercase tracking-widest mt-0.5">Streak</div>
+        </div>
       </div>
+      <button id="dash-push-btn" onclick="requestPushPermission()" class="mt-2 font-condensed text-xs text-c-muted border border-c-border rounded-lg px-3 py-1.5 hidden">🔔 Benachrichtigungen aktivieren</button>
     </div>
 
     <div class="animate-up" style="animation-delay:60ms">
@@ -1396,11 +1458,16 @@ document.addEventListener('DOMContentLoaded', () => {
 ════════════════════════════════════════ -->
 <div id="s-online-q" class="screen flex-col">
   <div class="filmstrip flex-shrink-0" id="filmstrip-oq"></div>
-  <div class="flex flex-col flex-1 p-6 pt-8 gap-4 safe-bottom">
+  <!-- Timer-Leiste -->
+  <div class="flex-shrink-0 h-1.5 bg-c-card overflow-hidden">
+    <div id="oq-timer-bar" class="h-full bg-blue-400" style="width:100%"></div>
+  </div>
+  <div class="flex flex-col flex-1 p-6 pt-4 gap-4 safe-bottom">
     <div class="flex justify-between items-center animate-up">
       <span id="oq-progress" class="font-condensed text-c-muted text-xs uppercase tracking-wide"></span>
       <span id="oq-cat" class="font-condensed text-xs uppercase tracking-wide" style="color:#60a5fa"></span>
     </div>
+    <span id="oq-points-label" class="font-condensed text-xs text-c-muted"></span>
     <p id="oq-question" class="font-display text-xl font-bold text-c-text leading-snug animate-up" style="animation-delay:40ms"></p>
     <div id="oq-answers" class="flex flex-col gap-3 animate-up" style="animation-delay:80ms"></div>
   </div>
@@ -1423,13 +1490,13 @@ document.addEventListener('DOMContentLoaded', () => {
 ════════════════════════════════════════ -->
 <div id="s-online-result" class="screen flex-col">
   <div class="filmstrip flex-shrink-0" id="filmstrip-or"></div>
-  <div class="flex flex-col flex-1 p-6 pt-8 gap-6 safe-bottom justify-between">
-    <div class="text-center animate-up">
+  <div class="flex flex-col flex-1 p-6 pt-8 gap-4 safe-bottom overflow-y-auto">
+    <div class="text-center animate-up flex-shrink-0">
       <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-2">Ergebnis</div>
       <h2 id="or-winner" class="font-display text-3xl font-bold text-c-gold"></h2>
     </div>
 
-    <div class="flex gap-4 animate-up" style="animation-delay:60ms">
+    <div class="flex gap-4 animate-up flex-shrink-0" style="animation-delay:60ms">
       <div class="flex-1 bg-c-card border border-c-border rounded-2xl p-4 text-center">
         <p id="or-p1-name" class="font-condensed text-xs text-c-muted uppercase tracking-wide mb-1 truncate"></p>
         <p id="or-p1-score" class="font-display text-4xl font-bold text-c-gold"></p>
@@ -1441,14 +1508,20 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     </div>
 
-    <div class="flex flex-col gap-3 animate-up" style="animation-delay:120ms">
-      <button onclick="show('s-challenge-setup'); initChallengeSetup()" class="btn-primary">⚔️ NEUES DUELL</button>
+    <div class="animate-up flex-shrink-0" style="animation-delay:100ms">
+      <div class="font-condensed text-c-muted text-xs uppercase tracking-widest mb-2">Fragen-Übersicht</div>
+      <div id="or-answers" class="flex flex-col gap-2"></div>
+    </div>
+
+    <div class="flex flex-col gap-3 animate-up flex-shrink-0 mt-2" style="animation-delay:180ms">
+      <button id="or-rematch-btn" onclick="startRematch()" class="btn-primary hidden">🔁 REMATCH</button>
+      <button onclick="show('s-challenge-setup'); initChallengeSetup()" class="btn-secondary">⚔️ NEUES DUELL</button>
       <button onclick="loadDashboard()" class="btn-secondary text-sm">← Dashboard</button>
     </div>
   </div>
 </div>
 
-<script type="module" src="./app.js"></script>
-<script type="module" src="./online.js"></script>
+<script type="module" src="./app.js?v=6"></script>
+<script type="module" src="./online.js?v=6"></script>
 </body>
 </html>

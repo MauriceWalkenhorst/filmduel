@@ -23,12 +23,12 @@ http.route({
   }),
 });
 
-// GET /leaderboard
+// GET /leaderboard — reads from users table (online duel stats)
 http.route({
   path: "/leaderboard",
   method: "GET",
   handler: httpAction(async (ctx) => {
-    const data = await ctx.runQuery(api.scores.getLeaderboard);
+    const data = await ctx.runQuery(api.users.getLeaderboard);
     return new Response(JSON.stringify(data), {
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });

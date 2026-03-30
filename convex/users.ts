@@ -18,6 +18,7 @@ function toProfile(user: any) {
     wins: user.wins ?? 0,
     games: user.games ?? 0,
     totalScore: user.totalScore ?? 0,
+    streak: user.streak ?? 0,
   };
 }
 
@@ -114,6 +115,45 @@ export const searchByName = query({
       _id: u._id.toString(),
       displayName: u.displayName,
     }));
+  },
+});
+
+export const getLeaderboard = query({
+  args: {},
+  handler: async (ctx) => {
+    const users = await ctx.db.query("users").collect();
+    return users
+      .filter((u: any) => (u.games ?? 0) > 0)
+      .sort((a: any, b: any) => {
+        const diff = (b.wins ?? 0) - (a.wins ?? 0);
+        if (diff !== 0) return diff;
+        return (b.totalScore ?? 0) - (a.totalScore ?? 0);
+      })
+      .slice(0, 20)
+      .map((u: any) => ({
+        name: u.displayName || u.name || "Spieler",
+        wins: u.wins ?? 0,
+        games: u.games ?? 0,
+        totalScore: u.totalScore ?? 0,
+      }));
+  },
+});
+
+export const savePushSubscription = mutation({
+  args: { subscription: v.any() },
+  handler: async (ctx, args) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) throw new Error("Nicht eingeloggt");
+    const userId = user._id.toString();
+
+    const existing = await ctx.db.query("pushSubscriptions")
+      .withIndex("by_userId", (q: any) => q.eq("userId", userId))
+      .first();
+    if (existing) {
+      await ctx.db.patch(existing._id, { subscription: args.subscription });
+    } else {
+      await ctx.db.insert("pushSubscriptions", { userId, subscription: args.subscription });
+    }
   },
 });
 

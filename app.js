@@ -19,6 +19,7 @@ export let G = {
   timer: null,
   timeLeft: window.TSEC,
   history: [],
+  solo: false,
 };
 
 export function show(id) {
@@ -55,9 +56,28 @@ window.makeFilmstrip = makeFilmstrip;
 // ═══════════════════════════════════════
 window.setRounds = function(n) {
   G.rounds = n;
-  document.querySelectorAll('.round-btn').forEach(b => {
+  document.querySelectorAll('[data-r]').forEach(b => {
     b.classList.toggle('active', parseInt(b.dataset.r) === n);
   });
+};
+
+window.setSoloRounds = function(n) {
+  G.rounds = n;
+  document.querySelectorAll('[data-sr]').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.sr) === n);
+  });
+};
+
+window.startSolo = function() {
+  G.p1 = document.getElementById('solo-p1').value.trim() || 'Spieler';
+  G.p2 = '';
+  G.scores = {1:0, 2:0};
+  G.usedCats = {1:[], 2:[]};
+  G.round = 1;
+  G.player = 1;
+  G.history = [];
+  G.solo = true;
+  showCat();
 };
 
 window.startGame = function() {
@@ -68,6 +88,7 @@ window.startGame = function() {
   G.round = 1;
   G.player = 1;
   G.history = [];
+  G.solo = false;
   showCat();
 };
 
@@ -79,14 +100,22 @@ window.showCat = function() {
   document.getElementById('cat-round').textContent = `Runde ${G.round} von ${G.rounds}`;
   document.getElementById('cat-player').textContent = pname(G.player).toUpperCase();
 
-  const s1 = G.scores[1], s2 = G.scores[2];
-  const tot = s1 + s2 || 2;
-  const pct = ((s1 / tot) * 100).toFixed(1);
-  document.getElementById('s-p1-name').textContent = G.p1;
-  document.getElementById('s-p2-name').textContent = G.p2;
-  document.getElementById('s-p1-val').textContent = s1;
-  document.getElementById('s-p2-val').textContent = s2;
-  document.getElementById('s-bar').style.width = `${pct}%`;
+  if (G.solo) {
+    document.getElementById('score-pill').style.display = 'none';
+    document.getElementById('solo-score-pill').style.display = 'block';
+    document.getElementById('solo-score-val').textContent = G.scores[1];
+  } else {
+    document.getElementById('score-pill').style.display = 'block';
+    document.getElementById('solo-score-pill').style.display = 'none';
+    const s1 = G.scores[1], s2 = G.scores[2];
+    const tot = s1 + s2 || 2;
+    const pct = ((s1 / tot) * 100).toFixed(1);
+    document.getElementById('s-p1-name').textContent = G.p1;
+    document.getElementById('s-p2-name').textContent = G.p2;
+    document.getElementById('s-p1-val').textContent = s1;
+    document.getElementById('s-p2-val').textContent = s2;
+    document.getElementById('s-bar').style.width = `${pct}%`;
+  }
 
   const grid = document.getElementById('cat-grid');
   grid.innerHTML = '';
@@ -210,7 +239,7 @@ window.nextQ = function() {
     window.showQ();
   } else {
     G.scores[G.player] += G.rndPts[G.player];
-    
+
     G.history.push({
       p: G.player,
       r: G.round,
@@ -218,7 +247,14 @@ window.nextQ = function() {
       pts: G.rndPts[G.player]
     });
 
-    if (G.player === 1) {
+    if (G.solo) {
+      G.round++;
+      if (G.round > G.rounds) {
+        showRes();
+      } else {
+        showCat();
+      }
+    } else if (G.player === 1) {
       G.player = 2;
       showHand();
     } else {
@@ -248,45 +284,89 @@ window.handConfirm = function() {
   showCat();
 };
 
+function soloRating(pct) {
+  if (pct >= 90) return { title: 'FILMKRITIKER-LEGENDE', icon: '🏆' };
+  if (pct >= 75) return { title: 'CINEAST', icon: '🎬' };
+  if (pct >= 55) return { title: 'KINOFAN', icon: '🎥' };
+  if (pct >= 35) return { title: 'GELEGENHEITSZUSCHAUER', icon: '🍿' };
+  return { title: 'FILMSTUDENT', icon: '📽️' };
+}
+
 window.showRes = function() {
   makeFilmstrip('filmstrip-r');
   const s1 = G.scores[1], s2 = G.scores[2];
-  let w = 'UNENTSCHIEDEN';
-  if (s1 > s2) w = `${G.p1} GEWINNT`;
-  if (s2 > s1) w = `${G.p2} GEWINNT`;
-  document.getElementById('res-winner').textContent = w.toUpperCase();
 
   const rs = document.getElementById('res-scores');
-  rs.innerHTML = `
-    <div class="bg-c-card border ${s1>s2?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
-      <span class="font-display text-2xl">${G.p1}</span>
-      <span class="font-display text-4xl font-bold text-c-gold">${s1}</span>
-    </div>
-    <div class="bg-c-card border ${s2>s1?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
-      <span class="font-display text-2xl">${G.p2}</span>
-      <span class="font-display text-4xl font-bold text-c-gold">${s2}</span>
-    </div>
-  `;
-
   const rc = document.getElementById('res-cats');
-  rc.innerHTML = '';
-  const rows = [];
-  for (let r=1; r<=G.rounds; r++) {
-    const r1 = G.history.find(h => h.p === 1 && h.r === r);
-    const r2 = G.history.find(h => h.p === 2 && h.r === r);
-    if (!r1 || !r2) continue;
-    const c1 = CATS.find(c => c.id === r1.cat);
-    const c2 = CATS.find(c => c.id === r2.cat);
-    rows.push(`
-      <div class="flex items-center text-sm py-1.5 border-b border-c-border last:border-0">
-        <div class="flex-1 text-right pr-3 font-medium text-[${c1.color}]" style="color:${c1.color}">${c1.abbr}&nbsp;&nbsp;<span class="text-c-text">${r1.pts}</span></div>
-        <div class="font-condensed text-xs text-c-faint w-6 text-center">R${r}</div>
-        <div class="flex-1 pl-3 font-medium text-[${c2.color}]" style="color:${c2.color}"><span class="text-c-text">${r2.pts}</span>&nbsp;&nbsp;${c2.abbr}</div>
+
+  if (G.solo) {
+    const maxPts = G.rounds * window.QPR;
+    const pct = Math.round((s1 / maxPts) * 100);
+    const rating = soloRating(pct);
+
+    document.getElementById('res-winner').textContent = rating.title + ' ' + rating.icon;
+
+    rs.innerHTML = `
+      <div class="bg-c-card border border-c-gold rounded-2xl p-5 flex flex-col items-center gap-2">
+        <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">${G.p1}</span>
+        <span class="font-display text-6xl font-bold text-c-gold">${s1}</span>
+        <span class="font-condensed text-c-muted text-sm">${s1} von ${maxPts} Punkten (${pct}%)</span>
       </div>
-    `);
+    `;
+
+    rc.innerHTML = '';
+    const rows = [];
+    for (let r=1; r<=G.rounds; r++) {
+      const entry = G.history.find(h => h.p === 1 && h.r === r);
+      if (!entry) continue;
+      const cat = CATS.find(c => c.id === entry.cat);
+      rows.push(`
+        <div class="flex items-center justify-between text-sm py-1.5 border-b border-c-border last:border-0">
+          <div class="flex items-center gap-2">
+            <div class="font-condensed text-xs text-c-faint w-5">R${r}</div>
+            <span class="font-condensed font-semibold uppercase tracking-wide" style="color:${cat.color}">${cat.label}</span>
+          </div>
+          <span class="font-display font-bold text-c-gold">${entry.pts} / ${window.QPR}</span>
+        </div>
+      `);
+    }
+    rc.innerHTML = rows.join('');
+  } else {
+    let w = 'UNENTSCHIEDEN';
+    if (s1 > s2) w = `${G.p1} GEWINNT`;
+    if (s2 > s1) w = `${G.p2} GEWINNT`;
+    document.getElementById('res-winner').textContent = w.toUpperCase();
+
+    rs.innerHTML = `
+      <div class="bg-c-card border ${s1>s2?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
+        <span class="font-display text-2xl">${G.p1}</span>
+        <span class="font-display text-4xl font-bold text-c-gold">${s1}</span>
+      </div>
+      <div class="bg-c-card border ${s2>s1?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
+        <span class="font-display text-2xl">${G.p2}</span>
+        <span class="font-display text-4xl font-bold text-c-gold">${s2}</span>
+      </div>
+    `;
+
+    rc.innerHTML = '';
+    const rows = [];
+    for (let r=1; r<=G.rounds; r++) {
+      const r1 = G.history.find(h => h.p === 1 && h.r === r);
+      const r2 = G.history.find(h => h.p === 2 && h.r === r);
+      if (!r1 || !r2) continue;
+      const c1 = CATS.find(c => c.id === r1.cat);
+      const c2 = CATS.find(c => c.id === r2.cat);
+      rows.push(`
+        <div class="flex items-center text-sm py-1.5 border-b border-c-border last:border-0">
+          <div class="flex-1 text-right pr-3 font-medium" style="color:${c1.color}">${c1.abbr}&nbsp;&nbsp;<span class="text-c-text">${r1.pts}</span></div>
+          <div class="font-condensed text-xs text-c-faint w-6 text-center">R${r}</div>
+          <div class="flex-1 pl-3 font-medium" style="color:${c2.color}"><span class="text-c-text">${r2.pts}</span>&nbsp;&nbsp;${c2.abbr}</div>
+        </div>
+      `);
+    }
+    rc.innerHTML = rows.join('');
   }
-  rc.innerHTML = rows.join('');
-  
+
   show('s-result');
 };
 
