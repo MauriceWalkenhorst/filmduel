@@ -491,6 +491,33 @@ function saveHighscore(entry) {
   localStorage.setItem('filmduel_highscores', JSON.stringify(scores.slice(0, 5)));
 }
 
+// HIGHSCORE MODAL
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+window.openHSModal = function() {
+  const modal = document.getElementById('hs-modal');
+  const list  = document.getElementById('hs-modal-list');
+  if (!modal || !list) return;
+  const scores = loadHighscores();
+  if (scores.length === 0) {
+    list.innerHTML = '<p class="text-c-muted text-sm text-center py-4">Noch keine Einträge</p>';
+  } else {
+    list.innerHTML = scores.map((s, i) => `
+      <div class="flex items-center gap-3 py-2 border-b border-c-border last:border-0">
+        <span class="font-display text-lg font-bold ${i === 0 ? 'text-c-gold' : 'text-c-muted'} w-5">${i + 1}</span>
+        <span class="font-body flex-1 truncate">${s.name || 'Anon'}</span>
+        <span class="font-condensed text-xs text-c-muted">${s.rounds}Rd</span>
+        <span class="font-display font-bold ${i === 0 ? 'text-c-gold' : 'text-c-text'}">${s.pct}%</span>
+        <span class="font-condensed text-xs text-c-muted">${s.rating}</span>
+      </div>`).join('');
+  }
+  modal.classList.remove('hidden');
+};
+
+window.closeHSModal = function() {
+  const modal = document.getElementById('hs-modal');
+  if (modal) modal.classList.add('hidden');
+};
+
 // Start Initialize Setup
 document.addEventListener("DOMContentLoaded", () => {
     window.goHome(); // init start screen
