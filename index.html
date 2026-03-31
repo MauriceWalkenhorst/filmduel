@@ -451,9 +451,17 @@ function showToast(msg, type = 'info', duration = 3500) {
 
     <!-- Header -->
     <div class="animate-up">
-      <button onclick="show('s-start')" class="font-condensed text-c-muted text-xs tracking-widest uppercase mb-6 flex items-center gap-2">
-        ← ZURÜCK
-      </button>
+      <div class="flex justify-between items-center mb-6">
+        <button onclick="show('s-start')" class="font-condensed text-c-muted text-xs tracking-widest uppercase flex items-center gap-2">
+          ← ZURÜCK
+        </button>
+        <button onclick="openHSModal()" class="text-c-muted hover:text-c-gold transition-colors" title="Rangliste">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V3h12v6a6 6 0 01-12 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 9a6 6 0 006 6m0 0a6 6 0 006-6M12 15v3m-4 3h8"/>
+          </svg>
+        </button>
+      </div>
       <h2 class="font-display text-3xl font-bold text-c-gold">SOLO SPIELEN</h2>
       <p class="font-condensed text-c-muted text-sm mt-1">Teste dein Kinowissen alleine</p>
     </div>
@@ -1552,7 +1560,18 @@ document.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<script type="module" src="./app.js?v=6"></script>
+<!-- Highscore Modal -->
+<div id="hs-modal" class="hidden fixed inset-0 z-50 flex items-end justify-center p-4 safe-bottom" style="background:rgba(9,9,9,0.85)">
+  <div class="w-full max-w-sm bg-c-card border border-c-border rounded-2xl p-5 animate-up">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="font-display text-xl font-bold text-c-gold">RANGLISTE</h3>
+      <button onclick="closeHSModal()" class="text-c-muted hover:text-c-text text-xl leading-none">✕</button>
+    </div>
+    <div id="hs-modal-list"></div>
+  </div>
+</div>
+
+<script type="module" src="./app.js?v=7"></script>
 <script type="module" src="./online.js?v=6"></script>
 </body>
 </html>
