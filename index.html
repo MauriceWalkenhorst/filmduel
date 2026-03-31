@@ -533,6 +533,9 @@ function showToast(msg, type = 'info', duration = 3500) {
      SCREEN 3 — FRAGE
 ════════════════════════════════════════ -->
 <div id="s-q" class="screen flex-col">
+  <div id="streak-badge" style="display:none"
+    class="fixed top-4 right-4 z-50 bg-c-gold text-black font-display font-bold text-sm px-3 py-1.5 rounded-full shadow-lg">
+  </div>
   <div class="filmstrip flex-shrink-0" id="filmstrip-q"></div>
   <div class="flex flex-col flex-1 p-6 pt-7 gap-4 safe-bottom overflow-y-auto">
 
@@ -616,6 +619,34 @@ function showToast(msg, type = 'info', duration = 3500) {
     <div class="bg-c-card border border-c-border rounded-2xl p-5 animate-up" style="animation-delay:120ms">
       <div class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-4">Kategorien</div>
       <div id="res-cats" class="flex flex-col gap-2.5"></div>
+    </div>
+
+    <!-- Solo Stats -->
+    <div id="solo-stats" style="display:none" class="flex flex-col gap-3 mt-2">
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-c-card border border-c-border rounded-xl p-3 flex flex-col items-center gap-1">
+          <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">Beste Kategorie</span>
+          <span id="stat-best-cat" class="font-display font-bold text-base text-center">–</span>
+        </div>
+        <div class="bg-c-card border border-c-border rounded-xl p-3 flex flex-col items-center gap-1">
+          <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">Ø Antwortzeit</span>
+          <span id="stat-avg-time" class="font-display font-bold text-base">–</span>
+        </div>
+        <div class="bg-c-card border border-c-border rounded-xl p-3 flex flex-col items-center gap-1">
+          <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">Bester Streak</span>
+          <span id="stat-streak" class="font-display font-bold text-base">–</span>
+        </div>
+        <div class="bg-c-card border border-c-border rounded-xl p-3 flex flex-col items-center gap-1">
+          <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">Zeit-Boni</span>
+          <span id="stat-bonuses" class="font-display font-bold text-base">–</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Highscores -->
+    <div id="solo-highscores" style="display:none" class="flex flex-col gap-2 mt-2">
+      <div class="font-condensed text-xs uppercase tracking-widest text-c-muted text-center">🏆 Top 5 Highscores</div>
+      <div id="highscores-list" class="flex flex-col gap-1.5"></div>
     </div>
 
     <div class="flex flex-col gap-3 mt-auto animate-up" style="animation-delay:170ms">
