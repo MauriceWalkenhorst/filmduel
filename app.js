@@ -20,6 +20,8 @@ export let G = {
   timeLeft: window.TSEC,
   history: [],
   solo: false,
+  streak: 0,
+  bestStreak: 0,
 };
 
 export function show(id) {
@@ -77,6 +79,8 @@ window.startSolo = function() {
   G.player = 1;
   G.history = [];
   G.solo = true;
+  G.streak = 0;
+  G.bestStreak = 0;
   showCat();
 };
 
@@ -89,6 +93,8 @@ window.startGame = function() {
   G.player = 1;
   G.history = [];
   G.solo = false;
+  G.streak = 0;
+  G.bestStreak = 0;
   showCat();
 };
 
@@ -189,7 +195,19 @@ window.showQ = function() {
 
   show('s-q');
   startTimer();
+  updateStreakBadge();
 };
+
+function updateStreakBadge() {
+  const badge = document.getElementById('streak-badge');
+  if (!badge) return;
+  if (G.streak >= 3) {
+    badge.textContent = `🔥 ${G.streak}x`;
+    badge.style.display = 'block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
 
 function startTimer() {
   clearInterval(G.timer);
@@ -219,17 +237,43 @@ window.ansQ = function(idx, el) {
   const q = G.qs[G.qi];
   const cor = q.corIdx;
   const isOk = idx === cor;
-  
-  if (isOk) G.rndPts[G.player]++;
+  const answerTime = window.TSEC - G.timeLeft;
+  const basePts = q.d || 1;
+  const timeBonus = (isOk && answerTime < 8) ? 1 : 0;
+  const pts = isOk ? basePts + timeBonus : 0;
+
+  if (isOk) {
+    G.rndPts[G.player] += pts;
+    G.streak++;
+    if (G.streak > G.bestStreak) G.bestStreak = G.streak;
+  } else {
+    G.streak = 0;
+  }
+
+  updateStreakBadge();
+
+  G.history.push({
+    p: G.player,
+    r: G.round,
+    cat: G.selCat,
+    qi: G.qi,
+    pts,
+    basePts,
+    timeBonus,
+    answerTime,
+    correct: isOk
+  });
 
   const btns = document.querySelectorAll('.btn-ans');
   btns[cor].classList.add('correct');
   if (!isOk && el) el.classList.add('wrong');
 
   const fb = document.getElementById('fact-box');
-  fb.innerHTML = `<strong>Wusstest du?</strong><br>${q.f}`;
-  fb.classList.add('show');
-  
+  if (q.f) {
+    fb.innerHTML = `<strong>Wusstest du?</strong><br>${q.f}`;
+    fb.classList.add('show');
+  }
+
   document.getElementById('next-btn').style.display = 'block';
 };
 
@@ -239,13 +283,6 @@ window.nextQ = function() {
     window.showQ();
   } else {
     G.scores[G.player] += G.rndPts[G.player];
-
-    G.history.push({
-      p: G.player,
-      r: G.round,
-      cat: G.selCat,
-      pts: G.rndPts[G.player]
-    });
 
     if (G.solo) {
       G.round++;
@@ -294,14 +331,19 @@ function soloRating(pct) {
 
 window.showRes = function() {
   makeFilmstrip('filmstrip-r');
+  const soloStatsEl = document.getElementById('solo-stats');
+  const soloHSEl = document.getElementById('solo-highscores');
+  if (soloStatsEl) soloStatsEl.style.display = 'none';
+  if (soloHSEl) soloHSEl.style.display = 'none';
   const s1 = G.scores[1], s2 = G.scores[2];
 
   const rs = document.getElementById('res-scores');
   const rc = document.getElementById('res-cats');
 
   if (G.solo) {
-    const maxPts = G.rounds * window.QPR;
-    const pct = Math.round((s1 / maxPts) * 100);
+    const soloHistory = G.history.filter(h => h.p === 1);
+    const maxPossible = soloHistory.reduce((sum, h) => sum + h.basePts + 1, 0) || 1;
+    const pct = Math.round((s1 / maxPossible) * 100);
     const rating = soloRating(pct);
 
     document.getElementById('res-winner').textContent = rating.title + ' ' + rating.icon;
@@ -310,27 +352,75 @@ window.showRes = function() {
       <div class="bg-c-card border border-c-gold rounded-2xl p-5 flex flex-col items-center gap-2">
         <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">${G.p1}</span>
         <span class="font-display text-6xl font-bold text-c-gold">${s1}</span>
-        <span class="font-condensed text-c-muted text-sm">${s1} von ${maxPts} Punkten (${pct}%)</span>
+        <span class="font-condensed text-c-muted text-sm">${s1} von ${maxPossible} Punkten (${pct}%)</span>
       </div>
     `;
 
     rc.innerHTML = '';
-    const rows = [];
-    for (let r=1; r<=G.rounds; r++) {
-      const entry = G.history.find(h => h.p === 1 && h.r === r);
-      if (!entry) continue;
-      const cat = CATS.find(c => c.id === entry.cat);
-      rows.push(`
+    const roundRows = [];
+    for (let r = 1; r <= G.rounds; r++) {
+      const rEntries = soloHistory.filter(h => h.r === r);
+      if (!rEntries.length) continue;
+      const cat = CATS.find(c => c.id === rEntries[0].cat);
+      const rPts = rEntries.reduce((s, h) => s + h.pts, 0);
+      const rMax = rEntries.reduce((s, h) => s + h.basePts + 1, 0);
+      roundRows.push(`
         <div class="flex items-center justify-between text-sm py-1.5 border-b border-c-border last:border-0">
           <div class="flex items-center gap-2">
             <div class="font-condensed text-xs text-c-faint w-5">R${r}</div>
             <span class="font-condensed font-semibold uppercase tracking-wide" style="color:${cat.color}">${cat.label}</span>
           </div>
-          <span class="font-display font-bold text-c-gold">${entry.pts} / ${window.QPR}</span>
+          <span class="font-display font-bold text-c-gold">${rPts} / ${rMax}</span>
         </div>
       `);
     }
-    rc.innerHTML = rows.join('');
+    rc.innerHTML = roundRows.join('');
+
+    const catStats = {};
+    soloHistory.forEach(h => {
+      if (!catStats[h.cat]) catStats[h.cat] = { pts: 0, maxPts: 0 };
+      catStats[h.cat].pts += h.pts;
+      catStats[h.cat].maxPts += h.basePts + 1;
+    });
+    const bestCatId = Object.entries(catStats)
+      .sort((a, b) => (b[1].pts / b[1].maxPts) - (a[1].pts / a[1].maxPts))[0]?.[0];
+    const bestCat = CATS.find(c => c.id === bestCatId);
+    const avgTime = soloHistory.length
+      ? Math.round(soloHistory.reduce((s, h) => s + h.answerTime, 0) / soloHistory.length)
+      : 0;
+    const timeBonusCount = soloHistory.filter(h => h.timeBonus === 1).length;
+
+    const statBestCat = document.getElementById('stat-best-cat');
+    if (statBestCat) {
+      statBestCat.textContent = bestCat ? bestCat.label : '–';
+      if (bestCat) statBestCat.style.color = bestCat.color;
+    }
+    const statAvgTime = document.getElementById('stat-avg-time');
+    if (statAvgTime) statAvgTime.textContent = `${avgTime}s`;
+    const statStreak = document.getElementById('stat-streak');
+    if (statStreak) statStreak.textContent = G.bestStreak > 0 ? `🔥 ${G.bestStreak}x` : '–';
+    const statBonuses = document.getElementById('stat-bonuses');
+    if (statBonuses) statBonuses.textContent = `⚡ ${timeBonusCount}`;
+    if (soloStatsEl) soloStatsEl.style.display = 'flex';
+
+    saveHighscore({ name: G.p1, score: s1, maxScore: maxPossible, pct, rating: rating.title, rounds: G.rounds, date: new Date().toLocaleDateString('de-DE') });
+    const scores = loadHighscores();
+    if (soloHSEl) soloHSEl.style.display = 'flex';
+    const hsList = document.getElementById('highscores-list');
+    if (hsList) hsList.innerHTML = scores.map((sc, i) => `
+      <div class="flex items-center justify-between text-sm py-1 border-b border-c-border last:border-0">
+        <div class="flex items-center gap-2">
+          <span class="font-condensed text-xs text-c-faint w-4">${i + 1}.</span>
+          <span class="font-medium">${sc.name}</span>
+          <span class="font-condensed text-xs text-c-muted">${sc.rating}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-condensed text-xs text-c-muted">${sc.date}</span>
+          <span class="font-display font-bold text-c-gold">${sc.pct}%</span>
+        </div>
+      </div>
+    `).join('');
+
   } else {
     let w = 'UNENTSCHIEDEN';
     if (s1 > s2) w = `${G.p1} GEWINNT`;
@@ -377,12 +467,29 @@ window.rematch = function() {
   G.round = 1;
   G.player = 1;
   G.history = [];
+  G.streak = 0;
+  G.bestStreak = 0;
   window.showCat();
 };
 
 window.goHome = function() {
   show('s-start');
 };
+
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+// HIGHSCORES (LocalStorage)
+// ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+function loadHighscores() {
+  try { return JSON.parse(localStorage.getItem('filmduel_highscores') || '[]'); }
+  catch { return []; }
+}
+
+function saveHighscore(entry) {
+  const scores = loadHighscores();
+  scores.push(entry);
+  scores.sort((a, b) => b.pct - a.pct);
+  localStorage.setItem('filmduel_highscores', JSON.stringify(scores.slice(0, 5)));
+}
 
 // Start Initialize Setup
 document.addEventListener("DOMContentLoaded", () => {
