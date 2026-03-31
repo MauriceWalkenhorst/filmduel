@@ -1,0 +1,46 @@
+# FilmDuel
+
+> A movie quiz app where players duel each other on film knowledge.
+
+## What is FilmDuel?
+
+FilmDuel (filmduel.space) is a competitive movie quiz app with three game modes:
+
+- **Solo Mode** — Single player, choose a category, answer questions, get a rating
+- **Local Duo** — Pass-the-phone mode for two players on one device
+- **Online Mode** — Async multiplayer (QuizDuell-style), challenge friends online
+
+## How to play
+
+1. Visit filmduel.space
+2. Choose a game mode
+3. Select a film category (18 categories available)
+4. Answer 3 questions per round within 20 seconds each
+5. Get rated: from "Film Student" to "Film Critic Legend"
+
+## Categories
+
+18 film categories including genres, decades, directors, and more.
+
+## Rating System (Solo Mode)
+
+| Score | Title |
+|-------|-------|
+| 90%+ | Film Critic Legend |
+| 75%+ | Cinephile |
+| 55%+ | Cinema Fan |
+| 35%+ | Casual Viewer |
+| <35% | Film Student |
+
+## Tech Stack
+
+- Frontend: Vanilla JavaScript (ES Modules), Tailwind CSS
+- Backend: Convex (real-time database + auth)
+- Auth: Google OAuth
+- Deployment: Vercel
+- PWA: Yes (installable as app)
+
+## Links
+
+- App: https://filmduel.space
+- Built by: Maurice Walkenhorst
