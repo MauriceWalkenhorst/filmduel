@@ -455,7 +455,7 @@ function showToast(msg, type = 'info', duration = 3500) {
         <button onclick="show('s-start')" class="font-condensed text-c-muted text-xs tracking-widest uppercase flex items-center gap-2">
           ← ZURÜCK
         </button>
-        <button onclick="openHSModal()" class="text-c-muted hover:text-c-gold transition-colors" title="Rangliste">
+        <button onclick="openHSModal()" class="text-c-muted hover:text-c-gold transition-colors -mr-2 p-2" title="Rangliste">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 9V3h12v6a6 6 0 01-12 0z"/>
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 9a6 6 0 006 6m0 0a6 6 0 006-6M12 15v3m-4 3h8"/>
@@ -541,8 +541,8 @@ function showToast(msg, type = 'info', duration = 3500) {
      SCREEN 3 — FRAGE
 ════════════════════════════════════════ -->
 <div id="s-q" class="screen flex-col">
-  <div id="streak-badge" style="display:none"
-    class="fixed top-4 right-4 z-50 bg-c-gold text-black font-display font-bold text-sm px-3 py-1.5 rounded-full shadow-lg">
+  <div id="streak-badge" style="display:none; top: calc(28px + env(safe-area-inset-top) + 8px); right: 16px"
+    class="fixed z-50 bg-c-gold text-black font-display font-bold text-sm px-3 py-1.5 rounded-full shadow-lg">
   </div>
   <div class="filmstrip flex-shrink-0" id="filmstrip-q"></div>
   <div class="flex flex-col flex-1 p-6 pt-7 gap-4 safe-bottom overflow-y-auto">
@@ -1561,11 +1561,11 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <!-- Highscore Modal -->
-<div id="hs-modal" class="hidden fixed inset-0 z-50 flex items-end justify-center p-4 safe-bottom" style="background:rgba(9,9,9,0.85)">
-  <div class="w-full max-w-sm bg-c-card border border-c-border rounded-2xl p-5 animate-up">
+<div id="hs-modal" class="hidden fixed inset-0 z-50 flex items-end justify-center p-4" style="background:rgba(9,9,9,0.85)" onclick="closeHSModal()">
+  <div class="w-full max-w-sm bg-c-card border border-c-border rounded-2xl p-5 pb-8 safe-bottom animate-up" onclick="event.stopPropagation()">
     <div class="flex justify-between items-center mb-4">
       <h3 class="font-display text-xl font-bold text-c-gold">RANGLISTE</h3>
-      <button onclick="closeHSModal()" class="text-c-muted hover:text-c-text text-xl leading-none">✕</button>
+      <button onclick="closeHSModal()" class="text-c-muted hover:text-c-text text-xl leading-none p-2 -mr-2">✕</button>
     </div>
     <div id="hs-modal-list"></div>
   </div>
