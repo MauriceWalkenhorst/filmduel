@@ -232,7 +232,7 @@ export const Q = {
     { q:'"The Wire" spielt in welcher amerikanischen Stadt?', a:["New York","Chicago","Baltimore","Los Angeles"], c:2, d:2, f:'Baltimore dient als Spiegel für das gesamte amerikanische System.' },
     { q:'In "Chernobyl" (HBO) — was war der tatsächliche Unglücksort?', a:["Russland","Weißrussland","Ukraine","Polen"], c:2, d:2, f:'Das Kernkraftwerk Tschernobyl liegt in der heutigen Ukraine.' },
     { q:'Welche Serie zeigt das Leben im Weißen Haus unter Präsident Bartlet?', a:["House of Cards","Veep","The West Wing","Scandal"], c:2, d:2, f:'The West Wing von Aaron Sorkin gilt als idealistisches Politdrama.' },
-    { q:'In welcher Serie lautet das Passwort "Winter is Coming"?', a:["Game of Thrones","The Last of Us","The Witcher","Westworld"], c:0, d:2, f:'Der Spruch des Hauses Stark ist das Symbol für drohende Gefahr.' },
+    { q:'Aus welcher Serie stammt der Spruch "Winter is Coming"?', a:["Game of Thrones","The Last of Us","The Witcher","Westworld"], c:0, d:1, f:'Der Spruch des Hauses Stark ist das Symbol für drohende Gefahr.' },
     { q:'Wer ist die Showrunnerin der Serie "Fleabag"?', a:["Lena Dunham","Michaela Coel","Phoebe Waller-Bridge","Amy Sherman-Palladino"], c:2, d:2, f:'Phoebe Waller-Bridge schrieb, produzierte und spielte die Hauptrolle.' },
   ],
 
