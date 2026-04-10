@@ -4,6 +4,13 @@ import { CATS, Q } from './categories.js';
 window.QPR = 3;
 window.TSEC = 20;
 
+const CAT_FILTER = {
+  all:  null,
+  film: ['arthouse','directors','world','noir','cult','tech','horror','indie','oscars','german','comedy','scifi','nineties','worldcinema','animation'],
+  more: ['series','superhero','musical'],
+};
+let _activeCatTab = 'all';
+
 export let G = {
   p1:'', p2:'',
   rounds: 5,
@@ -24,10 +31,18 @@ export let G = {
   bestStreak: 0,
 };
 
-export function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+export function show(id, dir = 'forward') {
+  document.querySelectorAll('.screen').forEach(s =>
+    s.classList.remove('active', 'screen-enter', 'screen-enter-back')
+  );
+  const next = document.getElementById(id);
+  next.classList.add('active');
+  if (dir !== 'none') {
+    const cls = dir === 'back' ? 'screen-enter-back' : 'screen-enter';
+    next.classList.add(cls);
+    setTimeout(() => next.classList.remove(cls), 350);
+  }
+  window.scrollTo(0, 0);
 }
 
 export function pname(n) { return n===1 ? G.p1 : G.p2; }
@@ -123,20 +138,40 @@ window.showCat = function() {
     document.getElementById('s-bar').style.width = `${pct}%`;
   }
 
+  _activeCatTab = 'all';
+  document.querySelectorAll('.cat-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === 'all')
+  );
+  renderCatGrid();
+
+  document.getElementById('cat-btn').disabled = true;
+  show('s-cat');
+};
+
+function renderCatGrid() {
+  const filter = CAT_FILTER[_activeCatTab];
   const grid = document.getElementById('cat-grid');
   grid.innerHTML = '';
   CATS.forEach(cat => {
+    if (filter && !filter.includes(cat.id)) return;
     const used = G.usedCats[1].includes(cat.id) || G.usedCats[2].includes(cat.id);
     const d = document.createElement('div');
-    d.className = 'cat-card' + (used ? ' used' : '');
+    d.className = 'cat-card' + (used ? ' used' : '') + (G.selCat === cat.id ? ' selected' : '');
     d.style.setProperty('--cat-color', cat.color);
     d.innerHTML = `<div class="cat-abbr">${cat.abbr}</div><div class="cat-label">${cat.label}</div>`;
     if (!used) d.onclick = () => window.selCat(cat.id, d);
     grid.appendChild(d);
   });
+}
 
+window.setCatTab = function(tab) {
+  _activeCatTab = tab;
+  G.selCat = null;
   document.getElementById('cat-btn').disabled = true;
-  show('s-cat');
+  document.querySelectorAll('.cat-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === tab)
+  );
+  renderCatGrid();
 };
 
 window.selCat = function(id, el) {
@@ -164,8 +199,17 @@ window.showQ = function() {
   const q = G.qs[G.qi];
   document.getElementById('q-round').textContent = `Runde ${G.round} — Frage ${G.qi + 1}`;
   document.getElementById('q-player').textContent = pname(G.player).toUpperCase();
-  
+
   const catObj = CATS.find(c => c.id === G.selCat);
+
+  // Progress dots
+  const progEl = document.getElementById('q-progress');
+  progEl.style.setProperty('--prog-color', catObj.color);
+  progEl.innerHTML = Array.from({ length: window.QPR }, (_, i) => {
+    const cls = i < G.qi ? 'done' : i === G.qi ? 'active' : '';
+    return `<div class="prog-dot ${cls}"></div>`;
+  }).join('');
+
   const badge = document.getElementById('q-cat-badge');
   badge.textContent = catObj.label;
   badge.style.color = catObj.color;
