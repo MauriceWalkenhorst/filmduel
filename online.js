@@ -1,7 +1,7 @@
 // online.js — Online-Multiplayer-Modus
 import { client, initAuth, renderGoogleButton, signOut, getCurrentUser, updateCurrentUser } from './auth.js';
 import { CATS, Q } from './categories.js';
-import { shuffle } from './app.js';
+import { shuffle, G } from './app.js';
 
 // ───────────────────────────────────────────
 // Auth-Handlers
@@ -42,7 +42,7 @@ window.confirmUsername = async function () {
   try {
     const profile = await client.mutation('users:setDisplayName', { displayName: name });
     // Profil in localStorage aktualisieren
-    localStorage.setItem('filmduel_user', JSON.stringify(profile));
+    updateCurrentUser(profile);
     await loadDashboard();
   } catch (e) {
     const msg = e.message || 'Fehler — bitte erneut versuchen';
@@ -55,7 +55,7 @@ window.confirmUsername = async function () {
 };
 
 window.onlineLogout = async function () {
-  clearInterval(window._localTimer);
+  clearInterval(G.timer);
   await signOut();
   show('s-start');
 };

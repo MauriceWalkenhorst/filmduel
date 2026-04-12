@@ -118,26 +118,6 @@ export const searchByName = query({
   },
 });
 
-export const getLeaderboard = query({
-  args: {},
-  handler: async (ctx) => {
-    const users = await ctx.db.query("users").collect();
-    return users
-      .filter((u: any) => (u.games ?? 0) > 0)
-      .sort((a: any, b: any) => {
-        const diff = (b.wins ?? 0) - (a.wins ?? 0);
-        if (diff !== 0) return diff;
-        return (b.totalScore ?? 0) - (a.totalScore ?? 0);
-      })
-      .slice(0, 20)
-      .map((u: any) => ({
-        name: u.displayName || u.name || "Spieler",
-        wins: u.wins ?? 0,
-        games: u.games ?? 0,
-        totalScore: u.totalScore ?? 0,
-      }));
-  },
-});
 
 export const savePushSubscription = mutation({
   args: { subscription: v.any() },
@@ -157,15 +137,3 @@ export const savePushSubscription = mutation({
   },
 });
 
-export const updateStats = mutation({
-  args: { userId: v.id("users"), won: v.boolean(), score: v.number() },
-  handler: async (ctx, args) => {
-    const user = await ctx.db.get(args.userId);
-    if (!user) return;
-    await ctx.db.patch(args.userId, {
-      games: (user.games ?? 0) + 1,
-      wins: (user.wins ?? 0) + (args.won ? 1 : 0),
-      totalScore: (user.totalScore ?? 0) + args.score,
-    });
-  },
-});
