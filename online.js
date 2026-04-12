@@ -101,6 +101,7 @@ window.loadDashboard = async function () {
   try {
     const games = await client.query('games:getOpenGames', {});
     renderGamesList(games, user._id);
+    startDashboardPolling(user._id);
   } catch (e) {
     if (e?.message?.includes('auth') || e?.message?.includes('token') || e?.message?.includes('Unauthorized')) {
       showToast('Sitzung abgelaufen — bitte neu einloggen', 'warning');
@@ -125,14 +126,15 @@ function renderGamesList(games, myId) {
     const myTurn = (isChallenger && g.status === 'pending') ||
                    (!isChallenger && g.status === 'challenger_done');
     const cat = CATS.find(c => c.id === g.category);
+    const opponentName = isChallenger ? (g.opponentName || 'Zufallsgegner') : (g.challengerName || '?');
     return `
       <div class="bg-c-card border border-c-border rounded-2xl px-4 py-3 flex items-center justify-between cursor-pointer active:scale-95 transition-transform"
            onclick="openOnlineGame('${g._id}')">
         <div>
           <div class="font-condensed text-xs uppercase tracking-wide ${myTurn ? 'text-c-gold' : 'text-c-muted'}">
-            ${myTurn ? '🎯 Du bist dran' : '⏳ Warte auf Gegner'}
+            ${myTurn ? '🎯 Du bist dran' : `⏳ Warte auf ${opponentName}`}
           </div>
-          <div class="font-display text-base text-c-text mt-0.5">${cat?.label ?? g.category} · ${g.rounds} Runden</div>
+          <div class="font-display text-base text-c-text mt-0.5">${opponentName} · ${cat?.label ?? g.category} · ${g.rounds} Runden</div>
         </div>
         <span class="font-display text-c-muted text-lg">${myTurn ? '→' : '···'}</span>
       </div>`;
@@ -293,6 +295,41 @@ const VAPID_PUBLIC_KEY = 'BIdn1DR8_LbNpQyQIYsofx3_O9kwC60NW1JoCv1z2QrS-OnMArd9Kh
 let OG = { gameId: null, game: null, questions: [], qi: 0 };
 let _timerStart = 0;
 let _timerTimeout = null;
+let _dashInterval = null;
+let _waitInterval = null;
+
+function startDashboardPolling(userId) {
+  stopDashboardPolling();
+  _dashInterval = setInterval(async () => {
+    try {
+      const games = await client.query('games:getOpenGames', {});
+      renderGamesList(games, userId);
+    } catch (_) {}
+  }, 6000);
+}
+
+function stopDashboardPolling() {
+  clearInterval(_dashInterval);
+  _dashInterval = null;
+}
+
+function startWaitPolling(gameId, myId) {
+  stopWaitPolling();
+  _waitInterval = setInterval(async () => {
+    try {
+      const game = await client.query('games:getGame', { gameId });
+      if (game?.status === 'finished') {
+        stopWaitPolling();
+        showOnlineResult(game, myId);
+      }
+    } catch (_) {}
+  }, 6000);
+}
+
+function stopWaitPolling() {
+  clearInterval(_waitInterval);
+  _waitInterval = null;
+}
 
 window.openOnlineGame = async function (gameId) {
   const game = await client.query('games:getGame', { gameId });
@@ -315,6 +352,7 @@ window.openOnlineGame = async function (gameId) {
     document.getElementById('wait-msg').textContent =
       `Deine Antworten: ${myScore} Punkte (${game.rounds} Fragen)`;
     show('s-online-wait');
+    startWaitPolling(gameId, myId);
     return;
   }
 
@@ -325,6 +363,8 @@ window.openOnlineGame = async function (gameId) {
 function clearOnlineTimer() {
   clearTimeout(_timerTimeout);
   _timerTimeout = null;
+  stopDashboardPolling();
+  stopWaitPolling();
   const bar = document.getElementById('oq-timer-bar');
   if (bar) { bar.style.transition = 'none'; bar.style.width = '0%'; }
 }

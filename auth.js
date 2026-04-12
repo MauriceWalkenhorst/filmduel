@@ -73,8 +73,7 @@ async function _handleToken(token) {
   client.setAuth(async () => token);
   try {
     const profile = await client.mutation("users:getOrCreateProfile", {});
-    _currentUser = profile;
-    localStorage.setItem(USER_KEY, JSON.stringify(profile));
+    updateCurrentUser(profile);
   } catch (e) {
     console.error("Profil-Fehler:", e);
   }

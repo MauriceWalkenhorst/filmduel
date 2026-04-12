@@ -30,7 +30,20 @@ export const getOpenGames = query({
       .filter((q: any) => q.neq(q.field("status"), "finished"))
       .collect();
 
-    return [...asChallenger, ...asOpponent];
+    const allGames = [...asChallenger, ...asOpponent];
+
+    return await Promise.all(allGames.map(async (g: any) => {
+      const challenger = await ctx.db.get(g.challengerId as any);
+      const challengerName = challenger?.displayName || challenger?.name || g.challengerId.slice(0, 8) + "…";
+
+      let opponentName = "Zufallsgegner";
+      if (g.opponentId !== "random") {
+        const opponent = await ctx.db.get(g.opponentId as any);
+        opponentName = opponent?.displayName || opponent?.name || g.opponentId.slice(0, 8) + "…";
+      }
+
+      return { ...g, challengerName, opponentName };
+    }));
   },
 });
 
