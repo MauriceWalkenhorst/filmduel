@@ -631,10 +631,13 @@ function showToast(msg, type = 'info', duration = 3500) {
     </div>
 
     <!-- Category Filter Tabs -->
-    <div id="cat-tabs" class="flex gap-2 animate-up" style="animation-delay:70ms">
-      <button class="cat-tab active" data-tab="all" onclick="setCatTab('all')">Alle</button>
-      <button class="cat-tab" data-tab="film" onclick="setCatTab('film')">Film</button>
-      <button class="cat-tab" data-tab="more" onclick="setCatTab('more')">Serien & Mehr</button>
+    <div class="flex items-center gap-2 animate-up" style="animation-delay:70ms">
+      <div id="cat-tabs" class="flex gap-2 flex-1">
+        <button class="cat-tab active" data-tab="all" onclick="setCatTab('all')">Alle</button>
+        <button class="cat-tab" data-tab="film" onclick="setCatTab('film')">Film</button>
+        <button class="cat-tab" data-tab="more" onclick="setCatTab('more')">Serien & Mehr</button>
+      </div>
+      <button onclick="pickRandomCat()" class="cat-tab flex-shrink-0" style="border-color:#60a5fa; color:#60a5fa">🎲 Zufall</button>
     </div>
 
     <!-- Categories grid -->
@@ -978,7 +981,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <!-- Kategorie -->
       <div>
-        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Kategorie</label>
+        <div class="flex items-center justify-between mb-2">
+          <label class="font-condensed text-xs uppercase tracking-widest text-c-muted">Kategorie</label>
+          <button onclick="pickRandomChallengeCat()" class="font-condensed text-xs uppercase tracking-widest" style="color:#60a5fa">🎲 Zufall</button>
+        </div>
         <div id="cs-cats" class="grid grid-cols-3 gap-2"></div>
       </div>
 

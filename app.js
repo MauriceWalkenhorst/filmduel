@@ -181,6 +181,16 @@ window.selCat = function(id, el) {
   document.getElementById('cat-btn').disabled = false;
 };
 
+window.pickRandomCat = function() {
+  const available = CATS.filter(c =>
+    !G.usedCats[1].includes(c.id) && !G.usedCats[2].includes(c.id)
+  );
+  if (!available.length) return;
+  const cat = available[Math.floor(Math.random() * available.length)];
+  G.selCat = cat.id;
+  confirmCat();
+};
+
 window.confirmCat = function() {
   if (!G.selCat) return;
   G.usedCats[G.player].push(G.selCat);

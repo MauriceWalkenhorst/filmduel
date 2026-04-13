@@ -251,6 +251,12 @@ window.setChallengeRounds = function (n) {
   });
 };
 
+window.pickRandomChallengeCat = function() {
+  const cat = CATS[Math.floor(Math.random() * CATS.length)];
+  const btn = document.querySelector(`.cs-cat-btn[data-id="${cat.id}"]`);
+  if (btn) selectChallengeCat(cat.id, btn);
+};
+
 function updateChallengeStartBtn() {
   document.getElementById('cs-start-btn').disabled = !(CS.opponentId && CS.category);
 }
