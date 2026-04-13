@@ -156,7 +156,8 @@ window.initChallengeSetup = function () {
   setChallengeRounds(5);
 
   const grid = document.getElementById('cs-cats');
-  grid.innerHTML = CATS.map(c =>
+  const visibleCats = shuffle([...CATS]).slice(0, 5);
+  grid.innerHTML = visibleCats.map(c =>
     `<button class="cs-cat-btn rounded-xl p-2 text-center border border-c-border text-xs font-condensed uppercase tracking-wide transition-all"
              data-id="${c.id}"
              onclick="selectChallengeCat('${c.id}', this)">
@@ -252,9 +253,10 @@ window.setChallengeRounds = function (n) {
 };
 
 window.pickRandomChallengeCat = function() {
-  const cat = CATS[Math.floor(Math.random() * CATS.length)];
-  const btn = document.querySelector(`.cs-cat-btn[data-id="${cat.id}"]`);
-  if (btn) selectChallengeCat(cat.id, btn);
+  const btns = [...document.querySelectorAll('.cs-cat-btn')];
+  if (!btns.length) return;
+  const btn = btns[Math.floor(Math.random() * btns.length)];
+  selectChallengeCat(btn.dataset.id, btn);
 };
 
 function updateChallengeStartBtn() {
