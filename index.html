@@ -289,8 +289,8 @@
 
     .round-btn {
       flex: 1;
-      padding: 14px;
-      min-height: 54px;
+      padding: 12px 8px;
+      min-height: 62px;
       border-radius: 14px;
       border: 1px solid #252528;
       background: #141416;
@@ -302,7 +302,12 @@
       transition: all 0.15s;
       -webkit-touch-callout: none;
       user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
     }
+    .round-btn .rnd-sub { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.6; }
     .round-btn.active { border-color: #e8c84a; color: #e8c84a; background: #1a1a18; }
 
     /* Toast Notifications */
@@ -526,11 +531,11 @@ function showToast(msg, type = 'info', duration = 3500) {
 
     <!-- Rounds -->
     <div class="animate-up" style="animation-delay:110ms">
-      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Runden</label>
+      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Wie viele Fragen?</label>
       <div class="flex gap-2">
-        <button class="round-btn" data-r="3" onclick="setRounds(3)">3</button>
-        <button class="round-btn active" data-r="5" onclick="setRounds(5)">5</button>
-        <button class="round-btn" data-r="7" onclick="setRounds(7)">7</button>
+        <button class="round-btn" data-r="3" onclick="setRounds(3)">3<span class="rnd-sub">Fragen</span></button>
+        <button class="round-btn active" data-r="5" onclick="setRounds(5)">5<span class="rnd-sub">Fragen</span></button>
+        <button class="round-btn" data-r="7" onclick="setRounds(7)">7<span class="rnd-sub">Fragen</span></button>
       </div>
     </div>
 
@@ -577,11 +582,11 @@ function showToast(msg, type = 'info', duration = 3500) {
 
     <!-- Rounds -->
     <div class="animate-up" style="animation-delay:110ms">
-      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Runden</label>
+      <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-3 block">Wie viele Fragen?</label>
       <div class="flex gap-2">
-        <button class="round-btn" data-sr="3" onclick="setSoloRounds(3)">3</button>
-        <button class="round-btn active" data-sr="5" onclick="setSoloRounds(5)">5</button>
-        <button class="round-btn" data-sr="7" onclick="setSoloRounds(7)">7</button>
+        <button class="round-btn" data-sr="3" onclick="setSoloRounds(3)">3<span class="rnd-sub">Fragen</span></button>
+        <button class="round-btn active" data-sr="5" onclick="setSoloRounds(5)">5<span class="rnd-sub">Fragen</span></button>
+        <button class="round-btn" data-sr="7" onclick="setSoloRounds(7)">7<span class="rnd-sub">Fragen</span></button>
       </div>
     </div>
 
