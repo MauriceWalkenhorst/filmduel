@@ -990,11 +990,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
       <!-- Runden -->
       <div>
-        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Runden</label>
+        <label class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-2 block">Wie viele Fragen?</label>
         <div class="flex gap-2">
-          <button class="cs-rnd-btn flex-1 btn-secondary text-sm" data-r="5" onclick="setChallengeRounds(5)">5</button>
-          <button class="cs-rnd-btn flex-1 btn-secondary text-sm" data-r="10" onclick="setChallengeRounds(10)">10</button>
-          <button class="cs-rnd-btn flex-1 btn-secondary text-sm" data-r="15" onclick="setChallengeRounds(15)">15</button>
+          <button class="cs-rnd-btn flex-1 btn-secondary py-3" data-r="5" onclick="setChallengeRounds(5)">
+            <div class="font-display font-bold text-base leading-none">5</div>
+            <div class="font-condensed text-xs text-c-muted mt-0.5">Fragen</div>
+          </button>
+          <button class="cs-rnd-btn flex-1 btn-secondary py-3" data-r="10" onclick="setChallengeRounds(10)">
+            <div class="font-display font-bold text-base leading-none">10</div>
+            <div class="font-condensed text-xs text-c-muted mt-0.5">Fragen</div>
+          </button>
+          <button class="cs-rnd-btn flex-1 btn-secondary py-3" data-r="15" onclick="setChallengeRounds(15)">
+            <div class="font-display font-bold text-base leading-none">15</div>
+            <div class="font-condensed text-xs text-c-muted mt-0.5">Fragen</div>
+          </button>
         </div>
       </div>
     </div>
