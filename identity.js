@@ -50,3 +50,16 @@ function loadStats() {
   };
 }
 function saveStats(s)  { safeSet('filmduel_stats', s); }
+
+export function getMasteryInfo(totalCorrect) {
+  let level = 0;
+  for (let i = 0; i < MASTERY_LEVELS.length; i++) {
+    if (totalCorrect >= MASTERY_LEVELS[i].min) level = i;
+  }
+  const title   = MASTERY_LEVELS[level].title;
+  const isMax   = level === MASTERY_LEVELS.length - 1;
+  const nextMin = isMax ? MASTERY_LEVELS[level].min : MASTERY_LEVELS[level + 1].min;
+  const prevMin = MASTERY_LEVELS[level].min;
+  const progress = isMax ? 100 : Math.round(((totalCorrect - prevMin) / (nextMin - prevMin)) * 100);
+  return { level, title, progress };
+}
