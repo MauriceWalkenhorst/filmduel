@@ -452,7 +452,8 @@ function showToast(msg, type = 'info', duration = 3500) {
 <!-- ═══════════════════════════════════════
      SCREEN 1 — START
 ════════════════════════════════════════ -->
-<div id="s-start" class="screen active">
+<div id="s-start" class="screen active" style="position:relative;overflow:hidden">
+  <div class="film-grain" aria-hidden="true"></div>
   <div class="filmstrip" id="filmstrip-top"></div>
 
   <div class="flex flex-col items-center justify-between flex-1 px-6 pt-16 pb-12 safe-bottom">
