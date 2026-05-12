@@ -71,6 +71,46 @@ function updateMastery(history) {
   return { mastery, catGroups };
 }
 
+function updateStats(gameData, mastery) {
+  const stats     = loadStats();
+  const soloH     = gameData.history.filter(h => h.p === 1);
+  const correct   = soloH.filter(h => h.correct).length;
+  const played    = soloH.length;
+  const fastCount = soloH.filter(h => h.correct && h.answerTime < 8).length;
+  const perfect   = played > 0 && correct === played;
+
+  stats.gamesPlayed++;
+  stats.totalCorrect  += correct;
+  stats.bestStreak     = Math.max(stats.bestStreak, gameData.bestStreak);
+  stats.maxFastInGame  = Math.max(stats.maxFastInGame, fastCount);
+  if (perfect) stats.hadPerfectGame = true;
+
+  const prevBadges = new Set(stats.badges);
+  const newBadges  = BADGE_DEFS.filter(b => !prevBadges.has(b.id) && b.check(stats, mastery));
+  newBadges.forEach(b => stats.badges.push(b.id));
+  saveStats(stats);
+  return { stats, newBadges };
+}
+
+function computePersonality(mastery) {
+  const scores = {};
+
+  PERSONALITY_TYPES.forEach(type => {
+    let sum = 0, catCount = 0;
+    type.cats.forEach(cat => {
+      if (mastery[cat]?.played > 0) {
+        sum += mastery[cat].correct / mastery[cat].played;
+        catCount++;
+      }
+    });
+    scores[type.id] = catCount >= Math.min(3, type.cats.length) ? sum : 0;
+  });
+
+  const best = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
+  if (!best || best[1] === 0) return 'Der Cineast';
+  return PERSONALITY_TYPES.find(t => t.id === best[0])?.label ?? 'Der Cineast';
+}
+
 export function getMasteryInfo(totalCorrect) {
   let level = 0;
   for (let i = 0; i < MASTERY_LEVELS.length; i++) {
