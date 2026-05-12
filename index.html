@@ -11,14 +11,6 @@
   <link rel="manifest" href="/manifest.json" />
   <link rel="icon" type="image/png" href="/icon-192.png" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
-  <svg style="display:none" aria-hidden="true">
-    <defs>
-      <filter id="film-grain">
-        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>
-        <feColorMatrix type="saturate" values="0"/>
-      </filter>
-    </defs>
-  </svg>
   <title>FilmDuel — Wer kennt Kino wirklich?</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
@@ -432,10 +424,22 @@
     }
 
     /* Timer-Glow */
+    @keyframes glow {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 1; }
+    }
     .timer-glow { animation: glow 0.8s ease-in-out infinite; }
   </style>
 </head>
 <body>
+<svg style="display:none" aria-hidden="true">
+  <defs>
+    <filter id="film-grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+</svg>
 <div class="scanlines"></div>
 <div id="toast-container"></div>
 <script>
@@ -811,7 +815,7 @@ function showToast(msg, type = 'info', duration = 3500) {
     </div>
 
     <!-- Identity Block (Solo only, via JS befüllt) -->
-    <div id="identity-block" style="display:none" class="flex flex-col gap-3">
+    <div id="identity-block" style="display:none" class="flex flex-col gap-3 mt-2">
       <!-- Film-IQ -->
       <div class="bg-c-card border border-c-border rounded-2xl p-5 animate-up" style="animation-delay:140ms">
         <div class="font-condensed text-xs uppercase tracking-widest text-c-muted mb-1">Film-IQ</div>
