@@ -51,6 +51,26 @@ function loadStats() {
 }
 function saveStats(s)  { safeSet('filmduel_stats', s); }
 
+function updateMastery(history) {
+  const mastery = loadMastery();
+  const catGroups = {};
+
+  history.forEach(h => {
+    if (!catGroups[h.cat]) catGroups[h.cat] = { correct: 0, played: 0 };
+    catGroups[h.cat].played++;
+    if (h.correct) catGroups[h.cat].correct++;
+  });
+
+  Object.entries(catGroups).forEach(([cat, data]) => {
+    if (!mastery[cat]) mastery[cat] = { correct: 0, played: 0 };
+    mastery[cat].correct += data.correct;
+    mastery[cat].played  += data.played;
+  });
+
+  saveMastery(mastery);
+  return { mastery, catGroups };
+}
+
 export function getMasteryInfo(totalCorrect) {
   let level = 0;
   for (let i = 0; i < MASTERY_LEVELS.length; i++) {
