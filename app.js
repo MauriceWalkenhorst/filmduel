@@ -1,5 +1,6 @@
 // app.js
 import { CATS, Q } from './categories.js';
+import { updateAfterGame, getMasteryInfo } from './identity.js';
 
 function spawnParticleBurst(el) {
   const rect = el.getBoundingClientRect();
@@ -422,6 +423,64 @@ window.showRes = function() {
 
   if (G.solo) {
     const soloHistory = G.history.filter(h => h.p === 1);
+
+    // Identity-Daten berechnen und in UI eintragen
+    const identity = updateAfterGame({ history: G.history, bestStreak: G.bestStreak });
+    const identityBlock = document.getElementById('identity-block');
+    if (identityBlock) {
+      identityBlock.style.display = 'flex';
+
+      // Film-IQ count-up
+      const iqEl = document.getElementById('film-iq-value');
+      if (iqEl) {
+        const target = identity.filmIQ;
+        const start  = performance.now();
+        const tick   = (now) => {
+          const pct = Math.min((now - start) / 500, 1);
+          iqEl.textContent = Math.round(pct * target);
+          if (pct < 1) requestAnimationFrame(tick);
+        };
+        setTimeout(() => requestAnimationFrame(tick), 350);
+      }
+
+      // Persönlichkeit
+      const persEl = document.getElementById('personality-value');
+      if (persEl) persEl.textContent = identity.personality;
+
+      // Mastery Bar — letzte gespielte Kategorie
+      const lastCat = soloHistory[soloHistory.length - 1]?.cat;
+      if (lastCat && identity.mastery[lastCat]) {
+        const catObj     = CATS.find(c => c.id === lastCat);
+        const totalCorr  = identity.mastery[lastCat].correct;
+        const { title, progress } = getMasteryInfo(totalCorr);
+        const catNameEl  = document.getElementById('mastery-cat-name');
+        const titleEl    = document.getElementById('mastery-title');
+        const barEl      = document.getElementById('mastery-bar');
+        const nextLabelEl = document.getElementById('mastery-next-label');
+        if (catNameEl && catObj) { catNameEl.textContent = catObj.label; catNameEl.style.color = catObj.color; }
+        if (titleEl)    titleEl.textContent = title;
+        if (nextLabelEl) nextLabelEl.textContent = progress < 100 ? `${totalCorr} richtige Antworten insgesamt` : 'Maximalstufe erreicht 🏆';
+        if (barEl)      setTimeout(() => { barEl.style.width = `${progress}%`; }, 500);
+      }
+
+      // Neue Badges
+      if (identity.newBadges.length > 0) {
+        const badgesBlock = document.getElementById('new-badges-block');
+        if (badgesBlock) {
+          badgesBlock.style.display = 'flex';
+          badgesBlock.innerHTML = identity.newBadges.map(b => `
+            <div class="bg-c-card border border-c-gold rounded-xl p-4 flex items-center gap-3 animate-pop">
+              <span class="text-2xl">${b.emoji}</span>
+              <div>
+                <div class="font-condensed text-xs uppercase tracking-widest text-c-muted">Neues Badge freigeschaltet</div>
+                <div class="font-display font-bold text-c-gold">${b.label}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
     const maxPossible = soloHistory.reduce((sum, h) => sum + h.basePts + 1, 0) || 1;
     const pct = Math.round((s1 / maxPossible) * 100);
     const rating = soloRating(pct);
