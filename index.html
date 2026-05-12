@@ -18,6 +18,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
+      safelist: ['animate-shake'],
       theme: {
         extend: {
           fontFamily: {
@@ -424,11 +425,11 @@
     }
 
     /* Timer-Glow */
-    @keyframes glow {
+    @keyframes timer-pulse {
       0%, 100% { opacity: 0.6; }
       50%       { opacity: 1; }
     }
-    .timer-glow { animation: glow 0.8s ease-in-out infinite; }
+    .timer-glow { animation: timer-pulse 0.8s ease-in-out infinite; }
   </style>
 </head>
 <body>
