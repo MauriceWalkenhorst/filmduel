@@ -56,6 +56,7 @@ function updateMastery(history) {
   const catGroups = {};
 
   history.forEach(h => {
+    if (!h.cat) return;
     if (!catGroups[h.cat]) catGroups[h.cat] = { correct: 0, played: 0 };
     catGroups[h.cat].played++;
     if (h.correct) catGroups[h.cat].correct++;
@@ -81,7 +82,7 @@ function updateStats(gameData, mastery) {
 
   stats.gamesPlayed++;
   stats.totalCorrect  += correct;
-  stats.bestStreak     = Math.max(stats.bestStreak, gameData.bestStreak);
+  stats.bestStreak     = Math.max(stats.bestStreak, gameData.bestStreak ?? 0);
   stats.maxFastInGame  = Math.max(stats.maxFastInGame, fastCount);
   if (perfect) stats.hadPerfectGame = true;
 
