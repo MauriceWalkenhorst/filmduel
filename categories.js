@@ -59,6 +59,13 @@ export const Q = {
     { q:'Welcher Thai-Regisseur gewann 2010 die Goldene Palme für "Uncle Boonmee Who Can Recall His Past Lives"?', a:["Pen-ek Ratanaruang","Apichatpong Weerasethakul","Wisit Sasanatieng","Aditya Assarat"], c:1, d:3, f:'Apichatpong Weerasethakul — ein Meister des langsamen, rätselhaften und mythischen Kinos.' },
     { q:'Was ist "Dogme 95" — und wer gründete die Bewegung?', a:["Ein dänisches Filmmanifest von Lars von Trier und Thomas Vinterberg","Eine schwedische Produktionsfirma","Eine Dokumentarfilm-Schule in Kopenhagen","Ein Verleihsystem für europäische Indie-Filme"], c:0, d:2, f:'10 strenge Regeln: kein künstliches Licht, keine fremde Musik, Handkamera — eine Rückkehr zum Essenziellen.' },
     { q:'Abbas Kiarostamis Filme konzentrieren sich oft auf welchen Personenkreis und welche Lebensrealität?', a:["Kriegsveteranen im Iran","Kinder und Alltagsleben im ländlichen Iran","Reiche Teheraner Familien","Politische Dissidenten"], c:1, d:2, f:'Die Koker-Trilogie und "Close-Up" zeigen das bäuerliche Iran mit dokumentarischer Zartheit.' },
+  
+    { q:"Welcher Paolo-Sorrentino-Film von 2013 zeigt einen alternden Journalisten im dekadenten Rom?", a:["Youth","La Grande Bellezza","Il Divo","Loro"], c:1, d:2, f:"\"La Grande Bellezza\" gewann den Oscar für Besten fremdsprachigen Film 2014." },
+    { q:"Wer führte Regie bei \"Portrait of a Lady on Fire\" (2019)?", a:["Alice Rohrwacher","Mia Hansen-Løve","Céline Sciamma","Claire Denis"], c:2, d:2, f:"Sciammas Film über verbotene Liebe zwischen einer Malerin und ihrem Modell — ohne Männerblick." },
+    { q:"In welchem Wim-Wenders-Film von 1987 beobachten Engel still das Leben der Berliner?", a:["Der Himmel über Berlin","Paris, Texas","Der Stand der Dinge","Alice in den Städten"], c:0, d:1, f:"\"Der Himmel über Berlin\" — Bruno Ganz und Otto Sander als Engel im geteilten Berlin." },
+    { q:"Welcher Yorgos-Lanthimos-Film von 2018 zeigt einen Machtkampf am englischen Königshof?", a:["The Lobster","Dogtooth","The Favourite","The Killing of a Sacred Deer"], c:2, d:2, f:"\"The Favourite\" mit Olivia Colman als Königin Anne — 10 Oscar-Nominierungen." },
+    { q:"Welcher Terrence-Malick-Film von 2011 beginnt mit einer Meditation über Gnade und Natur?", a:["Days of Heaven","The Tree of Life","The Thin Red Line","Badlands"], c:1, d:2, f:"\"The Tree of Life\" (2011) — Goldene Palme in Cannes; Brad Pitt und Sean Penn." },
+    { q:"Welcher Wenders-Film von 2023 zeigt einen Tokioter Toilettenreiniger in einem meditativen Alltag?", a:["Paris, Texas","Perfect Days","Pina","Im Lauf der Zeit"], c:1, d:2, f:"\"Perfect Days\" (2023) — Koji Yakusho gewann den Schauspielpreis in Cannes." },
   ],
 
   directors: [
@@ -92,6 +99,13 @@ export const Q = {
     { q:'Darren Aronofsky nutzte für "Requiem for a Dream" (2000) eine Kamerahalterung am Körper des Schauspielers — wie nennt man das?', a:["Steadicam","Rig Shot / Snorricam","Handheld","Dolly Zoom"], c:1, d:3, f:'Der Snorricam befestigt die Kamera am Körper — der Hintergrund bewegt sich, das Gesicht nicht.' },
     { q:'Paul Thomas Anderson arbeitete am engsten mit welchen zwei Schauspielern zusammen?', a:["Tom Hanks und Kevin Spacey","Philip Seymour Hoffman und Daniel Day-Lewis","Brad Pitt und Casey Affleck","Leonardo DiCaprio und Joaquin Phoenix"], c:1, d:2, f:'Hoffman war PTAs wichtigster Darsteller bis zu seinem Tod 2014 — danach Day-Lewis in "The Master" und "Phantom Thread".' },
     { q:'Für welchen Film gewann Kathryn Bigelow als erste Frau den Oscar für Beste Regie?', a:["Point Break","Strange Days","The Hurt Locker","Zero Dark Thirty"], c:2, d:1, f:'"The Hurt Locker" (2009) über US-Bombenentschärfer im Irak — sie besiegte dabei James Cameron ("Avatar").' },
+  
+    { q:"Welcher Regisseur ist bekannt für \"Parasite\", \"Snowpiercer\" und \"The Host\"?", a:["Park Chan-wook","Lee Chang-dong","Bong Joon-ho","Hong Sang-soo"], c:2, d:1, f:"Bong Joon-ho ist der erste Regisseur, der Goldene Palme UND Oscar (Bester Film) gewann." },
+    { q:"Welche Regisseurin drehte \"Promising Young Woman\" (2020) und gewann den Drehbuch-Oscar?", a:["Greta Gerwig","Lulu Wang","Chloe Zhao","Emerald Fennell"], c:3, d:2, f:"Emerald Fennell — Carey Mulligan als Cassie in einem eleganten Rache-Thriller." },
+    { q:"Welcher Regisseur ist für \"The Lobster\", \"The Favourite\" und \"Poor Things\" bekannt?", a:["Yorgos Lanthimos","Costa-Gavras","Michael Cacoyannis","Pantelis Voulgaris"], c:0, d:2, f:"Lanthimos wurde mit \"Dogtooth\" (2009) berühmt — sein absurder Stil ist unverwechselbar." },
+    { q:"Greta Gerwig erlangte weltweite Aufmerksamkeit mit welchem Film von 2023?", a:["Lady Bird","Little Women","Barbie","Frances Ha"], c:2, d:1, f:"\"Barbie\" (2023) spielte über 1,4 Milliarden Dollar ein — Gerwigs kommerzieller Durchbruch." },
+    { q:"Jordan Peele ist bekannt für gesellschaftskritischen Horror — welcher war sein Regiedebüt?", a:["Get Out","Us","Nope","Candyman"], c:0, d:1, f:"\"Get Out\" (2017) — Peele gewann den Oscar für Bestes Originaldrehbuch." },
+    { q:"Welcher Regisseur ist bekannt für \"The Witch\", \"The Lighthouse\" und \"The Northman\"?", a:["Ari Aster","Alex Garland","Ti West","Robert Eggers"], c:3, d:2, f:"Robert Eggers — historisch präzise Settings und eine dichte, archaische Atmosphäre." },
   ],
 
   world: [
@@ -125,6 +139,13 @@ export const Q = {
     { q:'In welchem Land entwickelte sich das "Neorealismo" nach dem Zweiten Weltkrieg?', a:["Spanien","Frankreich","Deutschland","Italien"], c:3, d:1, f:'Der italienische Neorealismus (De Sica, Rossellini, Visconti) zeigte das echte Leben — oft mit Laiendarstellern auf der Straße.' },
     { q:'Cristian Mungiu gewann 2007 die Goldene Palme für einen Film über eine illegale Abtreibung in Rumänien. Wie lautet der Titel?', a:["Polizeizeugnis","4 Monate, 3 Wochen und 2 Tage","Das schwarze Dreieck","The Death of Mr. Lazarescu"], c:1, d:2, f:'"4 Monate, 3 Wochen und 2 Tage" — ein schonungsloser Blick auf das Ceaușescu-Regime.' },
     { q:'Welcher Pedro-Almodóvar-Film gewann den Oscar für den besten fremdsprachigen Film und handelt von Frauen, Verlust und Identität?', a:["Volver","Frauen am Rande des Nervenzusammenbruchs","Alles über meine Mutter","Sprich mit ihr"], c:2, d:2, f:'"Alles über meine Mutter" (1999) — Almodóvars Oscar für den besten fremdsprachigen Film.' },
+  
+    { q:"Welcher japanische Film von Ryûsuke Hamaguchi (2021) gewann den Oscar für Besten fremdsprachigen Film?", a:["Shoplifters","Asako I & II","Drive My Car","Happy Hour"], c:2, d:2, f:"\"Drive My Car\" — 3 Stunden über Tschechow, Trauer und Schauspielerarbeit. Basiert auf Murakami." },
+    { q:"Welcher norwegische Film von Joachim Trier (2021) zeigt eine junge Frau bei der Suche nach ihrem Platz im Leben?", a:["Louder Than Bombs","Thelma","Reprise","The Worst Person in the World"], c:3, d:2, f:"Renate Reinsve gewann in Cannes den Preis als Beste Darstellerin." },
+    { q:"Welcher argentinische Regisseur drehte die Episodenfilm-Satire \"Wild Tales\" (2014)?", a:["Pablo Trapero","Lucrecia Martel","Damián Szifron","Walter Salles"], c:2, d:2, f:"\"Relatos Salvajes\" — 6 schwarzhumorige Kurzgeschichten über Rache und Wahnsinn." },
+    { q:"Welcher dänische Film von Thomas Vinterberg (2020) über das Experiment mit täglichem Alkohol gewann den Oscar?", a:["The Hunt","Submarino","The Celebration","Another Round"], c:3, d:1, f:"\"Another Round\" (Druk, 2020) — Mads Mikkelsen tanzt in der Schlussszene. Oscar für Besten fremdsprachigen Film." },
+    { q:"Welcher Film von Justine Triet (2023) zeigt einen Gerichtsprozess gegen eine Schriftstellerin und gewann die Goldene Palme?", a:["Portrait of a Lady on Fire","Anatomy of a Fall","Titane","Saint Omer"], c:1, d:2, f:"\"Anatomy of a Fall\" — Sandra Hüller als Angeklagte; gewann auch den Oscar für Bestes Drehbuch." },
+    { q:"Welcher türkische Film von Nuri Bilge Ceylan (2014) gewann die Goldene Palme?", a:["Uzak","Climates","Winter Sleep","Once Upon a Time in Anatolia"], c:2, d:2, f:"\"Winter Sleep\" (Kış Uykusu) — ein 3-stündiges, dialogreiches Kammerspiel auf einem anatolischen Plateau." },
   ],
 
   noir: [
@@ -158,6 +179,13 @@ export const Q = {
     { q:'In welchem David-Fincher-Film von 2007 sucht ein Journalist jahrelang nach einem nie gefassten Serienmörder?', a:["Se7en","The Game","Gone Girl","Zodiac"], c:3, d:2, f:'"Zodiac" (2007) — über den realen Zodiac-Killer, der nie identifiziert wurde; Finchers persönlichster Film.' },
     { q:'Wer spielt in "L.A. Confidential" (1997) den jungen, idealistischen Polizisten Bud White?', a:["Russell Crowe","Guy Pearce","Kevin Spacey","James Cromwell"], c:0, d:2, f:'Russell Crowe als Bud White — sein internationaler Durchbruch; Guy Pearce spielt den berechnenden Exley.' },
     { q:'Was charakterisiert den "Noir-Fatalismus" — die pessimistische Grundhaltung des Film Noir?', a:["Der Held gewinnt immer","Das Schicksal ist vorherbestimmt und kaum zu entkommen","Böse werden bestraft","Moral triumphiert am Ende"], c:1, d:2, f:'Noir-Helden scheitern oft trotz allem — das System ist korrupt, Gerechtigkeit eine Illusion.' },
+  
+    { q:"Welcher Film von Rian Johnson (2019) ist ein moderner Whodunit mit Daniel Craig als Detective Blanc?", a:["The Last Jedi","Looper","Glass Onion","Knives Out"], c:3, d:1, f:"\"Knives Out\" (2019) — ein Detektiv-Film, der das Genre gleichzeitig feiert und subvertiert." },
+    { q:"In welchem Netflix-Film von Rian Johnson (2022) löst Detective Blanc ein Rätsel auf einer griechischen Insel?", a:["Knives Out","The Last Jedi","Glass Onion: A Knives Out Mystery","Clue"], c:2, d:1, f:"\"Glass Onion\" (2022) — unter Tech-Milliardären; Ed Norton als Elon-Musk-ähnlicher Oligarch." },
+    { q:"In welchem britischen Film von Emerald Fennell (2023) dringt ein Oxford-Student in eine noble Familie ein?", a:["Saltburn","The Favourite","Poor Things","The Riot Club"], c:0, d:1, f:"\"Saltburn\" (2023) mit Barry Keoghan und Jacob Elordi — Neo-Gothic-Thriller der britischen Oberschicht." },
+    { q:"In welchem David-Fincher-Film von 2023 ist Michael Fassbender ein Auftragsmörder auf der Flucht?", a:["Mank","Gone Girl","The Killer","Zodiac"], c:2, d:2, f:"\"The Killer\" (2023) auf Netflix — nihilistisch, präzise, von The Smiths begleitet." },
+    { q:"In welchem iranischen Vampir-Noir von 2014 fährt eine Vampirin auf einem Skateboard durch eine Geisterstadt?", a:["A Girl Walks Home Alone at Night","The Babadook","Border","Raw"], c:0, d:2, f:"\"A Girl Walks Home Alone at Night\" von Ana Lily Amirpour — in Schwarz-Weiß, inspiriert von Spaghetti-Western." },
+    { q:"Welcher Film von Damien Chazelle (2018) zeigt Ryan Gosling als ersten Mann auf dem Mond?", a:["First Man","La La Land","Drive","Blade Runner 2049"], c:0, d:2, f:"\"First Man\" von Damien Chazelle — IMAX-Mondlandung aus Neil Armstrongs Innenperspektive." },
   ],
 
   cult: [
@@ -191,6 +219,13 @@ export const Q = {
     { q:'Was bedeutet "Camp" als kulturästhetischer Begriff in der Filmkultur?', a:["Extreme Gewaltdarstellung","Übertriebene, kitschige Ästhetik, die mit Ironie gefeiert wird","Dokumentarischer Realismus","Minimalistische Bildsprache"], c:1, d:2, f:'Susan Sontag definierte "Camp" 1964: die Liebe zum Übertriebenen, Theatralischen, Unnatürlichen.' },
     { q:'Welcher Mel-Brooks-Film parodiert den Hitchcock-Thriller-Stil?', a:["Young Frankenstein","Blazing Saddles","High Anxiety","Spaceballs"], c:2, d:2, f:'"High Anxiety" (1977) — Brooks\' liebevolle Verbeugung vor Hitchcock mit Zitaten aus Psycho, Vertigo und The Birds.' },
     { q:'Welcher britische Kulthorror von 1973 zeigt einen Polizisten, der zu einem heidnischen Ritual auf einer Insel gelockt wird?', a:["The Wicker Man","The Omen","Don\'t Look Now","Witchfinder General"], c:0, d:2, f:'"The Wicker Man" (1973) mit Christopher Lee — Nic Cage drehte 2006 ein berüchtigtes Remake.' },
+  
+    { q:"Welcher Lanthimos-Film zeigt Menschen, die in einem Hotel heiraten müssen — oder in Tiere verwandelt werden?", a:["The Lobster","The Favourite","The Killing of a Sacred Deer","Poor Things"], c:0, d:2, f:"\"The Lobster\" (2015) — Colin Farrell in einer absurden Parabel über Beziehungszwang." },
+    { q:"In welchem Film von Gaspar Noé (2018) gerät eine Tanzgruppe durch LSD im Sangria in einen Albtraum?", a:["Enter the Void","Climax","Love","Irréversible"], c:1, d:2, f:"\"Climax\" (2018) — gedreht in 15 Tagen; die Choreografie ist real, der Horror auch." },
+    { q:"Welcher Ruben-Östlund-Film (2014) zeigt einen Vater, der bei einem Lawinenalarm wegläuft und seine Familie beschämt?", a:["The Square","Triangle of Sadness","Play","Force Majeure"], c:3, d:2, f:"\"Force Majeure\" — in Deutschland \"Höhere Gewalt\"; eine bissige Satire auf Männlichkeit und Selbstbild." },
+    { q:"Welcher Cult-Horror-Film von Ti West (2022) ist eine Hommage an 70er-Slasher, gedreht in Neuseeland?", a:["Pearl","MaXXXine","X","Haunt"], c:2, d:2, f:"\"X\" (2022) — und sein Prequel \"Pearl\" (2022); Ti West rehabilitierte das Slasher-Genre als Kunstform." },
+    { q:"Welcher Film von Darren Aronofsky (2022) zeigt Brendan Fraser als morbid übergewichtigen Englischlehrer?", a:["The Whale","Pi","Requiem for a Dream","The Wrestler"], c:0, d:1, f:"\"The Whale\" (2022) — Brendan Fraser gewann den Oscar für Besten Hauptdarsteller." },
+    { q:"In welchem schwedischen Folk-Horror (2019) werden Besucher langsam in ein rituelles Fest verstrickt?", a:["The Witch","Hereditary","Midsommar","The Wicker Man"], c:2, d:1, f:"\"Midsommar\" (2019) von Ari Aster — Horror im hellen Sonnenlicht; existiert als 3-Stunden-Directors-Cut." },
   ],
 
   tech: [
@@ -223,6 +258,13 @@ export const Q = {
     { q:'Was ist ein "Establishing Shot"?', a:["Eine extreme Nahaufnahme des Gesichts","Eine weite Einstellung, die Ort und Kontext einer Szene zeigt","Eine Blende ins Schwarzweiß","Ein Zeitraffer"], c:1, d:1, f:'Der Establishing Shot orientiert das Publikum — z.B. Skyline der Stadt vor einer Szene darin.' },
     { q:'Wer komponierte die Filmmusik für Christopher Nolans "Interstellar", "Inception" und "The Dark Knight Rises"?', a:["John Williams","Bernard Herrmann","Jonny Greenwood","Hans Zimmer"], c:3, d:1, f:'Hans Zimmers massive Klanglandschaften prägten Nolans Filme — und definierten den modernen Blockbuster-Sound.' },
     { q:'Was ist eine "Einstellungsgröße" im Film — z.B. Totale, Halbtotale, Nahaufnahme?', a:["Die Länge einer Szene","Der Abstand zwischen Kamera und Motiv, der bestimmt wie viel vom Subjekt sichtbar ist","Eine Kamerabewegung","Die Lichtintensität einer Einstellung"], c:1, d:1, f:'Von der Weitaufnahme (Panorama) bis zur Detailaufnahme (Auge) — Einstellungsgrößen steuern die Nähe zum Geschehen.' },
+  
+    { q:"Was bezeichnet das \"Academy Ratio\" (1.33:1 / 4:3)?", a:["Das klassische Kino-Seitenverhältnis bis in die 1950er","Das Cinemascope-Format","Das IMAX-Format","Ein digitales 4K-Format"], c:0, d:2, f:"Heute als künstlerische Wahl wiederentdeckt — z.B. von Pawel Pawlikowski in \"Ida\" (2013)." },
+    { q:"Welcher Kameramann fotografierte \"Parasite\" (2019)?", a:["Hong Kyung-pyo","Roger Deakins","Sayombhu Mukdeeprom","Chung Chung-hoon"], c:0, d:3, f:"Hong Kyung-pyo — sein Licht in \"Parasite\" ist architektonisch präzise; auch DoP für \"Snowpiercer\"." },
+    { q:"Was ist IMAX?", a:["Ein Filmformat mit extrem hoher Auflösung und großem Filmbild","Ein Schnitt-Programm","Ein Kamerahersteller","Ein Tonsystem"], c:0, d:1, f:"IMAX-Kameras produzieren das größtmögliche Filmbild — Nolan dreht große Teile seiner Filme in IMAX." },
+    { q:"Was ist der Unterschied zwischen \"Score\" und \"Soundtrack\"?", a:["Kein Unterschied","Score ist Originalkomposition; Soundtrack enthält auch Songs","Soundtrack ist immer orchestral","Score enthält nur Sprache"], c:1, d:1, f:"Hans Zimmer schreibt Scores; ein Soundtrack-Album kann auch Songs enthalten (z.B. \"Guardians of the Galaxy\")." },
+    { q:"Was versteht man unter \"Anamorphic Widescreen\"?", a:["Ein Tonsystem","Eine Nahaufnahme-Technik","Optisch gestauchte Aufnahme, die ein breites Kinobild erzeugt","Eine Kamerabewegung"], c:2, d:2, f:"Anamorphic-Linsen erzeugen charakteristische Lichtstreifen (Lens Flares) und das klassische Breitbild." },
+    { q:"Was bedeutet \"Continuity Editing\"?", a:["Schnitt, der den räumlichen und zeitlichen Fluss nahtlos erscheinen lässt","Immer lange Takes ohne Schnitt","Ein Farbgrading-Verfahren","Ein Kamerabewegungsprinzip"], c:0, d:2, f:"Hollywood-Standard seit den 1910ern — der Schnitt soll unsichtbar bleiben, die Handlung fließen." },
   ],
 
   horror: [
@@ -256,6 +298,13 @@ export const Q = {
     { q:'Wer schrieb das Drehbuch zum ersten "Friday the 13th" (1980)?', a:["Wes Craven","John Carpenter","Victor Miller","James Wan"], c:2, d:2, f:'Victor Miller erschuf Jason Voorhees und Camp Crystal Lake — für 1,5 Millionen Dollar und 60 Millionen Einspielergebnis.' },
     { q:'Welcher James-Wan-Film begründete 2013 das Conjuring-Horroruniversum?', a:["Saw","Insidious","The Conjuring","Annabelle"], c:2, d:1, f:'"The Conjuring" (2013) — basierend auf den echten Fällen des Paranormal-Ehepaars Ed und Lorraine Warren.' },
     { q:'Welcher Horrorfilm von Wes Craven (1984) zeigt einen Mörder, der seine Opfer in Träumen angreift?', a:["Scream","The Hills Have Eyes","A Nightmare on Elm Street","The Last House on the Left"], c:2, d:1, f:'"A Nightmare on Elm Street" (1984) — Freddy Krueger ist eine der ikonischsten Figuren des Horror-Genres.' },
+  
+    { q:"Welcher Mike-Flanagan-Film auf Netflix zeigt einen Priester, der einer isolierten Gemeinde Wunder bringt?", a:["The Haunting of Hill House","Midnight Mass","Doctor Sleep","Oculus"], c:1, d:2, f:"\"Midnight Mass\" (2021) — Flanagans persönlichstes Werk; über Religion, Sucht und Unsterblichkeit." },
+    { q:"Welcher Folk-Horror-Film von Alex Garland (2022) zeigt eine Frau allein in der schottischen Wildnis?", a:["28 Days Later","Men","Ex Machina","Annihilation"], c:1, d:2, f:"\"Men\" (2022) mit Jessie Buckley — psychologischer Horror über Trauma und toxische Männlichkeit." },
+    { q:"Welcher Horrorfilm von 2022 beginnt als normale Airbnb-Geschichte und endet in einem unterirdischen Albtraum?", a:["Barbarian","Smile","Terrifier 2","The Black Phone"], c:0, d:2, f:"\"Barbarian\" (2022) von Zach Cregger — einer der überraschendsten Horrorfilme der letzten Jahre." },
+    { q:"In welchem James-Wan-Film von 2021 ist eine Frau mit einem entfernten Geschwisterwesen telepathisch verbunden?", a:["The Conjuring 3","Annabelle","Malignant","Insidious"], c:2, d:2, f:"\"Malignant\" (2021) — Wans wildester Film; barocke Gewaltchoreografie trifft Genre-Subversion." },
+    { q:"Von welchem Regisseur stammt der australische Horrorfilm \"The Babadook\" (2014)?", a:["Jennifer Kent","Leigh Whannell","James Wan","David Michôd"], c:0, d:2, f:"Jennifer Kent — Trauer und Mutterschaft als Horrormetapher; ein Meilenstein des modernen Horrors." },
+    { q:"Welcher Ti-West-Film (2022) ist das Prequel zu \"X\" und zeigt die junge Antagonistin als Mädchen in den 1910ern?", a:["MaXXXine","Pearl","House of the Devil","The Innkeepers"], c:1, d:2, f:"\"Pearl\" (2022) — Mia Goth schrieb das Drehbuch selbst; stylisiert wie ein Douglas-Sirk-Melodram." },
   ],
 
   indie: [
@@ -288,6 +337,13 @@ export const Q = {
     { q:'Welcher Ryan-Gosling-Film von 2010 zeigt nichtlinear den Aufstieg und Fall einer Beziehung?', a:["La La Land","Drive","Blue Valentine","The Place Beyond the Pines"], c:2, d:2, f:'"Blue Valentine" von Derek Cianfrance — Gosling und Michelle Williams; gedreht in zwei zeitlichen Ebenen.' },
     { q:'Welches war das erste Spielfilm-Debüt von Lena Dunham, gedreht für unter 50.000 Dollar?', a:["Tiny Furniture","Girls","Creative Nonfiction","Hannah Takes the Stairs"], c:0, d:3, f:'"Tiny Furniture" (2010) — ein Schlüsselwerk des Mumblecore-Genres und Dunhams Durchbruch.' },
     { q:'Welcher A24-Debütfilm von Celine Song (2023) zeigt eine verheiratete Frau, die ihren Jugendfreund in New York wiedertrifft?', a:["Aftersun","All of Us Strangers","Past Lives","The Taste of Things"], c:2, d:2, f:'"Past Lives" (2023) — über Erinnerung, Entscheidungen und die Frage, wer man hätte werden können.' },
+  
+    { q:"Welcher Film von Charlotte Wells (2022) zeigt eine Tochter, die Urlaubsvideos mit ihrem Vater analysiert?", a:["Aftersun","C'mon C'mon","Saint Maud","The Worst Person in the World"], c:0, d:1, f:"\"Aftersun\" — Paul Mescal und Frankie Corio; stille Melancholie über Vaterschaft und Verlust." },
+    { q:"Welcher A24-Film von 2022 zeigt Michelle Yeoh als Laundromat-Besitzerin, die durch das Multiversum kämpft?", a:["Minari","Past Lives","Everything Everywhere All at Once","The Whale"], c:2, d:1, f:"\"EEAAO\" — 7 Oscars; eine bunte Liebeserklärung an das Leben im Chaos." },
+    { q:"Welcher Film von Mike Mills (2021) zeigt Joaquin Phoenix als Radio-Journalist mit seinem Neffen?", a:["Her","Beginners","C'mon C'mon","20th Century Women"], c:2, d:2, f:"\"C'mon C'mon\" — in Schwarz-Weiß; über Kindsein, Erwachsensein und echtes Zuhören." },
+    { q:"Welcher Film von Justine Triet (2023) zeigt eine deutsche Schriftstellerin vor Gericht in den französischen Alpen?", a:["Saint Omer","Anatomy of a Fall","Titane","Portrait of a Lady on Fire"], c:1, d:2, f:"\"Anatomy of a Fall\" — Goldene Palme 2023 und Oscar für Bestes Drehbuch. Sandra Hüller." },
+    { q:"Paul Mescal spielte in welchem A24-Film einen jungen Vater im Urlaub mit seiner Tochter?", a:["Normal People","All of Us Strangers","The Banshees of Inisherin","Aftersun"], c:3, d:1, f:"\"Aftersun\" (2022) — Charlotte Wells' Regiedebüt; einer der bewegendsten Filme der letzten Jahre." },
+    { q:"Welcher A24-Film von 2023 zeigt eine verheiratete Frau, die ihren Jugendfreund in New York wiedertrifft?", a:["Aftersun","All of Us Strangers","The Worst Person in the World","Past Lives"], c:3, d:1, f:"\"Past Lives\" von Celine Song — über Erinnerung, Entscheidungen und wer man hätte werden können." },
   ],
 
   // --- NEUE KATEGORIEN ---
@@ -322,6 +378,13 @@ export const Q = {
     { q:'Welche Serie zeigte Matthew McConaughey und Woody Harrelson auf der Jagd nach einem Serienmörder?', a:["Mindhunter","True Detective","Ozark","Sharp Objects"], c:1, d:2, f:'"True Detective" Staffel 1 (2014) gilt als Meisterwerk des Crime-Genres.' },
     { q:'Wer produzierte und spielte die Hauptrolle in der britischen Serie "I May Destroy You"?', a:["Phoebe Waller-Bridge","Issa Rae","Michaela Coel","Lena Waithe"], c:2, d:2, f:'Michaela Coels autobiografische Serie über sexuellen Übergriff und Heilung.' },
     { q:'In welcher Serie dreht sich alles um rivalisierende Gangs in Birmingham der 1920er?', a:["Peaky Blinders","Boardwalk Empire","Taboo","Gangs of London"], c:0, d:1, f:'"Peaky Blinders" — die Shelby-Brüder nähten Rasierklingen in ihre Mützen.' },
+  
+    { q:"In welcher HBO-Serie überlebt ein Junge nach einer Pilzapokalypse mit einem Schützling im post-apokalyptischen Amerika?", a:["Station Eleven","The Walking Dead","The Last of Us","Fallout"], c:2, d:1, f:"\"The Last of Us\" (2023) — basierend auf dem Videospiel; Pedro Pascal und Bella Ramsey." },
+    { q:"In welcher Apple TV+-Serie sind die Arbeitserinnerungen der Mitarbeiter operativ von ihren privaten getrennt?", a:["For All Mankind","Severance","Foundation","Slow Horses"], c:1, d:1, f:"\"Severance\" (2022) — Ben Stiller führte Regie; Adam Scott in einem meisterhaft aufgebauten Büro-Albtraum." },
+    { q:"Welche HBO-Serie von Mike White zeigt Hotelgäste und -personal in moralischen Verstrickungen in einem Luxusresort?", a:["Succession","Big Little Lies","The White Lotus","Sharp Objects"], c:2, d:1, f:"\"The White Lotus\" Staffel 2 (2022) auf Sizilien — ein bissiger Blick auf Privilegien und Gier." },
+    { q:"In welcher HBO-Serie spielt Zendaya eine drogenabhängige Teenagerin namens Rue?", a:["Euphoria","Riverdale","Pretty Little Liars","13 Reasons Why"], c:0, d:1, f:"\"Euphoria\" (HBO, ab 2019) — Sam Levinsons Serie über Sucht, Identität und Gen-Z." },
+    { q:"Welche britische Krimiserie zeigt Sergeant Catherine Cawood in ihrer letzten Woche vor der Pension?", a:["Shetland","Happy Valley","Broadchurch","The Responder"], c:1, d:2, f:"\"Happy Valley\" Staffel 3 (2023) — Sarah Lancashire in einer der besten Serienvorstellungen der letzten Jahre." },
+    { q:"Welche Amazon-Serie zeigt Superhelden als skrupellose Konzernprodukte unter dem Mantel der Öffentlichkeit?", a:["Invincible","Jupiter's Legacy","The Boys","Umbrella Academy"], c:2, d:1, f:"\"The Boys\" (2019) — Karl Urban als Billy Butcher; eine zynische Satire auf Superhelden-Kultur und Medien." },
   ],
 
   animation: [
@@ -355,6 +418,13 @@ export const Q = {
     { q:'Welcher Studio-Ghibli-Film von Isao Takahata zeigt zwei japanische Geschwister, die im Zweiten Weltkrieg verhungern?', a:["Nausicaä","Das Grab der Glühwürmchen","Mein Nachbar Totoro","Das Schloss im Himmel"], c:1, d:2, f:'"Das Grab der Glühwürmchen" (1988) gilt als einer der bewegendsten Antikriegsfilme aller Zeiten.' },
     { q:'Welche japanische Animationsregisseurin ist bekannt für "A Silent Voice" (2016)?', a:["Makoto Shinkai","Satoshi Kon","Naoko Yamada","Isao Takahata"], c:2, d:3, f:'"A Silent Voice" von Naoko Yamada behandelt Taubheit, Mobbing und Schuld.' },
     { q:'Welcher Pixar-Film zeigt, was wäre, wenn der Asteroid nie die Dinosaurier ausgelöscht hätte?', a:["The Good Dinosaur","Brave","Cars 3","Onward"], c:0, d:2, f:'"The Good Dinosaur" (2015) — Dinosaurier wurden zu Bauern, Menschen zu wilden Wesen.' },
+  
+    { q:"Welcher Miyazaki-Film von 2023 ist sein erster Langfilm seit \"The Wind Rises\" (2013)?", a:["The Boy and the Heron","Earwig and the Witch","The Cat Returns","Princess Kaguya"], c:0, d:1, f:"\"The Boy and the Heron\" (2023) — Miyazakis persönlichstes und rätselhaftestes Spätwerk." },
+    { q:"Welcher Pixar-Film von 2022 zeigt Mei Lee, die sich in einen roten Panda verwandelt, wenn sie gestresst ist?", a:["Brave","Encanto","Turning Red","Soul"], c:2, d:1, f:"\"Turning Red\" — Domee Shi als erste asiatisch-amerikanische Pixar-Regisseurin." },
+    { q:"Welcher irische Animationsfilm von Tomm Moore (2020) handelt von Werwolf-Legenden im mittelalterlichen Irland?", a:["Wolfwalkers","Song of the Sea","The Breadwinner","Secret of Kells"], c:0, d:2, f:"\"Wolfwalkers\" (2020) — handgezeichnet, BAFTA-Gewinner, auf Apple TV+." },
+    { q:"Welcher Anime-Film von Makoto Shinkai (2016) verbindet zwei Jugendliche durch Zeitreise und Körpertausch?", a:["5 Centimeters per Second","Weathering with You","A Silent Voice","Your Name (Kimi no Na wa)"], c:3, d:1, f:"\"Your Name\" (Kimi no Na wa, 2016) — der international erfolgreichste Anime-Film aller Zeiten." },
+    { q:"Welcher Disney-Animationsfilm von 2021 spielt in einem magischen kolumbianischen Haus mit Songs von Lin-Manuel Miranda?", a:["Encanto","Coco","Moana","Luca"], c:0, d:1, f:"\"Encanto\" (2021) — \"We Don't Talk About Bruno\" wurde der meistgestreamte Disney-Song überhaupt." },
+    { q:"Welcher Wes-Anderson-Stop-Motion-Film von 2018 spielt in einer japanischen Hunde-Dystopie?", a:["Fantastic Mr. Fox","Isle of Dogs","The Grand Budapest Hotel","Asteroid City"], c:1, d:1, f:"\"Isle of Dogs\" (2018) — Bryan Cranston, Bill Murray, Tilda Swinton als Hunde." },
   ],
 
   superhero: [
@@ -388,6 +458,13 @@ export const Q = {
     { q:'Wie heißt der dritte Teil von Christopher Nolans Batman-Trilogie?', a:["Batman Begins","The Dark Knight","The Dark Knight Rises","Batman Forever"], c:2, d:1, f:'"The Dark Knight Rises" (2012) — mit Tom Hardy als Bane.' },
     { q:'Wer spielt Carol Danvers / Captain Marvel im MCU?', a:["Scarlett Johansson","Cate Blanchett","Brie Larson","Elizabeth Olsen"], c:2, d:1, f:'Brie Larson debütierte 2019 als Captain Marvel.' },
     { q:'In welchem Jahr erschien "Iron Man" als erster Film des Marvel Cinematic Universe?', a:["2005","2006","2007","2008"], c:3, d:1, f:'"Iron Man" (2008) startete das MCU mit Robert Downey Jr. und der legendären Post-Credits-Szene mit Nick Fury.' },
+  
+    { q:"Welche Amazon-Serie zeigt Superhelden als skrupellose Konzernprodukte?", a:["Invincible","Jupiter's Legacy","Umbrella Academy","The Boys"], c:3, d:1, f:"\"The Boys\" (2019) — Karl Urban als Billy Butcher; eine zynische Satire auf Superhelden-Kultur." },
+    { q:"Welcher Marvel-Film von Sam Raimi (2022) zeigt Doctor Strange auf einer Reise durch alternative Universen?", a:["Avengers: Endgame","Spider-Man: No Way Home","Doctor Strange in the Multiverse of Madness","Thor: Love and Thunder"], c:2, d:1, f:"\"Doctor Strange in the Multiverse of Madness\" — Raimi brachte seinen Horror-Stil ins MCU." },
+    { q:"In welchem Animationsfilm zeigt jede Spider-Man-Dimension ihren eigenen Zeichenstil?", a:["Into the Spider-Verse","Spider-Man 2","Spider-Man: No Way Home","Across the Spider-Verse"], c:3, d:1, f:"\"Across the Spider-Verse\" (2023) — jede Dimension hat eigene Animation; revolutionäres Filmhandwerk." },
+    { q:"Wer spielt die Hauptrolle in \"Joker: Folie à Deux\" (2024)?", a:["Heath Ledger","Jared Leto","Joaquin Phoenix","Jack Nicholson"], c:2, d:1, f:"Joaquin Phoenix — er verkörperte Arthur Fleck bereits in \"Joker\" (2019), der die Goldene Palme in Venedig gewann." },
+    { q:"Welcher X-Men-Film von 2017 zeigt einen gealterten Wolverine in einer postapokalyptischen Wüstenlandschaft?", a:["X-Men: Days of Future Past","X-Men: Apocalypse","Logan","The Wolverine"], c:2, d:1, f:"\"Logan\" (2017) von James Mangold — der erste R-rated Superhelden-Film, der für den Oscar nominiert wurde." },
+    { q:"Welcher Marvel-Charakter ist die erste indigene Hauptfigur im MCU (2024)?", a:["Kamala Khan","America Chavez","Echo","Shang-Chi"], c:2, d:2, f:"\"Echo\" (Maya Lopez, 2024) — taubstumm und Choctaw; erste indigene MCU-Hauptfigur." },
   ],
 
   oscars: [
@@ -421,6 +498,13 @@ export const Q = {
     { q:'Wer hält den Rekord für die meisten gewonnenen Oscars einer einzelnen Person?', a:["Katharine Hepburn","Walt Disney","Meryl Streep","John Ford"], c:1, d:3, f:'Walt Disney gewann 22 kompetitive Oscars — kein anderer Mensch kommt auch nur annähernd heran.' },
     { q:'In welchem Theater werden die Oscar-Verleihungen heute traditionell abgehalten?', a:["Grauman\'s Chinese Theatre","Hollywood Bowl","Dolby Theatre","TCL Chinese Theatre"], c:2, d:2, f:'Das Dolby Theatre in Hollywood ist seit 2002 das Zuhause der Academy Awards.' },
     { q:'Welcher Schauspieler gewann für seine Rolle in "Whiplash" (2014) den Oscar als Bester Nebendarsteller?', a:["Miles Teller","Terrence Howard","J.K. Simmons","Jared Leto"], c:2, d:1, f:'J.K. Simmons spielte Terence Fletcher — den kompromisslosen Jazzlehrer, der seinen Schüler zerstört.' },
+  
+    { q:"Welcher Film gewann bei der 96. Oscarverleihung (2024) den Hauptpreis \"Bester Film\"?", a:["Oppenheimer","Barbie","Poor Things","Killers of the Flower Moon"], c:0, d:1, f:"\"Oppenheimer\" von Christopher Nolan — 7 Oscars; Cillian Murphy als Bester Hauptdarsteller." },
+    { q:"Wer gewann den Oscar für Beste Hauptdarstellerin 2023 für \"Everything Everywhere All at Once\"?", a:["Cate Blanchett","Michelle Yeoh","Ana de Armas","Margot Robbie"], c:1, d:1, f:"Michelle Yeoh — die erste Asiatin, die den Hauptdarstellerinnen-Oscar gewann." },
+    { q:"Welcher Film von Jonathan Glazer (2023) zeigt den Alltag des Auschwitz-Kommandanten als Horror der Normalität?", a:["Son of Saul","The Zone of Interest","The Reader","Ida"], c:1, d:2, f:"\"The Zone of Interest\" — Horror durch radikale Auslassung; Oscar für Besten fremdsprachigen Film 2024." },
+    { q:"Welcher Film von Sean Baker gewann bei den Oscars 2025 den Hauptpreis?", a:["Red Rocket","Anora","Tangerine","The Florida Project"], c:1, d:2, f:"\"Anora\" (2024) — Mikey Madison als Tänzerin, die einen Oligarchensohn heiratet. Goldene Palme UND Oscar." },
+    { q:"Welcher Film von Todd Field (2022) mit Cate Blanchett erhielt 8 Nominierungen aber keinen Oscar?", a:["Tár","The Banshees of Inisherin","Living","Empire of Light"], c:0, d:2, f:"\"Tár\" — Cate Blanchett als Dirigentin; eine der eindrucksvollsten Vorstellungen des Jahrzehnts." },
+    { q:"Als welcher Film wurde bei der 89. Oscar-Verleihung (2017) fälschlicherweise der Bester-Film-Sieger verkündet?", a:["La La Land","Spotlight","The Revenant","Moonlight"], c:0, d:1, f:"Warren Beatty las \"La La Land\" vor — Sieger war \"Moonlight\". Eine der größten Oscar-Pannen der Geschichte." },
   ],
 
   german: [
@@ -454,6 +538,13 @@ export const Q = {
     { q:'Welcher deutsche Film zeigt die letzte Zeit der Geschwister Hans und Sophie Scholl vor ihrer Hinrichtung?', a:["Der Untergang","Hannah Arendt","Sophie Scholl — Die letzten Tage","Das weiße Band"], c:2, d:1, f:'"Sophie Scholl — Die letzten Tage" (2005) — Julia Jentsch gewann für die Hauptrolle den Silbernen Bären.' },
     { q:'Wie viele Staffeln hat die deutsche Netflix-Zeitreise-Serie "Dark"?', a:["1","2","3","4"], c:2, d:1, f:'"Dark" (2017–2020) erzählt über 3 Staffeln von Zeitreisen und einem Paradoxon über vier Generationen.' },
     { q:'Welcher Film zeigt die Geschichte der RAF-Terroristen Baader, Meinhof und Ensslin?', a:["Der Baader Meinhof Komplex","Stammheim","Die bleierne Zeit","Deutschland im Herbst"], c:0, d:2, f:'"Der Baader Meinhof Komplex" (2008) von Uli Edel — für den Oscar als bester fremdsprachiger Film nominiert.' },
+  
+    { q:"Welcher deutsche Film gewann 2023 den Oscar für Besten internationalen Film?", a:["Das Boot","Im Westen nichts Neues","Stalingrad","Das weiße Band"], c:1, d:1, f:"\"Im Westen nichts Neues\" (2022) von Edward Berger — vierter Oscar für Deutschland." },
+    { q:"Welche Schauspielerin wurde für ihre Rollen in \"Anatomy of a Fall\" und \"The Zone of Interest\" (beide 2023) gefeiert?", a:["Sandra Hüller","Martina Gedeck","Diane Kruger","Corinna Harfouch"], c:0, d:1, f:"Sandra Hüller — zwei internationale Top-Produktionen im selben Jahr; eine der gefragtesten europäischen Darstellerinnen." },
+    { q:"Welcher deutsche Film von İlker Çatak (2023) zeigt Lehrermacht als Schulsystem-Thriller?", a:["Das weiße Band","Systemsprenger","Das Lehrerzimmer","Lara"], c:2, d:2, f:"\"Das Lehrerzimmer\" (2023) — Leonie Benesch als Lehrerin im Sog von Verdacht und System." },
+    { q:"Welcher Christian-Petzold-Film von 2023 spielt als Sommerdrama vor dem Hintergrund von Waldbränden?", a:["Phoenix","Transit","Afire","Undine"], c:2, d:2, f:"\"Afire\" (Roter Himmel, 2023) — Petzolds Sommerfilm; Silberner Bär in Berlin." },
+    { q:"Wim Wenders gewann 2023 den Schauspielpreis in Cannes mit welchem Film?", a:["Paris, Texas","Pina","Perfect Days","Im Lauf der Zeit"], c:2, d:2, f:"\"Perfect Days\" (2023) — ein japanischer Toilettenreiniger als Held; Koji Yakusho gewann den Darstellerpreis." },
+    { q:"Welcher österreichische Regisseur ist für \"Amour\" (2012) und \"Das weiße Band\" (2009) bekannt?", a:["Stefan Ruzowitzky","Ulrich Seidl","Barbara Albert","Michael Haneke"], c:3, d:1, f:"Haneke (Österreicher, dreht oft auf Französisch) — zwei Goldene Palmen, ein europäisches Gewissen." },
   ],
 
   comedy: [
@@ -487,6 +578,13 @@ export const Q = {
     { q:'In welchem Film von Todd Phillips wacht eine Männergruppe in Las Vegas auf und kann sich an nichts erinnern?', a:["Old School","Wedding Crashers","Bachelor Party","The Hangover"], c:3, d:1, f:'"The Hangover" (2009) — drei Männer suchen ihren verschwundenen Freund vor seiner Hochzeit.' },
     { q:'Welcher Komödienregisseur ist bekannt für "Knocked Up", "The 40-Year-Old Virgin" und "Superbad"?', a:["Todd Phillips","Adam McKay","Judd Apatow","Paul Feig"], c:2, d:2, f:'Judd Apatow prägte die roh-ehrlichen R-rated Komödien der 2000er.' },
     { q:'In welchem Adam-Sandler-Film muss ein verwöhnter Erbe alle Schulklassen neu durchlaufen?', a:["Big Daddy","Happy Gilmore","The Waterboy","Billy Madison"], c:3, d:1, f:'"Billy Madison" (1995) — Adam Sandler muss die Grundschule bis Abitur wiederholen, um das Firmenimperium zu erben.' },
+  
+    { q:"Welcher Ruben-Östlund-Film von 2022 zeigt einen toxischen Luxus-Kreuzfahrt-Trip mit Superreichen?", a:["Force Majeure","The Square","Triangle of Sadness","Play"], c:2, d:1, f:"\"Triangle of Sadness\" — Goldene Palme 2022; eine dreistufige Satire über Klasse, Würde und Kotzen." },
+    { q:"Welcher Film von Rian Johnson (2022) zeigt Detective Blanc bei einer Ermittlung unter Tech-Milliardären?", a:["Glass Onion","Knives Out","The Last Jedi","Clue"], c:0, d:1, f:"\"Glass Onion: A Knives Out Mystery\" (2022) auf Netflix — satirischer als Teil 1." },
+    { q:"Welcher Film von 2022 zeigt ein Exklusiv-Restaurant mit einem tödlich ernst gemeinten Abend-Menü?", a:["The Bear","Julie & Julia","Burnt","The Menu"], c:3, d:1, f:"\"The Menu\" (2022) mit Ralph Fiennes und Anya Taylor-Joy — Satire auf Foodie-Kultur und Privilegien." },
+    { q:"Welcher Film von Greta Gerwig (2023) mit Margot Robbie spielte über 1,4 Milliarden Dollar ein?", a:["Little Women","Lady Bird","Barbie","Frances Ha"], c:2, d:1, f:"\"Barbie\" (2023) — Ryan Gosling als Ken war für den Oscar nominiert." },
+    { q:"Welcher Yorgos-Lanthimos-Film von 2023 zeigt eine wieder zum Leben erweckte Frau in einer surrealen viktorianischen Welt?", a:["Poor Things","The Lobster","The Favourite","Dogtooth"], c:0, d:1, f:"\"Poor Things\" (2023) — Emma Stone gewann den Oscar; Goldene Palme in Venedig." },
+    { q:"Welcher Adam-McKay-Film (2021) zeigt Wissenschaftler, die vergeblich vor einem Asteroiden warnen?", a:["The Big Short","Vice","Don't Look Up","Step Brothers"], c:2, d:1, f:"\"Don't Look Up\" (2021) — Netflix-Satire auf Medienverweigerung und politischen Populismus." },
   ],
 
   musical: [
@@ -520,6 +618,13 @@ export const Q = {
     { q:'Welcher Film von Baz Luhrmann aus dem Jahr 2022 erzählt das Leben von Elvis Presley?', a:["Rocketman","Bohemian Rhapsody","Elvis","Walk the Line"], c:2, d:1, f:'"Elvis" (2022) mit Austin Butler als Elvis und Tom Hanks als Colonel Tom Parker.' },
     { q:'In welchem Film spielt Jennifer Lopez ihre Durchbruchsrolle als Tejano-Sängerin?', a:["Coco","Selena","La Bamba","Mi Familia"], c:1, d:2, f:'"Selena" (1997) — das Biopic über Selena Quintanilla-Pérez, die Königin der Tejano-Musik.' },
     { q:'Welcher Komponist schrieb zusammen mit Stephen Sondheim als Texter die Musik zu "West Side Story" (1957)?', a:["Cole Porter","George Gershwin","Leonard Bernstein","Jule Styne"], c:2, d:2, f:'Leonard Bernsteins Musik und Sondheims Texte schufen eines der bedeutendsten Musicals der Geschichte.' },
+  
+    { q:"Welcher Biopic-Musicalfilm von 2019 zeigt das Leben von Elton John mit Taron Egerton?", a:["Bohemian Rhapsody","Judy","Rocketman","Walk the Line"], c:2, d:1, f:"\"Rocketman\" (2019) — Egerton singt selbst. Gewann den Oscar für Besten Filmsong." },
+    { q:"In welchem Film singt Lady Gaga \"Shallow\" und gewann dafür den Oscar?", a:["Joker","A Star Is Born","House of Gucci","Maestro"], c:1, d:1, f:"\"A Star Is Born\" (2018) von Bradley Cooper — Gaga gewann den Oscar für Besten Filmsong." },
+    { q:"Welcher Disney-Film von 2021 mit Songs von Lin-Manuel Miranda spielt in einem magischen kolumbianischen Haus?", a:["Coco","Moana","Encanto","Raya and the Last Dragon"], c:2, d:1, f:"\"Encanto\" (2021) — \"We Don't Talk About Bruno\" wurde der meistgestreamte Disney-Song aller Zeiten." },
+    { q:"Welche Schauspielerin spielte in \"Wicked\" (2024) die Hexe Elphaba?", a:["Ariana Grande","Jennifer Hudson","Beyoncé","Cynthia Erivo"], c:3, d:1, f:"\"Wicked\" (2024) von Jon M. Chu — Cynthia Erivo als Elphaba, Ariana Grande als Glinda." },
+    { q:"In welchem Baz-Luhrmann-Film (2022) zeigt Austin Butler das Leben von Elvis Presley?", a:["Moulin Rouge!","Elvis","Australia","The Great Gatsby"], c:1, d:1, f:"\"Elvis\" (2022) — Austin Butler gewann den Golden Globe; Tom Hanks als Colonel Parker." },
+    { q:"Welcher Lin-Manuel-Miranda-Film (2021) basiert auf seinem ersten Broadway-Musical über Washington Heights?", a:["Hamilton","Tick Tick Boom","In the Heights","The Prom"], c:2, d:2, f:"\"In the Heights\" (2021) — über den Zusammenhalt eines Latino-Viertels in New York." },
   ],
 
   scifi: [
@@ -553,6 +658,13 @@ export const Q = {
     { q:'Welcher Film von Alex Garland zeigt eine Forscherin, die in eine geheimnisvolle Zone eindringt, in der Natur mutiert?', a:["Annihilation","Arrival","Contact","Life"], c:0, d:3, f:'"Annihilation" (2018) — basierend auf Jeff VanderMeers Roman; hypnotisch und unerklärlich.' },
     { q:'In welchem Spielberg-Film werden Menschen durch eine riesige Bergformation magisch zu Außerirdischen hingezogen?', a:["E.T.","Close Encounters of the Third Kind","War of the Worlds","A.I."], c:1, d:2, f:'"Close Encounters of the Third Kind" (1977) — Richard Dreyfuss und der ikonische Devils Tower in Wyoming.' },
     { q:'Welcher Bong-Joon-ho-Film spielt auf einem ewigen Zug, in dem eine Klassengesellschaft nach der Apokalypse überlebt?', a:["Parasite","Okja","Snowpiercer","Memories of Murder"], c:2, d:2, f:'"Snowpiercer" (2013) — basierend auf dem französischen Comic "Le Transperceneige".' },
+  
+    { q:"Welcher Jordan-Peele-Film (2022) zeigt eine Horseman-Familie, die ein UFO über ihrer Ranch beobachtet?", a:["Get Out","Nope","Us","Candyman"], c:1, d:1, f:"\"Nope\" (2022) — ein Film über das Spektakel, Schaulust und das Kino selbst." },
+    { q:"Welcher Denis-Villeneuve-Film (2021) zeigt Timothée Chalamet als Paul Atreides auf dem Wüstenplaneten Arrakis?", a:["Dune","Arrival","Blade Runner 2049","Prisoners"], c:0, d:1, f:"\"Dune\" (2021) — Frank Herberts Romanadaption; Villeneuve schuf einen modernen Sci-Fi-Epos." },
+    { q:"In welchem Film von 2014 kämpft Tom Cruise immer wieder denselben Schlachttag durch?", a:["Minority Report","Oblivion","Mission: Impossible","Edge of Tomorrow"], c:3, d:1, f:"\"Edge of Tomorrow\" (2014) — basierend auf dem Manga \"All You Need Is Kill\"." },
+    { q:"Welcher Sci-Fi-Film von Gareth Edwards (2023) zeigt einen Konflikt zwischen Menschen und KI in Asien?", a:["WALL-E","The Mitchells vs. the Machines","The Creator","Lightyear"], c:2, d:2, f:"\"The Creator\" (2023) — visuell beeindruckend; auf Consumer-Kameras gedreht für handgemachten Look." },
+    { q:"In welchem Film von 2024 zeigt Alex Garland einen Bürgerkrieg im nahen Amerika aus Perspektive einer Kriegsfotografin?", a:["28 Days Later","Ex Machina","Men","Civil War"], c:3, d:2, f:"\"Civil War\" (2024) — keine klare politische Seite; ein Film über das Dokumentieren von Gewalt." },
+    { q:"Welcher Dune-Fortsetzungsfilm von Denis Villeneuve erschien 2024?", a:["Dune: Part Two","Dune: Messiah","Dune: Awakening","Dune: Jihad"], c:0, d:1, f:"\"Dune: Part Two\" (2024) — Zendaya bekommt deutlich mehr Screentime als im ersten Teil." },
   ],
 
   nineties: [
@@ -586,6 +698,13 @@ export const Q = {
     { q:'Welcher Keanu-Reeves-Film von 1994 dreht sich um einen Bus, der nicht unter 50 Meilen pro Stunde fahren darf?', a:["Point Break","Johnny Mnemonic","Speed","Chain Reaction"], c:2, d:1, f:'"Speed" (1994) mit Sandra Bullock — der Bus, der niemals stoppen darf.' },
     { q:'In welchem Film von 1998 lebt Jim Carrey sein gesamtes Leben in einer heimlich ausgestrahlten TV-Show?', a:["Liar Liar","Man on the Moon","The Truman Show","Ace Ventura"], c:2, d:1, f:'"The Truman Show" (1998) von Peter Weir — einer von Carreys wichtigsten dramatischen Filmen.' },
     { q:'In welchem Stephen-King-Film von 1990 wird ein Schriftsteller von seiner "Nummer-1-Fans" entführt und gefangen gehalten?', a:["It","Stand by Me","Carrie","Misery"], c:3, d:1, f:'"Misery" (1990) — Kathy Bates gewann den Oscar für ihre Rolle als fanatische Annie Wilkes.' },
+  
+    { q:"In welchem Film von Harold Ramis (1993) wacht ein Weatherman denselben Tag immer wieder auf?", a:["Liar Liar","Groundhog Day","The Truman Show","Multiplicity"], c:1, d:1, f:"\"Groundhog Day\" (1993) — Bill Murray in Punxsutawney; das zeitloseste Zeitschleifen-Konzept des Kinos." },
+    { q:"Welcher Film von Ridley Scott (1991) zeigt zwei Frauen auf einer Flucht durch Amerika?", a:["Alien","Thelma & Louise","Gladiator","Black Hawk Down"], c:1, d:1, f:"\"Thelma & Louise\" (1991) — Susan Sarandon und Geena Davis; ein feministischer Road-Movie-Klassiker." },
+    { q:"In welchem Film von Mel Gibson (1995) kämpft ein schottischer Freiheitsheld gegen die Engländer?", a:["Braveheart","The Patriot","Gladiator","Apocalypse Now"], c:0, d:1, f:"\"Braveheart\" (1995) — Gibson spielte und inszenierte; gewann 5 Oscars inklusive Bester Film." },
+    { q:"In welchem Film von Paul Verhoeven (1992) spielt Sharon Stone eine Mordverdächtige in einem Verhör?", a:["Total Recall","Basic Instinct","Showgirls","Starship Troopers"], c:1, d:1, f:"\"Basic Instinct\" (1992) — Michael Douglas; die Verhör-Szene mit Sharon Stone ist ikonisch." },
+    { q:"Welcher Tim-Burton-Film von 1990 zeigt einen scherenhändigen Außenseiter in einer Vorstadtidylle?", a:["Beetlejuice","Edward Scissorhands","Batman","Batman Returns"], c:1, d:1, f:"\"Edward Scissorhands\" (1990) — Johnny Depp in seiner ersten Zusammenarbeit mit Tim Burton." },
+    { q:"Welcher John-Singleton-Film von 1991 zeigt das Leben in den Compton-Straßen aus Sicht junger schwarzer Männer?", a:["Menace II Society","Boyz n the Hood","Juice","Poetic Justice"], c:1, d:2, f:"\"Boyz n the Hood\" (1991) — Singleton wurde mit 24 Jahren für den Oscar nominiert; Ice Cube in seiner ersten Filmrolle." },
   ],
 
   worldcinema: [
@@ -619,6 +738,14 @@ export const Q = {
     { q:'Welcher iranische Regisseur drehte trotz Berufsverbot heimlich "This Is Not a Film" (2011) und schmuggelte ihn auf einem USB-Stick aus dem Iran?', a:["Abbas Kiarostami","Jafar Panahi","Mohsen Makhmalbaf","Bahman Ghobadi"], c:1, d:3, f:'Panahi wurde 2010 mit Filmverbot belegt — der Film wurde auf einem USB-Stick im Kuchen versteckt.' },
     { q:'Welcher taiwanische Regisseur drehte das 3-stündige Familiendrama "Yi Yi" (2000)?', a:["Hou Hsiao-Hsien","Edward Yang","Tsai Ming-liang","Ang Lee"], c:1, d:3, f:'"Yi Yi" von Edward Yang — ein Meisterwerk über eine Taipaier Familie und das ganz normale Leben.' },
     { q:'Welcher russische Film von Andrei Zvyagintsev zeigt staatliche Korruption in einem russischen Küstendorf?', a:["The Return","Elena","Loveless","Leviathan"], c:3, d:3, f:'"Leviathan" (2014) gewann den Preis für das beste Drehbuch in Cannes und war für den Oscar nominiert.' },
+  
+    { q:"Welcher dänische Film von Thomas Vinterberg (2020) über ein Alkohol-Experiment mit Mads Mikkelsen gewann den Oscar?", a:["The Hunt","Submarino","The Celebration","Another Round"], c:3, d:1, f:"\"Another Round\" (Druk) — Mads Mikkelsens Tanzszene am Ende ist unvergesslich." },
+    { q:"Welcher Film von Justine Triet (2023) zeigt einen Gerichtsprozess gegen eine Schriftstellerin und gewann die Goldene Palme?", a:["Anatomy of a Fall","Portrait of a Lady on Fire","Saint Omer","Titane"], c:0, d:1, f:"\"Anatomy of a Fall\" — Sandra Hüller; gewann auch den Oscar für Bestes Drehbuch." },
+    { q:"Welcher österreichisch-britische Film von Jonathan Glazer (2023) zeigt den Alltag des Auschwitz-Kommandanten?", a:["Son of Saul","The Reader","Ida","The Zone of Interest"], c:3, d:2, f:"\"The Zone of Interest\" — Horror durch radikale Auslassung; Oscar für Besten fremdsprachigen Film 2024." },
+    { q:"Welcher Film von Lucrecia Martel aus dem Jahr 2017 zeigt einen spanischen Konquistador in Südamerika als Albtraum?", a:["La Ciénaga","The Holy Girl","The Headless Woman","Zama"], c:3, d:3, f:"\"Zama\" (2017) — Martels langer erwarteter Comeback; ein desorientierender historischer Film über Macht und Verfall." },
+    { q:"Welcher israelische Animationsfilm von Ari Folman (2008) zeigt das Massaker von Sabra und Schatila?", a:["The Band's Visit","Waltz with Bashir","Foxtrot","Lebanon"], c:1, d:2, f:"\"Waltz with Bashir\" — Erinnerungsverdrängung als Animation; Golden Globe-Gewinner." },
+    { q:"Welcher Film von Hirokazu Kore-eda (2018) zeigt eine Familie, die ihren Lebensunterhalt mit Diebstahl verdient?", a:["Nobody Knows","Like Father Like Son","Shoplifters","Our Little Sister"], c:2, d:1, f:"\"Shoplifters\" (Manbiki Kazoku) — Goldene Palme 2018; ein zartes, erschütterndes Portrait einer improvisierten Familie." },
   ],
 
 };
+
