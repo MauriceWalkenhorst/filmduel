@@ -1,6 +1,24 @@
 // app.js
 import { CATS, Q } from './categories.js';
 
+function spawnParticleBurst(el) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const dist  = 45 + Math.random() * 20;
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = cx + 'px';
+    p.style.top  = cy + 'px';
+    p.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+    p.style.setProperty('--ty', `${Math.sin(angle) * dist}px`);
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 600);
+  }
+}
+
 window.QPR = 3;
 window.TSEC = 20;
 
@@ -273,7 +291,7 @@ function startTimer() {
     G.timeLeft--;
     tn.textContent = G.timeLeft;
     tf.style.width = `${(G.timeLeft / window.TSEC) * 100}%`;
-    if (G.timeLeft <= 5) tf.className = 'timer-fill bg-c-red';
+    if (G.timeLeft <= 5) tf.className = 'timer-fill bg-c-red timer-glow';
     else if (G.timeLeft <= 10) tf.className = 'timer-fill bg-c-orange';
     else tf.className = 'timer-fill bg-c-gold';
 
@@ -320,7 +338,15 @@ window.ansQ = function(idx, el) {
 
   const btns = document.querySelectorAll('.btn-ans');
   btns[cor].classList.add('correct');
-  if (!isOk && el) el.classList.add('wrong');
+  if (isOk && el) {
+    spawnParticleBurst(el);
+  }
+  if (!isOk && el) {
+    el.classList.add('wrong');
+    const grid = document.getElementById('ans-grid');
+    grid.classList.add('animate-shake');
+    setTimeout(() => grid.classList.remove('animate-shake'), 400);
+  }
 
   const fb = document.getElementById('fact-box');
   if (q.f) {
