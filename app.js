@@ -463,21 +463,23 @@ window.showRes = function() {
         if (barEl)      setTimeout(() => { barEl.style.width = `${progress}%`; }, 500);
       }
 
-      // Neue Badges
-      if (identity.newBadges.length > 0) {
-        const badgesBlock = document.getElementById('new-badges-block');
-        if (badgesBlock) {
-          badgesBlock.style.display = 'flex';
-          badgesBlock.innerHTML = identity.newBadges.map(b => `
-            <div class="bg-c-card border border-c-gold rounded-xl p-4 flex items-center gap-3 animate-pop">
-              <span class="text-2xl">${b.emoji}</span>
-              <div>
-                <div class="font-condensed text-xs uppercase tracking-widest text-c-muted">Neues Badge freigeschaltet</div>
-                <div class="font-display font-bold text-c-gold">${b.label}</div>
-              </div>
+      // Neue Badges — Block immer zurücksetzen (verhindert stale content bei Rematch)
+      const badgesBlock = document.getElementById('new-badges-block');
+      if (badgesBlock) {
+        badgesBlock.style.display = 'none';
+        badgesBlock.innerHTML = '';
+      }
+      if (identity.newBadges.length > 0 && badgesBlock) {
+        badgesBlock.style.display = 'flex';
+        badgesBlock.innerHTML = identity.newBadges.map(b => `
+          <div class="bg-c-card border border-c-gold rounded-xl p-4 flex items-center gap-3 animate-pop">
+            <span class="text-2xl">${b.emoji}</span>
+            <div>
+              <div class="font-condensed text-xs uppercase tracking-widest text-c-muted">Neues Badge freigeschaltet</div>
+              <div class="font-display font-bold text-c-gold">${b.label}</div>
             </div>
-          `).join('');
-        }
+          </div>
+        `).join('');
       }
     }
 
