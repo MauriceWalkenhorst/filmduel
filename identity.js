@@ -123,3 +123,21 @@ export function getMasteryInfo(totalCorrect) {
   const progress = isMax ? 100 : Math.round(((totalCorrect - prevMin) / (nextMin - prevMin)) * 100);
   return { level, title, progress };
 }
+
+export function updateAfterGame(gameData) {
+  const { mastery, catGroups } = updateMastery(gameData.history);
+  const { newBadges }          = updateStats(gameData, mastery);
+  const personality            = computePersonality(mastery);
+
+  const soloH = gameData.history.filter(h => h.p === 1);
+  let filmIQ = 0;
+  if (soloH.length > 0) {
+    const correctPct    = soloH.filter(h => h.correct).length / soloH.length;
+    const difficultyAvg = soloH.reduce((s, h) => s + (h.basePts || 1), 0) / soloH.length;
+    const fastCount     = soloH.filter(h => h.correct && h.answerTime < 8).length;
+    const speedBonus    = 1.0 + (fastCount / soloH.length) * 0.2;
+    filmIQ = Math.min(100, Math.round(correctPct * (difficultyAvg / 3) * speedBonus * 100));
+  }
+
+  return { newBadges, personality, catGroups, filmIQ, mastery };
+}
