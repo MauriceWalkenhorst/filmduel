@@ -36,10 +36,17 @@ function safeGet(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 }
 function safeSet(key, val) {
-  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  try { localStorage.setItem(key, JSON.stringify(val)); return true; } catch { return false; }
 }
 
 function loadMastery() { return safeGet('filmduel_mastery', {}); }
 function saveMastery(m) { safeSet('filmduel_mastery', m); }
-function loadStats()   { return { ...DEFAULT_STATS, ...safeGet('filmduel_stats', {}) }; }
+function loadStats() {
+  const stored = safeGet('filmduel_stats', {});
+  return {
+    ...DEFAULT_STATS,
+    ...stored,
+    badges: Array.isArray(stored.badges) ? [...stored.badges] : [],
+  };
+}
 function saveStats(s)  { safeSet('filmduel_stats', s); }
