@@ -7,6 +7,12 @@
 <meta name="description" content="Monatlicher Zähler für die UCI-Freikarten mit Einlöse-Code.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#100d0b">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Freikarten">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -102,6 +108,7 @@
   }
   .stub {
     position: relative;
+    width: 100%;
     aspect-ratio: 3 / 4;
     border: 1px dashed var(--cream-faint);
     border-radius: 9px;
@@ -197,6 +204,25 @@
   .punch-btn:disabled { opacity: 0.35; cursor: default; }
   .punch-btn span { color: var(--gold); }
 
+  .share-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%;
+    margin-top: -0.35rem;
+    padding: 0.8rem 1rem;
+    font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cream-dim);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+  }
+  .share-btn:active { transform: scale(0.98); }
+  .share-btn:hover { color: var(--cream); border-color: var(--cream-faint); }
+  .share-btn.is-done { color: var(--gold); border-color: var(--gold); }
+  .share-btn svg { width: 14px; height: 14px; flex: none; }
+
   footer {
     margin-top: auto; padding-top: 1.4rem;
     font-size: 0.62rem; letter-spacing: 0.1em; color: var(--cream-faint);
@@ -234,6 +260,17 @@
 
   <button class="punch-btn" data-punch>Freikarte einlösen <span>+</span></button>
 
+  <button class="share-btn" data-share>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"></line>
+      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"></line>
+    </svg>
+    <span data-share-label>Seite teilen</span>
+  </button>
+
   <footer>
     Setzt sich am Monatsanfang automatisch zurück.<br>
     <span data-sync>Verbinde …</span>
@@ -248,6 +285,7 @@
   var API = "https://shiny-setter-795.eu-west-1.convex.site/freikarten";
 
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var FLIGHT_MS = 420;
 
   function monthKey() {
     var d = new Date();
@@ -330,16 +368,22 @@
       var dx = Math.cos(ang) * dist;
       var dy = Math.sin(ang) * dist - 30;
       var rot = (Math.random() - 0.5) * 540;
+      var dur = 700 + Math.random() * 300;
       b.animate([
         { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
         { transform: "translate(" + dx + "px," + (dy + 80) + "px) rotate(" + rot + "deg)", opacity: 0 }
-      ], { duration: 700 + Math.random() * 300, easing: "cubic-bezier(0.2,0.6,0.3,1)" })
-       .onfinish = function () { this.effect.target.remove(); };
+      ], { duration: dur, easing: "cubic-bezier(0.2,0.6,0.3,1)", fill: "forwards" });
+      (function (node) {
+        setTimeout(function () { node.remove(); }, dur + 150);
+      })(b);
     }
   }
 
-  function flyTicket(fromEl, toEl, done) {
-    if (reduceMotion) { done(); return; }
+  // Rein dekorativ: der Zustand wird nie an diese Animation gekoppelt, damit ein
+  // nicht feuernder Animations-Callback (Hintergrund-Tab, Throttling) nie einen
+  // Klick verschluckt.
+  function flyTicket(fromEl, toEl) {
+    if (reduceMotion) return;
     var f = fromEl.getBoundingClientRect();
     var t = toEl.getBoundingClientRect();
     var tk = document.createElement("div");
@@ -355,10 +399,10 @@
       { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
       { transform: "translate(" + (ex - sx) * 0.5 + "px," + ((ey - sy) * 0.5 - 46) + "px) rotate(180deg) scale(1.08)", opacity: 1, offset: 0.55 },
       { transform: "translate(" + (ex - sx) + "px," + (ey - sy) + "px) rotate(340deg) scale(0.55)", opacity: 0.9 }
-    ], { duration: 520, easing: "cubic-bezier(0.3,0.6,0.3,1)" }).onfinish = function () {
-      tk.remove();
-      done();
-    };
+    ], { duration: FLIGHT_MS, easing: "cubic-bezier(0.3,0.6,0.3,1)" });
+    // Aufräumen per Timer statt per onfinish — onfinish feuert in gedrosselten
+    // Tabs nicht zuverlässig.
+    setTimeout(function () { tk.remove(); }, FLIGHT_MS + 120);
   }
 
   function punchStub(i) {
@@ -372,17 +416,16 @@
   }
 
   // ---- Persistenz: Convex-Backend + lokaler Fallback ----
-  function persist(newUsed, animateIndex) {
-    var prev = state.used;
+  function persist(newUsed) {
     state = { month: monthKey(), used: Math.min(MAX, Math.max(0, newUsed)) };
     saveLocal(state);
     render();
-    if (animateIndex !== undefined && state.used > prev) punchStub(animateIndex);
     fetch(API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ month: state.month, used: state.used })
-    }).then(function () {
+    }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
       online = true;
       setSync("Synct für alle mit diesem Link.", true);
     }).catch(function () {
@@ -392,7 +435,10 @@
   }
 
   function pull() {
-    fetch(API).then(function (r) { return r.json(); }).then(function (data) {
+    fetch(API).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (data) {
       online = true;
       var remote = effective(data);
       // Nur übernehmen, wenn der Server wirklich etwas hat; sonst lokalen Stand hochschieben.
@@ -426,10 +472,10 @@
   punchBtn.addEventListener("click", function () {
     refreshMonth();
     if (state.used >= MAX) return;
-    var idx = state.used; // der Stub, der gleich abgehakt wird
-    flyTicket(punchBtn, stubBtns[idx], function () {
-      persist(idx + 1, idx);
-    });
+    var idx = state.used; // der Stub, der abgehakt wird
+    persist(idx + 1);     // Zustand sofort — unabhängig von jeder Animation
+    flyTicket(punchBtn, stubBtns[idx]);
+    setTimeout(function () { punchStub(idx); }, reduceMotion ? 0 : FLIGHT_MS - 80);
   });
 
   stubBtns.forEach(function (btn, i) {
@@ -437,7 +483,8 @@
       refreshMonth();
       var target = i < state.used ? i : i + 1;
       var adding = target > state.used;
-      persist(target, adding ? target - 1 : undefined);
+      persist(target);
+      if (adding) punchStub(target - 1);
     });
   });
 
@@ -463,10 +510,53 @@
     } else { fallback(); }
   });
 
+  // Monatswechsel: Anzeige und Zähler laufen mit dem Kalender mit, auch wenn
+  // die Seite über den Monatswechsel hinweg offen bleibt.
+  var shownMonth = monthKey();
+  function checkMonth() {
+    if (monthKey() === shownMonth) return;
+    shownMonth = monthKey();
+    renderMonth();
+    refreshMonth();
+  }
+
+  // ---- Seite teilen ----
+  var shareBtn = document.querySelector("[data-share]");
+  var shareLabel = document.querySelector("[data-share-label]");
+  shareBtn.addEventListener("click", function () {
+    var url = location.href.split("#")[0];
+    function flash(text) {
+      shareBtn.classList.add("is-done");
+      shareLabel.textContent = text;
+      setTimeout(function () {
+        shareBtn.classList.remove("is-done");
+        shareLabel.textContent = "Seite teilen";
+      }, 1800);
+    }
+    if (navigator.share) {
+      navigator.share({
+        title: "UCI Freikarten",
+        text: "Unsere UCI-Freikarten für diesen Monat",
+        url: url
+      }).catch(function () { /* abgebrochen */ });
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () {
+        flash("Link kopiert ✓");
+      }, function () {
+        flash(url);
+      });
+    } else {
+      flash(url);
+    }
+  });
+
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) { refreshMonth(); pull(); }
+    if (!document.hidden) { checkMonth(); refreshMonth(); pull(); }
   });
   setInterval(function () {
+    checkMonth();
     if (!document.hidden) pull();
   }, 25000);
 
