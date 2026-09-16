@@ -20,6 +20,7 @@ export const CATS = [
   { id:'scifi',     label:'Sci-Fi',     abbr:'SCI',  color:'#2dd4bf' },
   { id:'nineties',  label:'90er Hits',  abbr:'90S',  color:'#a78bfa' },
   { id:'worldcinema', label:'Weltfilme',abbr:'WCIN', color:'#10b981' },
+  { id:'fff',       label:'Fantasy Filmfest', abbr:'FFF', color:'#fe5e2e' },
 ];
 
 // Für Testzwecke verwenden wir hier nur 3 Fragen pro neuer Kategorie, 
@@ -106,6 +107,9 @@ export const Q = {
     { q:"Greta Gerwig erlangte weltweite Aufmerksamkeit mit welchem Film von 2023?", a:["Lady Bird","Little Women","Barbie","Frances Ha"], c:2, d:1, f:"\"Barbie\" (2023) spielte über 1,4 Milliarden Dollar ein — Gerwigs kommerzieller Durchbruch." },
     { q:"Jordan Peele ist bekannt für gesellschaftskritischen Horror — welcher war sein Regiedebüt?", a:["Get Out","Us","Nope","Candyman"], c:0, d:1, f:"\"Get Out\" (2017) — Peele gewann den Oscar für Bestes Originaldrehbuch." },
     { q:"Welcher Regisseur ist bekannt für \"The Witch\", \"The Lighthouse\" und \"The Northman\"?", a:["Ari Aster","Alex Garland","Ti West","Robert Eggers"], c:3, d:2, f:"Robert Eggers — historisch präzise Settings und eine dichte, archaische Atmosphäre." },
+    { q:'Wer inszenierte "One Battle After Another" (2025)?', a:["Paul Thomas Anderson","Quentin Tarantino","David Fincher","Wes Anderson"], c:0, d:1, f:'Die schwarze Komödie gewann 2026 sechs Oscars, darunter bester Film und beste Regie.' },
+    { q:'Welchen Film drehte Chloé Zhao 2025?', a:["Hamnet","Nomadland","Eternals","The Rider"], c:0, d:2, f:'Ihr Shakespeare-Drama brachte Jessie Buckley den Oscar als beste Hauptdarstellerin.' },
+    { q:'Joachim Trier gewann 2026 den Auslands-Oscar mit...', a:["Sentimental Value","The Worst Person in the World","Oslo, 31. August","Thelma"], c:0, d:2, f:'Der norwegische Film lief zuvor in Cannes.' },
   ],
 
   world: [
@@ -265,6 +269,7 @@ export const Q = {
     { q:"Was ist der Unterschied zwischen \"Score\" und \"Soundtrack\"?", a:["Kein Unterschied","Score ist Originalkomposition; Soundtrack enthält auch Songs","Soundtrack ist immer orchestral","Score enthält nur Sprache"], c:1, d:1, f:"Hans Zimmer schreibt Scores; ein Soundtrack-Album kann auch Songs enthalten (z.B. \"Guardians of the Galaxy\")." },
     { q:"Was versteht man unter \"Anamorphic Widescreen\"?", a:["Ein Tonsystem","Eine Nahaufnahme-Technik","Optisch gestauchte Aufnahme, die ein breites Kinobild erzeugt","Eine Kamerabewegung"], c:2, d:2, f:"Anamorphic-Linsen erzeugen charakteristische Lichtstreifen (Lens Flares) und das klassische Breitbild." },
     { q:"Was bedeutet \"Continuity Editing\"?", a:["Schnitt, der den räumlichen und zeitlichen Fluss nahtlos erscheinen lässt","Immer lange Takes ohne Schnitt","Ein Farbgrading-Verfahren","Ein Kamerabewegungsprinzip"], c:0, d:2, f:"Hollywood-Standard seit den 1910ern — der Schnitt soll unsichtbar bleiben, die Handlung fließen." },
+    { q:'Wer gewann 2026 den Kamera-Oscar für "Sinners"?', a:["Autumn Durald Arkapaw","Roger Deakins","Hoyte van Hoytema","Greig Fraser"], c:0, d:3, f:'Ludwig Göransson gewann für denselben Film den Oscar für die beste Filmmusik.' },
   ],
 
   horror: [
@@ -305,6 +310,9 @@ export const Q = {
     { q:"In welchem James-Wan-Film von 2021 ist eine Frau mit einem entfernten Geschwisterwesen telepathisch verbunden?", a:["The Conjuring 3","Annabelle","Malignant","Insidious"], c:2, d:2, f:"\"Malignant\" (2021) — Wans wildester Film; barocke Gewaltchoreografie trifft Genre-Subversion." },
     { q:"Von welchem Regisseur stammt der australische Horrorfilm \"The Babadook\" (2014)?", a:["Jennifer Kent","Leigh Whannell","James Wan","David Michôd"], c:0, d:2, f:"Jennifer Kent — Trauer und Mutterschaft als Horrormetapher; ein Meilenstein des modernen Horrors." },
     { q:"Welcher Ti-West-Film (2022) ist das Prequel zu \"X\" und zeigt die junge Antagonistin als Mädchen in den 1910ern?", a:["MaXXXine","Pearl","House of the Devil","The Innkeepers"], c:1, d:2, f:"\"Pearl\" (2022) — Mia Goth schrieb das Drehbuch selbst; stylisiert wie ein Douglas-Sirk-Melodram." },
+    { q:'Womit verbindet Ryan Cooglers "Sinners" (2025) seinen Vampirhorror?', a:["Mit dem Blues der 1930er","Mit dem Punk der 1970er","Mit Techno","Mit Oper"], c:0, d:1, f:'Der Film spielt 1932 im Mississippi-Delta, wo Vampire von einem Blues-Wunderkind angezogen werden.' },
+    { q:'Welche Rolle übernimmt Michael B. Jordan in "Sinners"?', a:["Zwillingsbrüder","Vater und Sohn","Einen Sheriff","Einen Priester"], c:0, d:2, f:'Jordan spielt beide Brüder, die in ihre Heimatstadt im Jim-Crow-Süden zurückkehren.' },
+    { q:'Für "Weapons" (2025) gewann welche Darstellerin den Nebenrollen-Oscar 2026?', a:["Amy Madigan","Toni Collette","Jamie Lee Curtis","Patricia Arquette"], c:0, d:3, f:'Zach Creggers Horrorfilm feierte 2025 Premiere.' },
   ],
 
   indie: [
@@ -344,6 +352,7 @@ export const Q = {
     { q:"Welcher Film von Justine Triet (2023) zeigt eine deutsche Schriftstellerin vor Gericht in den französischen Alpen?", a:["Saint Omer","Anatomy of a Fall","Titane","Portrait of a Lady on Fire"], c:1, d:2, f:"\"Anatomy of a Fall\" — Goldene Palme 2023 und Oscar für Bestes Drehbuch. Sandra Hüller." },
     { q:"Paul Mescal spielte in welchem A24-Film einen jungen Vater im Urlaub mit seiner Tochter?", a:["Normal People","All of Us Strangers","The Banshees of Inisherin","Aftersun"], c:3, d:1, f:"\"Aftersun\" (2022) — Charlotte Wells' Regiedebüt; einer der bewegendsten Filme der letzten Jahre." },
     { q:"Welcher A24-Film von 2023 zeigt eine verheiratete Frau, die ihren Jugendfreund in New York wiedertrifft?", a:["Aftersun","All of Us Strangers","The Worst Person in the World","Past Lives"], c:3, d:1, f:"\"Past Lives\" von Celine Song — über Erinnerung, Entscheidungen und wer man hätte werden können." },
+    { q:'Wer schrieb und inszenierte den Horrorfilm "Weapons" (2025)?', a:["Zach Cregger","Ari Aster","Robert Eggers","Jordan Peele"], c:0, d:2, f:'Cregger war zuvor mit BARBARIAN aufgefallen.' },
   ],
 
   // --- NEUE KATEGORIEN ---
@@ -425,6 +434,8 @@ export const Q = {
     { q:"Welcher Anime-Film von Makoto Shinkai (2016) verbindet zwei Jugendliche durch Zeitreise und Körpertausch?", a:["5 Centimeters per Second","Weathering with You","A Silent Voice","Your Name (Kimi no Na wa)"], c:3, d:1, f:"\"Your Name\" (Kimi no Na wa, 2016) — der international erfolgreichste Anime-Film aller Zeiten." },
     { q:"Welcher Disney-Animationsfilm von 2021 spielt in einem magischen kolumbianischen Haus mit Songs von Lin-Manuel Miranda?", a:["Encanto","Coco","Moana","Luca"], c:0, d:1, f:"\"Encanto\" (2021) — \"We Don't Talk About Bruno\" wurde der meistgestreamte Disney-Song überhaupt." },
     { q:"Welcher Wes-Anderson-Stop-Motion-Film von 2018 spielt in einer japanischen Hunde-Dystopie?", a:["Fantastic Mr. Fox","Isle of Dogs","The Grand Budapest Hotel","Asteroid City"], c:1, d:1, f:"\"Isle of Dogs\" (2018) — Bryan Cranston, Bill Murray, Tilda Swinton als Hunde." },
+    { q:'Welcher Song aus "KPop Demon Hunters" gewann 2026 den Oscar?', a:["Golden","Soda Pop","How It\'s Done","Takedown"], c:0, d:2, f:'Der Film gewann sowohl als bester Animationsfilm als auch für den besten Song.' },
+    { q:'Bei welchem Anbieter erschien "KPop Demon Hunters" (2025)?', a:["Netflix","Disney+","Apple TV+","Amazon Prime"], c:0, d:1, f:'Der Netflix-Film wurde zum überraschenden Publikumshit und räumte 2026 zwei Oscars ab.' },
   ],
 
   superhero: [
@@ -505,6 +516,12 @@ export const Q = {
     { q:"Welcher Film von Sean Baker gewann bei den Oscars 2025 den Hauptpreis?", a:["Red Rocket","Anora","Tangerine","The Florida Project"], c:1, d:2, f:"\"Anora\" (2024) — Mikey Madison als Tänzerin, die einen Oligarchensohn heiratet. Goldene Palme UND Oscar." },
     { q:"Welcher Film von Todd Field (2022) mit Cate Blanchett erhielt 8 Nominierungen aber keinen Oscar?", a:["Tár","The Banshees of Inisherin","Living","Empire of Light"], c:0, d:2, f:"\"Tár\" — Cate Blanchett als Dirigentin; eine der eindrucksvollsten Vorstellungen des Jahrzehnts." },
     { q:"Als welcher Film wurde bei der 89. Oscar-Verleihung (2017) fälschlicherweise der Bester-Film-Sieger verkündet?", a:["La La Land","Spotlight","The Revenant","Moonlight"], c:0, d:1, f:"Warren Beatty las \"La La Land\" vor — Sieger war \"Moonlight\". Eine der größten Oscar-Pannen der Geschichte." },
+    { q:'Welcher Film gewann 2026 den Oscar als bester Film?', a:["Sinners","One Battle After Another","Hamnet","Weapons"], c:1, d:1, f:'Paul Thomas Andersons Film holte bei der 98. Oscar-Verleihung sechs Auszeichnungen.' },
+    { q:'Wer gewann 2026 den Oscar für die beste Regie?', a:["Ryan Coogler","Chloé Zhao","Paul Thomas Anderson","Joachim Trier"], c:2, d:2, f:'Es war Andersons erster Regie-Oscar, für ONE BATTLE AFTER ANOTHER.' },
+    { q:'Für welchen Film gewann Michael B. Jordan 2026 den Hauptdarsteller-Oscar?', a:["Sinners","Creed IV","One Battle After Another","Weapons"], c:0, d:2, f:'Jordan spielt in SINNERS ein Zwillingspaar, also faktisch eine Doppelrolle.' },
+    { q:'Welcher Film stellte 2026 mit 16 Nominierungen einen Oscar-Rekord auf?', a:["Sinners","Hamnet","One Battle After Another","Avatar: Fire and Ash"], c:0, d:3, f:'Von den 16 Nominierungen wandelte SINNERS vier in Oscars um.' },
+    { q:'Wer wurde 2026 als beste Hauptdarstellerin ausgezeichnet?', a:["Jessie Buckley","Emma Stone","Saoirse Ronan","Mikey Madison"], c:0, d:2, f:'Buckley gewann für ihre Rolle in Chloé Zhaos HAMNET.' },
+    { q:'Welcher Animationsfilm gewann 2026 den Oscar?', a:["KPop Demon Hunters","Zootopia 2","Elio","Arco"], c:0, d:1, f:'Der Netflix-Film gewann zusätzlich den Oscar für den besten Song.' },
   ],
 
   german: [
@@ -665,6 +682,8 @@ export const Q = {
     { q:"Welcher Sci-Fi-Film von Gareth Edwards (2023) zeigt einen Konflikt zwischen Menschen und KI in Asien?", a:["WALL-E","The Mitchells vs. the Machines","The Creator","Lightyear"], c:2, d:2, f:"\"The Creator\" (2023) — visuell beeindruckend; auf Consumer-Kameras gedreht für handgemachten Look." },
     { q:"In welchem Film von 2024 zeigt Alex Garland einen Bürgerkrieg im nahen Amerika aus Perspektive einer Kriegsfotografin?", a:["28 Days Later","Ex Machina","Men","Civil War"], c:3, d:2, f:"\"Civil War\" (2024) — keine klare politische Seite; ein Film über das Dokumentieren von Gewalt." },
     { q:"Welcher Dune-Fortsetzungsfilm von Denis Villeneuve erschien 2024?", a:["Dune: Part Two","Dune: Messiah","Dune: Awakening","Dune: Jihad"], c:0, d:1, f:"\"Dune: Part Two\" (2024) — Zendaya bekommt deutlich mehr Screentime als im ersten Teil." },
+    { q:'Welcher Film gewann 2026 den Oscar für die besten visuellen Effekte?', a:["Avatar: Fire and Ash","Dune: Part Three","Superman","The Odyssey"], c:0, d:1, f:'James Cameron setzte damit die Effekt-Dominanz der Avatar-Reihe fort.' },
+    { q:'"Avatar: Fire and Ash" (2025) ist der wievielte Teil der Reihe?', a:["Der zweite","Der dritte","Der vierte","Der fünfte"], c:1, d:2, f:'Nach AVATAR (2009) und THE WAY OF WATER (2022) folgte 2025 der dritte Teil.' },
   ],
 
   nineties: [
@@ -740,11 +759,56 @@ export const Q = {
     { q:'Welcher russische Film von Andrei Zvyagintsev zeigt staatliche Korruption in einem russischen Küstendorf?', a:["The Return","Elena","Loveless","Leviathan"], c:3, d:3, f:'"Leviathan" (2014) gewann den Preis für das beste Drehbuch in Cannes und war für den Oscar nominiert.' },
   
     { q:"Welcher dänische Film von Thomas Vinterberg (2020) über ein Alkohol-Experiment mit Mads Mikkelsen gewann den Oscar?", a:["The Hunt","Submarino","The Celebration","Another Round"], c:3, d:1, f:"\"Another Round\" (Druk) — Mads Mikkelsens Tanzszene am Ende ist unvergesslich." },
-    { q:"Welcher Film von Justine Triet (2023) zeigt einen Gerichtsprozess gegen eine Schriftstellerin und gewann die Goldene Palme?", a:["Anatomy of a Fall","Portrait of a Lady on Fire","Saint Omer","Titane"], c:0, d:1, f:"\"Anatomy of a Fall\" — Sandra Hüller; gewann auch den Oscar für Bestes Drehbuch." },
+    { q:'Welcher südkoreanische Film gewann 2020 als erster nicht-englischsprachiger Film den Oscar als bester Film?', a:["Parasite","Burning","Oldboy","Decision to Leave"], c:0, d:1, f:'Bong Joon-hos PARASITE gewann vier Oscars und zuvor die Goldene Palme in Cannes.' },
     { q:"Welcher österreichisch-britische Film von Jonathan Glazer (2023) zeigt den Alltag des Auschwitz-Kommandanten?", a:["Son of Saul","The Reader","Ida","The Zone of Interest"], c:3, d:2, f:"\"The Zone of Interest\" — Horror durch radikale Auslassung; Oscar für Besten fremdsprachigen Film 2024." },
     { q:"Welcher Film von Lucrecia Martel aus dem Jahr 2017 zeigt einen spanischen Konquistador in Südamerika als Albtraum?", a:["La Ciénaga","The Holy Girl","The Headless Woman","Zama"], c:3, d:3, f:"\"Zama\" (2017) — Martels langer erwarteter Comeback; ein desorientierender historischer Film über Macht und Verfall." },
     { q:"Welcher israelische Animationsfilm von Ari Folman (2008) zeigt das Massaker von Sabra und Schatila?", a:["The Band's Visit","Waltz with Bashir","Foxtrot","Lebanon"], c:1, d:2, f:"\"Waltz with Bashir\" — Erinnerungsverdrängung als Animation; Golden Globe-Gewinner." },
     { q:"Welcher Film von Hirokazu Kore-eda (2018) zeigt eine Familie, die ihren Lebensunterhalt mit Diebstahl verdient?", a:["Nobody Knows","Like Father Like Son","Shoplifters","Our Little Sister"], c:2, d:1, f:"\"Shoplifters\" (Manbiki Kazoku) — Goldene Palme 2018; ein zartes, erschütterndes Portrait einer improvisierten Familie." },
+    { q:'Aus welchem Land stammt "Sentimental Value", der Auslands-Oscar-Gewinner 2026?', a:["Schweden","Norwegen","Dänemark","Island"], c:1, d:2, f:'Joachim Triers Film setzte sich gegen die internationale Konkurrenz durch.' },
+    { q:'Welcher Dokumentarfilm gewann 2026 den Oscar?', a:["Mr. Nobody Against Putin","Navalny","20 Days in Mariupol","No Other Land"], c:0, d:3, f:'Der Film wurde bei der 98. Oscar-Verleihung ausgezeichnet.' },
+  ],
+
+  // --- FANTASY FILMFEST ---
+  // Quelle: offizielles Programm des 40. Fantasy Filmfest (fantasyfilmfest.com), Stand September 2026.
+  fff: [
+    { q:'Welcher Film eröffnete das 40. Fantasy Filmfest 2026?', a:["Hope","Buddy","Leviticus","The Plague"], c:2, d:1, f:'Adrian Chiarellas australischer Horrorfilm machte den Auftakt, Na Hong-jins HOPE beschloss das Festival.' },
+    { q:'In wie vielen Städten läuft das Fantasy Filmfest?', a:["Drei","Fünf","Sieben","Zwölf"], c:2, d:1, f:'Berlin, Hamburg, Köln, München, Stuttgart, Nürnberg und Frankfurt bekommen nacheinander dasselbe Programm.' },
+    { q:'Auf welche Genres ist das Fantasy Filmfest spezialisiert?', a:["Heimatfilm und Komödie","Horror, Thriller und Sci-Fi","Dokumentarfilm","Stummfilm"], c:1, d:1, f:'Das Festival zeigt seit Jahrzehnten fantastisches Kino und Genre-Grenzgänger.' },
+    { q:'Um was für ein Wesen dreht sich BUDDY (2026)?', a:["Ein Killer-Einhorn","Einen Werwolf","Ein Riesenkaninchen","Einen Vampirhund"], c:0, d:1, f:'Casper Kellys US-Film schickt ein mörderisches Einhorn auf Kuschelkurs.' },
+    { q:'Aus welchem Land stammt die Doku HEX (2026)?', a:["Schweden","Norwegen","Island","Finnland"], c:1, d:1, f:'Maja Holand begleitet darin die norwegische Black-Metal-Band Witch Club Satan.' },
+    { q:'Welche Musikrichtung steht im Zentrum von HEX?', a:["Techno","Black Metal","Free Jazz","Schlager"], c:1, d:1, f:'Drei Musikerinnen wollen darin Norwegens kontroverseste Black-Metal-Band werden.' },
+    { q:'Wer führte Regie bei dem Thriller "The Chaser" (2008)?', a:["Bong Joon-ho","Park Chan-wook","Na Hong-jin","Kim Jee-woon"], c:2, d:1, f:'THE CHASER war Na Hong-jins Spielfilmdebüt.' },
+    { q:'Von wem stammt der Venedig-Klassiker "Don\'t Look Now" (1973)?', a:["Nicolas Roeg","Ken Russell","Dario Argento","Roman Polanski"], c:0, d:1, f:'Roegs Film mit Donald Sutherland und Julie Christie beruht auf einer Erzählung von Daphne du Maurier.' },
+    { q:'Aus welchem Land kommt "A Chinese Ghost Story" (1987)?', a:["Japan","Südkorea","Hongkong","Taiwan"], c:2, d:1, f:'Siu-Tung Chings Fantasy-Klassiker wurde von Tsui Hark produziert.' },
+    { q:'Wie heißt der Kurzfilmwettbewerb des Fantasy Filmfest?', a:["Get Shorty","Short Cuts","Kurz & Schmerzlos","Small Talk"], c:0, d:1, f:'Bei GET SHORTY stimmt das Publikum über den Gewinner ab.' },
+    { q:'Wer inszenierte "Beasts of the Southern Wild" (2012)?', a:["Benh Zeitlin","Sean Baker","Chloé Zhao","Barry Jenkins"], c:0, d:1, f:'Zeitlins Debüt gewann die Caméra d\'Or in Cannes.' },
+    { q:'GHOST IN THE CELL (2026) stammt von einem bekannten Regisseur aus...', a:["Thailand","Indonesien","Malaysia","den Philippinen"], c:1, d:1, f:'Joko Anwar ist für indonesische Horrorfilme wie SATAN\'S SLAVES bekannt.' },
+    { q:'Welcher Film beschloss das 40. Fantasy Filmfest?', a:["Hope","Leviticus","The Plague","Hokum"], c:0, d:1, f:'Na Hong-jins südkoreanischer Endzeitfilm lief als Abschlussfilm.' },
+    { q:'Aus welchem Land stammt LEVITICUS (2026)?', a:["Neuseeland","Australien","Kanada","Irland"], c:1, d:1, f:'Adrian Chiarellas Eröffnungsfilm ist eine australische Produktion.' },
+
+    { q:'In welchem Umfeld spielt THE PLAGUE (2024)?', a:["In einem Wasserball-Sommercamp","In einem Musikinternat","In einem Ferienlager am Meer","In einer Kadettenschule"], c:0, d:2, f:'Charlie Polingers Debüt über Mobbing lief in Cannes in der Reihe Un Certain Regard.' },
+    { q:'Welcher australische Star spielt in THE PLAGUE mit?', a:["Joel Edgerton","Jason Clarke","Ben Mendelsohn","Guy Pearce"], c:0, d:2, f:'Edgerton stand nicht nur vor der Kamera, sondern war auch als Produzent beteiligt.' },
+    { q:'Wie lang ist der Abschlussfilm HOPE?', a:["95 Minuten","120 Minuten","160 Minuten","185 Minuten"], c:2, d:2, f:'Mit 160 Minuten war HOPE der längste Film im Programm 2026.' },
+    { q:'BLADES OF THE GUARDIANS (2026) stammt von einer Legende des Martial-Arts-Kinos. Von wem?', a:["Yuen Woo-ping","Tsui Hark","John Woo","Donnie Yen"], c:0, d:2, f:'Yuen Woo-ping choreografierte die Kämpfe in MATRIX und TIGER & DRAGON.' },
+    { q:'Was für ein Film ist der Anime MEMORIES (1995)?', a:["Ein Episodenfilm","Ein Stummfilm","Eine Doku","Ein Musical"], c:0, d:2, f:'Der Film besteht aus drei Episoden und geht auf Katsuhiro Otomo zurück.' },
+    { q:'An welchem ungewöhnlichen Ort lief MEMORIES beim Festival 2026?', a:["Im Planetarium","Im Autokino","In einer Kirche","In einem Schwimmbad"], c:0, d:2, f:'Der Anime lief exklusiv im Zeiss-Großplanetarium Berlin und in der Volkssternwarte München.' },
+    { q:'Der Film SPECIES im Programm 2026 ist eine Produktion aus...', a:["den USA","Frankreich","Kanada","Australien"], c:1, d:2, f:'Marion Le Corrollers französischer Film teilt nur den Titel mit dem US-Sci-Fi von 1995.' },
+    { q:'Aus welchem Land stammt der Horrorfilm HOKUM (2026)?', a:["Schottland","Irland","Wales","England"], c:1, d:2, f:'Regisseur Damian McCarthy wurde mit den irischen Horrorfilmen CAVEAT und ODDITY bekannt.' },
+    { q:'Welche Firma veranstaltet das Fantasy Filmfest?', a:["rosebud entertainment","Studio Babelsberg","Constantin Film","Arthaus"], c:0, d:2, f:'Die rosebud entertainment GbR hat ihren Sitz in Berlin.' },
+    { q:'Léa Mysius war 2026 im Programm vertreten mit...', a:["The Birthday Party","The Better Me","Species","Recluse"], c:0, d:2, f:'Mysius drehte zuvor AVA und THE FIVE DEVILS.' },
+    { q:'TRISTES TROPIQUES (2025) stammt von einem Regisseur, der das Drehbuch zu "I Saw the Devil" schrieb. Wer ist es?', a:["Park Hoon-jung","Bong Joon-ho","Ryoo Seung-wan","Yeon Sang-ho"], c:0, d:2, f:'Park Hoon-jung inszenierte später Filme wie NEW WORLD und THE WITCH.' },
+    { q:'MUTTER – THE DIARY OF A MOTHER (2026) kommt aus...', a:["Griechenland","der Türkei","Bulgarien","Rumänien"], c:1, d:2, f:'Alphan Eşelis türkischer Film läuft 99 Minuten.' },
+    { q:'AT THE PLACE OF GHOSTS (2025) ist eine Koproduktion aus...', a:["Kanada und Belgien","USA und Mexiko","Irland und Frankreich","Norwegen und Dänemark"], c:0, d:2, f:'Bretten Hannam erzählt darin von einer Reise durch die Welt der Ahnen.' },
+    { q:'Wer inszenierte THE RESTORATION AT GRAYSON MANOR (2025)?', a:["Glenn McQuaid","Neil Marshall","Ben Wheatley","Corin Hardy"], c:0, d:2, f:'McQuaid drehte zuvor I SELL THE DEAD und Segmente für die V/H/S-Reihe.' },
+    { q:'NEVER AFTER DARK (2026) spielt in...', a:["Japan","Südkorea","Thailand","China"], c:0, d:2, f:'Dave Boyles Film verbindet Herzklopfen und Geisterjagd.' },
+    { q:'CAROLINA CAROLINE (2025) stammt von Adam Carter Rehmeier, bekannt durch...', a:["Dinner in America","Green Room","The Guest","Blue Ruin"], c:0, d:2, f:'Sein Outlaw-Märchen spielt an der letzten Tankstelle vor dem Nirgendwo.' },
+
+    { q:'Welcher Regisseur war 2026 gleich mit zwei Filmen im Programm vertreten?', a:["Na Hong-jin","Quentin Dupieux","Joko Anwar","Park Hoon-jung"], c:0, d:3, f:'Sein Debüt THE CHASER lief in der Klassiker-Reihe, sein neuer Film HOPE als Abschlussfilm.' },
+    { q:'VERTIGINOUS (2026) von Quentin Dupieux ist ungewöhnlich...', a:["kurz (67 Minuten)","lang (190 Minuten)","alt (schwarzweiß)","still (ohne Ton)"], c:0, d:3, f:'Dupieux ist für knappe, absurde Filme wie RUBBER und MANDIBLES bekannt.' },
+    { q:'MOTHERWITCH (2026) entstand unter Beteiligung welches Landes?', a:["Zypern","Malta","Kroatien","Portugal"], c:0, d:3, f:'Minos Papas drehte den Film als Koproduktion von Zypern, den USA und Nordmazedonien.' },
+    { q:'THE ONES WHO GRIEVE (2026) stammt von einem französischen Regisseur mit Künstlernamen. Wie lautet er?', a:["Quarxx","Gaspar Noé","Fabrice du Welz","Pascal Laugier"], c:0, d:3, f:'Quarxx wurde mit ALL THE GODS IN THE SKY bekannt.' },
+    { q:'NERVOUS (2026) ist eine Koproduktion Südkoreas mit...', a:["dem Vereinigten Königreich","Frankreich","Japan","Kanada"], c:0, d:3, f:'Regie führte Abner Pastoll, bekannt für A GOOD WOMAN IS HARD TO FIND.' },
+    { q:'SICKO (2025) stammt aus einem Land, das selten im Genre-Kino vertreten ist. Aus welchem?', a:["Kasachstan","Usbekistan","Georgien","Armenien"], c:0, d:3, f:'Aitore Zholdaskalis Film war einer der wenigen zentralasiatischen Beiträge im Programm.' },
   ],
 
 };

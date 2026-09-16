@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as freikarten from "../freikarten.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
 import type * as push from "../push.js";
@@ -21,6 +22,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  freikarten: typeof freikarten;
   games: typeof games;
   http: typeof http;
   push: typeof push;
