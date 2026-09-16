@@ -2,6 +2,10 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  freikarten: defineTable({
+    month: v.string(),
+    used: v.number(),
+  }),
   users: defineTable({
     tokenIdentifier: v.string(),
     name: v.optional(v.string()),
