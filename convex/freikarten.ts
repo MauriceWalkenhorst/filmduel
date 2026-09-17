@@ -13,7 +13,11 @@ import { v } from "convex/values";
 //
 // Ein Datensatz aus einem alten Monat gilt als 0 — der Reset passiert beim Lesen.
 
-const MAX = 10;
+// Obergrenze als reiner Unsinns-Schutz. Wie viele Karten eine Seite tatsächlich
+// hat, steht im Link der jeweiligen Person (dort bis 50 erlaubt) — hier darf
+// nicht enger begrenzt werden, sonst springt der Zähler bei mehr als 10 Karten
+// zurück.
+const MAX = 50;
 
 function clamp(used: number) {
   return Math.max(0, Math.min(MAX, Math.floor(used)));
