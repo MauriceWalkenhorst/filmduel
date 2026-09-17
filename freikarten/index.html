@@ -66,7 +66,7 @@
 
   /* ---- Einstiegsseite ---- */
   .hero { text-align: center; padding-top: 0.6rem; display: flex; flex-direction: column; align-items: center; gap: 0; }
-  .hero-icon { width: 56px; height: 56px; margin-bottom: 1rem; border-radius: 13px; }
+  .hero-icon { width: 72px; height: 45px; margin-bottom: 1.1rem; display: block; }
   .hero h1 { margin: 0; font-size: clamp(1.55rem, 7vw, 1.95rem); }
   .hero-sub {
     margin: 0.75rem 0 0; font-size: 0.92rem; line-height: 1.62;
@@ -288,7 +288,16 @@
 <div class="wrap" data-setup hidden>
 
   <div class="hero">
-    <img class="hero-icon" src="icon.svg" alt="" width="56" height="56">
+    <svg class="hero-icon" viewBox="0 0 64 40" role="img" aria-label="Kinoticket" focusable="false">
+      <defs>
+        <linearGradient id="tg" x1="2" y1="2" x2="62" y2="38" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f0b155"/>
+          <stop offset="1" stop-color="#c77f18"/>
+        </linearGradient>
+      </defs>
+      <path fill="url(#tg)" d="M8 2H56A6 6 0 0 1 62 8V13A7 7 0 0 0 62 27V32A6 6 0 0 1 56 38H8A6 6 0 0 1 2 32V27A7 7 0 0 0 2 13V8A6 6 0 0 1 8 2Z"/>
+      <path d="M45 7V33" stroke="#100d0b" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3.4"/>
+    </svg>
     <p class="eyebrow">Kino-Freikarten</p>
     <h1>Eigene Seite erstellen</h1>
     <p class="hero-sub">Zählt deine Freikarten mit und beginnt am Monatsanfang von selbst wieder bei null.</p>
