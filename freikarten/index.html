@@ -64,8 +64,54 @@
     text-transform: uppercase; color: var(--cream-dim);
   }
 
-  /* ---- Einrichtung ---- */
-  .setup-intro { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--cream-dim); text-align: center; text-wrap: pretty; }
+  /* ---- Einstiegsseite ---- */
+  .hero { text-align: center; padding-top: 0.6rem; display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .hero-icon { width: 56px; height: 56px; margin-bottom: 1rem; border-radius: 13px; }
+  .hero h1 { margin: 0; font-size: clamp(1.55rem, 7vw, 1.95rem); }
+  .hero-sub {
+    margin: 0.75rem 0 0; font-size: 0.92rem; line-height: 1.62;
+    color: var(--cream-dim); text-wrap: pretty; max-width: 23rem;
+  }
+
+  .howto { margin-top: -0.3rem; }
+  .howto summary {
+    list-style: none; cursor: pointer;
+    padding: 0.7rem 0.2rem;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--cream-dim);
+    display: flex; align-items: center; gap: 0.5rem;
+    transition: color 0.2s ease;
+  }
+  .howto summary::-webkit-details-marker { display: none; }
+  .howto summary::before {
+    content: "+"; font-size: 0.95rem; line-height: 1; color: var(--gold);
+  }
+  .howto[open] summary::before { content: "–"; }
+  .howto summary:hover { color: var(--cream); }
+  .howto em { font-style: normal; color: var(--cream); }
+
+  .os {
+    display: block; margin-top: 0.5rem; padding: 0.6rem 0.75rem;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 9px;
+    font-size: 0.79rem; line-height: 1.65;
+  }
+  .os + .os { margin-top: 0.4rem; }
+  .os-name {
+    display: block; margin-bottom: 0.15rem;
+    font-size: 0.58rem; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--gold);
+  }
+  .ios-share {
+    width: 0.95em; height: 0.95em; vertical-align: -0.16em;
+    margin: 0 0.1em; color: var(--cream);
+  }
+
+  .setup-box {
+    display: flex; flex-direction: column; gap: 1rem;
+    padding: 1.15rem 1.1rem 1.25rem;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 16px;
+    margin-top: 0.4rem;
+  }
   .field { display: flex; flex-direction: column; gap: 0.45rem; }
   .field label {
     font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em;
@@ -238,32 +284,35 @@
 </head>
 <body>
 
-<!-- ---------- Einrichtung ---------- -->
+<!-- ---------- Einstieg & Einrichtung ---------- -->
 <div class="wrap" data-setup hidden>
-  <header>
+
+  <div class="hero">
+    <img class="hero-icon" src="icon.svg" alt="" width="56" height="56">
     <p class="eyebrow">Kino-Freikarten</p>
-    <h1>Eigene Seite einrichten</h1>
-  </header>
-
-  <p class="setup-intro">Trag deinen Freikarten-Code ein. Du bekommst einen eigenen Link mit eigenem Zähler, der sich jeden Monat zurücksetzt.</p>
-
-  <div class="field">
-    <label for="in-code">Dein Freikarten-Code</label>
-    <input id="in-code" type="text" inputmode="latin" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. A12B34CD5E6FG" maxlength="40">
+    <h1>Eigene Seite erstellen</h1>
+    <p class="hero-sub">Zählt deine Freikarten mit und beginnt am Monatsanfang von selbst wieder bei null.</p>
   </div>
 
-  <label class="check" for="in-staff">
-    <input id="in-staff" type="checkbox">
-    <span class="check-text">
-      <span class="check-title">Zusätzlich 10 Staff-Karten</span>
-      <span class="check-sub">Für Manager: ein zweiter Zähler unter den Freikarten, ebenfalls 10 pro Monat. Zusammen also 20.</span>
-    </span>
-  </label>
+  <div class="setup-box">
+    <div class="field">
+      <label for="in-code">Dein Freikarten-Code</label>
+      <input id="in-code" type="text" inputmode="latin" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. A12B34CD5E6FG" maxlength="40">
+    </div>
 
-  <p class="error" data-error></p>
-  <button class="btn-gold" data-create>Seite erstellen</button>
+    <label class="check" for="in-staff">
+      <input id="in-staff" type="checkbox">
+      <span class="check-text">
+        <span class="check-title">Zusätzlich 10 Staff-Karten</span>
+        <span class="check-sub">Für Manager: ein zweiter Zähler unter den Freikarten, ebenfalls 10 pro Monat. Zusammen also 20.</span>
+      </span>
+    </label>
 
-  <p class="hint">Dein Code wird nicht auf dem Server gespeichert. Er steht nur in deinem eigenen Link, und dieser Teil der Adresse wird technisch nie an den Server gesendet. Gespeichert wird ausschließlich, wie viele Karten du diesen Monat eingelöst hast.<br><br><strong>Speichere den Link.</strong> Wer ihn hat, sieht deinen Code.</p>
+    <p class="error" data-error></p>
+    <button class="btn-gold" data-create>Meine Seite erstellen</button>
+  </div>
+
+  <p class="hint"><strong>Zum Datenschutz:</strong> Dein Code wird nicht auf dem Server gespeichert. Er steht nur in deinem eigenen Link, und dieser Teil der Adresse wird von Browsern technisch nie mitgesendet. Gespeichert wird ausschließlich die Zahl der eingelösten Karten.<br><br>Bewahre den Link gut auf, denn wer ihn hat, sieht deinen Code. Mit einer Person geteilt, zählt ihr gemeinsam.</p>
 </div>
 
 <!-- ---------- Zähler ---------- -->
@@ -299,6 +348,20 @@
   </section>
 
   <p class="hint-small">Tipp auf eine Karte, um einen Haken zurückzunehmen.</p>
+
+  <details class="howto" data-howto>
+    <summary>Als App auf den Home-Bildschirm legen</summary>
+    <div class="os">
+      <span class="os-name">iPhone</span>
+      Diese Seite in <em>Safari</em> öffnen, unten auf das Teilen-Symbol
+      <svg class="ios-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+      tippen, in der Liste nach unten zu <em>Zum Home-Bildschirm</em>, dann <em>Hinzufügen</em>.
+    </div>
+    <div class="os">
+      <span class="os-name">Android</span>
+      Diese Seite in <em>Chrome</em> öffnen, oben rechts auf die drei Punkte, dann <em>Zum Startbildschirm hinzufügen</em>.
+    </div>
+  </details>
 
   <button class="share-btn" data-share>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
