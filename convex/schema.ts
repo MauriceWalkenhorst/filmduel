@@ -3,9 +3,10 @@ import { v } from "convex/values";
 
 export default defineSchema({
   freikarten: defineTable({
+    slug: v.optional(v.string()),
     month: v.string(),
     used: v.number(),
-  }),
+  }).index("by_slug", ["slug"]),
   users: defineTable({
     tokenIdentifier: v.string(),
     name: v.optional(v.string()),

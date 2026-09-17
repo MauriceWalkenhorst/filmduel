@@ -1,13 +1,32 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-// Ein einziger Zählerstand für den UCI-Freikarten-Code (geteilt zwischen allen Nutzern des Links).
-// Ein Datensatz aus einem alten Monat gilt als 0 — der Reset passiert implizit beim Lesen.
+// Zählerstände für Kino-Freikarten.
+//
+// Zwei Arten von Datensätzen:
+//   - ohne slug: der ursprüngliche, einzelne Zähler (Seite /freikarten-x7q2/)
+//   - mit slug:  je eine Zeile pro selbst angelegter Seite (Seite /freikarten/)
+//
+// Der Freikarten-Code selbst wird NICHT gespeichert. Er steht ausschließlich im
+// URL-Anker der jeweiligen Seite, und der wird von Browsern nie an den Server
+// gesendet. Hier liegt nur, wie viele Karten in welchem Monat eingelöst wurden.
+//
+// Ein Datensatz aus einem alten Monat gilt als 0 — der Reset passiert beim Lesen.
+
+const MAX = 10;
+
+function clamp(used: number) {
+  return Math.max(0, Math.min(MAX, Math.floor(used)));
+}
+
+// --- Einzelzähler (ohne slug) ---
 
 export const get = query({
   args: {},
   handler: async (ctx) => {
-    const row = await ctx.db.query("freikarten").first();
+    // Bewusst nicht .first(): sobald es slug-Zeilen gibt, wäre das die falsche.
+    const rows = await ctx.db.query("freikarten").collect();
+    const row = rows.find((r: any) => !r.slug);
     return row ? { month: row.month, used: row.used } : null;
   },
 });
@@ -15,12 +34,45 @@ export const get = query({
 export const set = mutation({
   args: { month: v.string(), used: v.number() },
   handler: async (ctx, args) => {
-    const used = Math.max(0, Math.min(10, Math.floor(args.used)));
-    const row = await ctx.db.query("freikarten").first();
+    const rows = await ctx.db.query("freikarten").collect();
+    const row = rows.find((r: any) => !r.slug);
     if (row) {
-      await ctx.db.patch(row._id, { month: args.month, used });
+      await ctx.db.patch(row._id, { month: args.month, used: clamp(args.used) });
     } else {
-      await ctx.db.insert("freikarten", { month: args.month, used });
+      await ctx.db.insert("freikarten", { month: args.month, used: clamp(args.used) });
+    }
+  },
+});
+
+// --- Selbst angelegte Seiten (mit slug) ---
+
+export const getBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const row = await ctx.db
+      .query("freikarten")
+      .withIndex("by_slug", (q: any) => q.eq("slug", args.slug))
+      .first();
+    return row ? { month: row.month, used: row.used } : null;
+  },
+});
+
+export const setBySlug = mutation({
+  args: { slug: v.string(), month: v.string(), used: v.number() },
+  handler: async (ctx, args) => {
+    if (!/^[A-Za-z0-9_-]{6,40}$/.test(args.slug)) throw new Error("Ungültige Kennung");
+    const row = await ctx.db
+      .query("freikarten")
+      .withIndex("by_slug", (q: any) => q.eq("slug", args.slug))
+      .first();
+    if (row) {
+      await ctx.db.patch(row._id, { month: args.month, used: clamp(args.used) });
+    } else {
+      await ctx.db.insert("freikarten", {
+        slug: args.slug,
+        month: args.month,
+        used: clamp(args.used),
+      });
     }
   },
 });

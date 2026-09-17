@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kino-Freikarten</title>
+<meta name="description" content="Monatlicher Zähler für Kino-Freikarten mit Einlöse-Code.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#100d0b">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Freikarten">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #100d0b;
+    --ink-2: #1a1512;
+    --ink-3: #241d18;
+    --cream: #f2ece1;
+    --cream-dim: rgba(242, 236, 225, 0.55);
+    --cream-faint: rgba(242, 236, 225, 0.28);
+    --line: rgba(242, 236, 225, 0.13);
+    --gold: #e8a33d;
+    --gold-deep: #c77f18;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Helvetica, sans-serif;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--sans);
+    font-weight: 300;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: max(env(safe-area-inset-top), 1.2rem) 1.2rem max(env(safe-area-inset-bottom), 1.6rem);
+    overflow-x: hidden;
+  }
+  .wrap { width: 100%; max-width: 26rem; display: flex; flex-direction: column; gap: 1.15rem; }
+  [hidden] { display: none !important; }
+
+  header { text-align: center; padding-top: 0.4rem; }
+  .eyebrow {
+    font-size: 0.62rem; font-weight: 600; letter-spacing: 0.32em;
+    text-transform: uppercase; color: var(--gold); margin: 0 0 0.4rem;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 650; font-size: 1.7rem;
+    margin: 0; line-height: 1.1; text-wrap: balance;
+  }
+  .month {
+    margin: 0.45rem 0 0; font-size: 0.72rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--cream-dim);
+  }
+
+  /* ---- Einrichtung ---- */
+  .setup-intro {
+    margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--cream-dim);
+    text-align: center; text-wrap: pretty;
+  }
+  .field { display: flex; flex-direction: column; gap: 0.45rem; }
+  .field label {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--cream-dim);
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    font-size: 1rem; letter-spacing: 0.1em;
+    color: var(--cream);
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .field select { font-family: var(--sans); letter-spacing: 0.04em; }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field input::placeholder { color: var(--cream-faint); letter-spacing: 0.08em; }
+  .hint { margin: 0; font-size: 0.72rem; line-height: 1.55; color: var(--cream-faint); }
+  .error {
+    margin: 0; font-size: 0.75rem; color: #ff8f6b; min-height: 1.1em;
+  }
+
+  /* ---- Code-Karte ---- */
+  .code-card {
+    position: relative;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.05rem 1.1rem 1.15rem;
+  }
+  .code-card::before, .code-card::after {
+    content: ""; position: absolute; top: 50%; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--ink); border: 1px solid var(--line);
+    transform: translateY(-50%);
+  }
+  .code-card::before { left: -12px; }
+  .code-card::after { right: -12px; }
+  .code-label {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--cream-dim); margin: 0 0 0.5rem;
+    text-align: center;
+  }
+  .code {
+    font-family: "SF Mono", "Menlo", "Consolas", monospace;
+    font-size: clamp(1rem, 5.2vw, 1.28rem);
+    font-weight: 500; letter-spacing: 0.12em; text-align: center;
+    margin: 0 0 0.85rem; color: var(--cream);
+    user-select: all; -webkit-user-select: all;
+    overflow-wrap: anywhere;
+  }
+  .btn-gold {
+    display: block; width: 100%;
+    padding: 0.85rem 1rem;
+    font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: #17110a;
+    background: linear-gradient(110deg, var(--gold) 0%, var(--gold-deep) 100%);
+    border: none; border-radius: 10px; cursor: pointer;
+    transition: transform 0.12s ease, filter 0.2s ease;
+  }
+  .btn-gold:active { transform: scale(0.975); }
+  .btn-gold.is-copied { filter: saturate(0.4) brightness(1.1); }
+
+  /* ---- Ticket-Stubs ---- */
+  .stubs {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.55rem;
+    padding: 0; margin: 0; list-style: none;
+  }
+  .stub {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border: 1px dashed var(--cream-faint);
+    border-radius: 9px;
+    background: var(--ink-2);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.15rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background 0.25s ease, transform 0.12s ease;
+    padding: 0; font-family: var(--sans);
+  }
+  .stub:active { transform: scale(0.94); }
+  .stub .num { font-size: 0.58rem; font-weight: 500; letter-spacing: 0.08em; color: var(--cream-faint); }
+  .stub .mark {
+    font-family: var(--serif); font-size: 1.25rem; line-height: 1;
+    color: transparent; transform: scale(0.4);
+    transition: color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .stub .hole {
+    position: absolute; top: 6px; left: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--ink); border: 1px solid transparent;
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease;
+  }
+  .stub.is-used {
+    border-style: solid; border-color: var(--gold);
+    background: linear-gradient(150deg, rgba(232, 163, 61, 0.16), rgba(199, 127, 24, 0.05));
+  }
+  .stub.is-used .mark { color: var(--gold); transform: scale(1); }
+  .stub.is-used .num { color: var(--cream-dim); }
+  .stub.is-used .hole { transform: translateX(-50%) scale(1); border-color: var(--gold); }
+
+  @keyframes punch {
+    0%   { transform: rotate(0deg) scale(1); }
+    30%  { transform: rotate(-7deg) scale(1.12); }
+    55%  { transform: rotate(5deg) scale(1.05); }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+  .stub.just-punched { animation: punch 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+  .bit { position: fixed; z-index: 90; width: 7px; height: 11px; border-radius: 2px; pointer-events: none; will-change: transform, opacity; }
+  .fly-ticket {
+    position: fixed; z-index: 95; width: 34px; height: 22px;
+    background: linear-gradient(110deg, var(--gold), var(--gold-deep));
+    border-radius: 4px; pointer-events: none; will-change: transform, opacity;
+    box-shadow: 0 4px 14px rgba(232, 163, 61, 0.4);
+  }
+  .fly-ticket::before { content: ""; position: absolute; inset: 3px; border: 1px dashed rgba(23, 17, 10, 0.55); border-radius: 2px; }
+
+  /* ---- Zähler + Buttons ---- */
+  .count-row { text-align: center; margin-top: 0.15rem; }
+  .count { font-family: var(--serif); font-weight: 650; font-size: 2.6rem; line-height: 1; margin: 0; font-variant-numeric: tabular-nums; }
+  .count small { font-size: 1.05rem; font-weight: 500; color: var(--cream-dim); }
+  .count-hint { margin: 0.3rem 0 0; font-size: 0.72rem; color: var(--cream-dim); letter-spacing: 0.05em; }
+
+  .punch-btn {
+    width: 100%; padding: 1.15rem 1rem;
+    font-family: var(--serif); font-size: 1.12rem; font-weight: 650;
+    color: var(--cream); background: var(--ink-3);
+    border: 1px solid var(--line); border-radius: 14px; cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.2s ease, opacity 0.2s ease;
+  }
+  .punch-btn:active { transform: scale(0.98); }
+  .punch-btn:disabled { opacity: 0.35; cursor: default; }
+  .punch-btn span { color: var(--gold); }
+
+  .share-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; margin-top: -0.35rem; padding: 0.8rem 1rem;
+    font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--cream-dim); background: transparent;
+    border: 1px solid var(--line); border-radius: 12px; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.12s ease;
+  }
+  .share-btn:active { transform: scale(0.98); }
+  .share-btn:hover { color: var(--cream); border-color: var(--cream-faint); }
+  .share-btn.is-done { color: var(--gold); border-color: var(--gold); }
+  .share-btn svg { width: 14px; height: 14px; flex: none; }
+
+  footer {
+    margin-top: auto; padding-top: 1.4rem;
+    font-size: 0.62rem; letter-spacing: 0.1em; color: var(--cream-faint);
+    text-align: center; line-height: 1.8;
+  }
+  .sync-dot { color: var(--gold); }
+  .reset-link {
+    background: none; border: none; padding: 0; margin: 0;
+    font: inherit; color: var(--cream-faint); text-decoration: underline;
+    cursor: pointer; letter-spacing: inherit;
+  }
+
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .bit, .fly-ticket { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ---------- Einrichtung ---------- -->
+<div class="wrap" data-setup hidden>
+  <header>
+    <p class="eyebrow">Kino-Freikarten</p>
+    <h1>Eigene Seite einrichten</h1>
+  </header>
+
+  <p class="setup-intro">Trag deinen Freikarten-Code ein. Du bekommst einen eigenen Link mit eigenem Zähler, der sich jeden Monat zurücksetzt.</p>
+
+  <div class="field">
+    <label for="in-code">Dein Freikarten-Code</label>
+    <input id="in-code" type="text" inputmode="latin" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. A12B34CD5E6FG" maxlength="40">
+  </div>
+
+  <div class="field">
+    <label for="in-max">Karten pro Monat</label>
+    <select id="in-max">
+      <option value="5">5 Karten</option>
+      <option value="10" selected>10 Karten</option>
+      <option value="12">12 Karten</option>
+      <option value="15">15 Karten</option>
+    </select>
+  </div>
+
+  <p class="error" data-error></p>
+  <button class="btn-gold" data-create>Seite erstellen</button>
+
+  <p class="hint">Dein Code wird nicht auf dem Server gespeichert. Er steht nur in deinem eigenen Link, und dieser Teil der Adresse wird technisch nie an den Server gesendet. Gespeichert wird ausschließlich, wie viele Karten du diesen Monat eingelöst hast.<br><br><strong>Speichere den Link.</strong> Wer ihn hat, sieht deinen Code.</p>
+</div>
+
+<!-- ---------- Zähler ---------- -->
+<div class="wrap" data-app hidden>
+  <header>
+    <p class="eyebrow">Kino-Freikarten</p>
+    <h1>Code einlösen</h1>
+    <p class="month" data-month></p>
+  </header>
+
+  <section class="code-card" aria-label="Freikarten-Code">
+    <p class="code-label">Dein Code</p>
+    <p class="code" data-code></p>
+    <button class="btn-gold" data-copy>Code kopieren</button>
+  </section>
+
+  <ul class="stubs" data-stubs aria-label="Eingelöste Freikarten"></ul>
+
+  <div class="count-row">
+    <p class="count"><span data-count>0</span><small> / <span data-max>10</span> eingelöst</small></p>
+    <p class="count-hint">Tipp auf eine Karte, um einen Haken zurückzunehmen.</p>
+  </div>
+
+  <button class="punch-btn" data-punch>Freikarte einlösen <span>+</span></button>
+
+  <button class="share-btn" data-share>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"></line>
+      <line x1="8.6" y1="13.5" x2="15.4" y2="17.5"></line>
+    </svg>
+    <span data-share-label>Meinen Link teilen</span>
+  </button>
+
+  <footer>
+    Setzt sich am Monatsanfang automatisch zurück.<br>
+    <span data-sync>Verbinde …</span><br>
+    <button class="reset-link" data-reset>Anderen Code einrichten</button>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var API = "https://shiny-setter-795.eu-west-1.convex.site/freikarten";
+  var LAST = "freikarten-letzter-link";
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var FLIGHT_MS = 420;
+
+  var setupEl = document.querySelector("[data-setup]");
+  var appEl = document.querySelector("[data-app]");
+
+  // ---- Konfiguration aus dem URL-Anker lesen ----
+  // Der Anker (#…) wird vom Browser nie an den Server geschickt. Der Code bleibt
+  // damit auf dem Gerät und in dem Link, den die Person selbst aufbewahrt.
+  function readConfig() {
+    var h = location.hash.replace(/^#/, "");
+    if (!h) return null;
+    var p = new URLSearchParams(h);
+    var id = p.get("id"), code = p.get("code");
+    if (!id || !code) return null;
+    if (!/^[A-Za-z0-9_-]{6,40}$/.test(id)) return null;
+    var max = parseInt(p.get("n"), 10);
+    if (!(max >= 1 && max <= 50)) max = 10;
+    return { id: id, code: code, max: max };
+  }
+
+  function makeId() {
+    var a = new Uint8Array(9);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.from(a).map(function (b) {
+      return "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36];
+    }).join("");
+  }
+
+  // ---- Einrichtung ----
+  function showSetup() {
+    setupEl.hidden = false;
+    appEl.hidden = true;
+    document.title = "Kino-Freikarten einrichten";
+  }
+
+  document.querySelector("[data-create]").addEventListener("click", function () {
+    var errEl = document.querySelector("[data-error]");
+    var code = document.getElementById("in-code").value.trim().toUpperCase();
+    if (code.length < 4) { errEl.textContent = "Bitte den vollständigen Code eintragen."; return; }
+    if (!/^[A-Z0-9-]+$/.test(code)) { errEl.textContent = "Der Code darf nur Buchstaben, Ziffern und Bindestriche enthalten."; return; }
+    errEl.textContent = "";
+    var max = parseInt(document.getElementById("in-max").value, 10) || 10;
+    var hash = "#id=" + makeId() + "&code=" + encodeURIComponent(code) + "&n=" + max;
+    try { localStorage.setItem(LAST, hash); } catch (e) {}
+    // Sauberer Neuaufbau statt location.hash zu setzen: das loest sonst zusaetzlich
+    // hashchange aus und die Seite wuerde zweimal starten.
+    location.replace(location.pathname + hash);
+  });
+
+  document.getElementById("in-code").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.querySelector("[data-create]").click();
+  });
+
+  document.querySelector("[data-reset]").addEventListener("click", function () {
+    try { localStorage.removeItem(LAST); } catch (e) {}
+    location.hash = "";
+    location.reload();
+  });
+
+  // ---- Zähler ----
+  var cfg = null, MAX = 10, state = null, stubBtns = [];
+  var stubsEl = document.querySelector("[data-stubs]");
+  var countEl = document.querySelector("[data-count]");
+  var maxEl = document.querySelector("[data-max]");
+  var punchBtn = document.querySelector("[data-punch]");
+  var monthEl = document.querySelector("[data-month]");
+  var syncEl = document.querySelector("[data-sync]");
+  var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+
+  function monthKey() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  }
+  function effective(data) {
+    if (!data || data.month !== monthKey()) return { month: monthKey(), used: 0 };
+    return { month: data.month, used: Math.min(MAX, Math.max(0, data.used | 0)) };
+  }
+  function storeKey() { return "freikarten-" + cfg.id; }
+  function loadLocal() {
+    try {
+      var raw = localStorage.getItem(storeKey());
+      return effective(raw ? JSON.parse(raw) : null);
+    } catch (e) { return { month: monthKey(), used: 0 }; }
+  }
+  function saveLocal() {
+    try { localStorage.setItem(storeKey(), JSON.stringify(state)); } catch (e) {}
+  }
+  function renderMonth() {
+    var d = new Date();
+    monthEl.textContent = monthNames[d.getMonth()] + " " + d.getFullYear();
+  }
+  function setSync(text, ok) {
+    syncEl.innerHTML = ok ? '<span class="sync-dot">●</span> ' + text : text;
+  }
+  function render() {
+    stubBtns.forEach(function (btn, i) {
+      var used = i < state.used;
+      btn.classList.toggle("is-used", used);
+      btn.setAttribute("aria-pressed", used ? "true" : "false");
+      btn.setAttribute("aria-label", "Freikarte " + (i + 1) + (used ? " (eingelöst)" : " (frei)"));
+    });
+    countEl.textContent = state.used;
+    punchBtn.disabled = state.used >= MAX;
+    punchBtn.innerHTML = state.used >= MAX
+      ? "Alle " + MAX + " eingelöst 🎉"
+      : 'Freikarte einlösen <span>+</span>';
+  }
+
+  function confettiAt(x, y) {
+    if (reduceMotion) return;
+    var colors = ["#e8a33d", "#c77f18", "#f2ece1", "#fe5e2e"];
+    for (var i = 0; i < 14; i++) {
+      var b = document.createElement("div");
+      b.className = "bit";
+      b.style.background = colors[i % colors.length];
+      b.style.left = x + "px"; b.style.top = y + "px";
+      document.body.appendChild(b);
+      var ang = Math.random() * Math.PI * 2, dist = 40 + Math.random() * 70;
+      var dx = Math.cos(ang) * dist, dy = Math.sin(ang) * dist - 30;
+      var rot = (Math.random() - 0.5) * 540, dur = 700 + Math.random() * 300;
+      b.animate([
+        { transform: "translate(0,0) rotate(0deg)", opacity: 1 },
+        { transform: "translate(" + dx + "px," + (dy + 80) + "px) rotate(" + rot + "deg)", opacity: 0 }
+      ], { duration: dur, easing: "cubic-bezier(0.2,0.6,0.3,1)", fill: "forwards" });
+      (function (node) { setTimeout(function () { node.remove(); }, dur + 150); })(b);
+    }
+  }
+
+  // Rein dekorativ — der Zustand hängt nie an einer Animation.
+  function flyTicket(fromEl, toEl) {
+    if (reduceMotion) return;
+    var f = fromEl.getBoundingClientRect(), t = toEl.getBoundingClientRect();
+    var tk = document.createElement("div");
+    tk.className = "fly-ticket";
+    var sx = f.left + f.width / 2 - 17, sy = f.top + f.height / 2 - 11;
+    var ex = t.left + t.width / 2 - 17, ey = t.top + t.height / 2 - 11;
+    tk.style.left = sx + "px"; tk.style.top = sy + "px";
+    document.body.appendChild(tk);
+    tk.animate([
+      { transform: "translate(0,0) rotate(0deg) scale(1)", opacity: 1 },
+      { transform: "translate(" + (ex - sx) * 0.5 + "px," + ((ey - sy) * 0.5 - 46) + "px) rotate(180deg) scale(1.08)", opacity: 1, offset: 0.55 },
+      { transform: "translate(" + (ex - sx) + "px," + (ey - sy) + "px) rotate(340deg) scale(0.55)", opacity: 0.9 }
+    ], { duration: FLIGHT_MS, easing: "cubic-bezier(0.3,0.6,0.3,1)" });
+    setTimeout(function () { tk.remove(); }, FLIGHT_MS + 120);
+  }
+
+  function punchStub(i) {
+    var btn = stubBtns[i];
+    if (!btn) return;
+    btn.classList.remove("just-punched");
+    void btn.offsetWidth;
+    btn.classList.add("just-punched");
+    var r = btn.getBoundingClientRect();
+    confettiAt(r.left + r.width / 2, r.top + r.height / 2);
+  }
+
+  function persist(newUsed) {
+    state = { month: monthKey(), used: Math.min(MAX, Math.max(0, newUsed)) };
+    saveLocal();
+    render();
+    fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: cfg.id, month: state.month, used: state.used })
+    }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      setSync("Synct auf allen Geräten mit diesem Link.", true);
+    }).catch(function () {
+      setSync("Offline — wird beim nächsten Öffnen abgeglichen.");
+    });
+  }
+
+  function pull() {
+    fetch(API + "?slug=" + encodeURIComponent(cfg.id)).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (data) {
+      if (data === null && state.used > 0) { persist(state.used); return; }
+      var remote = effective(data);
+      if (remote.used !== state.used || remote.month !== state.month) {
+        state = remote; saveLocal(); renderMonth(); render();
+      }
+      setSync("Synct auf allen Geräten mit diesem Link.", true);
+    }).catch(function () {
+      setSync("Offline — lokaler Stand.");
+    });
+  }
+
+  function refreshMonth() {
+    var e = effective(state);
+    if (e.used !== state.used || e.month !== state.month) {
+      state = e; saveLocal(); renderMonth(); render();
+    }
+  }
+
+  function start() {
+    cfg = readConfig();
+    if (!cfg) { showSetup(); return; }
+
+    try { localStorage.setItem(LAST, location.hash); } catch (e) {}
+
+    MAX = cfg.max;
+    setupEl.hidden = true;
+    appEl.hidden = false;
+    document.title = "Kino-Freikarten";
+
+    document.querySelector("[data-code]").textContent = cfg.code;
+    maxEl.textContent = MAX;
+    renderMonth();
+
+    stubsEl.innerHTML = "";
+    for (var i = 0; i < MAX; i++) {
+      var li = document.createElement("li");
+      li.innerHTML = '<button class="stub" type="button" aria-pressed="false">' +
+        '<span class="hole" aria-hidden="true"></span>' +
+        '<span class="mark" aria-hidden="true">✓</span>' +
+        '<span class="num">' + (i + 1) + '</span></button>';
+      stubsEl.appendChild(li);
+    }
+    stubBtns = Array.prototype.slice.call(stubsEl.querySelectorAll(".stub"));
+    stubBtns.forEach(function (btn, i) {
+      btn.addEventListener("click", function () {
+        refreshMonth();
+        var target = i < state.used ? i : i + 1;
+        var adding = target > state.used;
+        persist(target);
+        if (adding) punchStub(target - 1);
+      });
+    });
+
+    state = loadLocal();
+    render();
+    pull();
+  }
+
+  punchBtn.addEventListener("click", function () {
+    refreshMonth();
+    if (state.used >= MAX) return;
+    var idx = state.used;
+    persist(idx + 1);
+    flyTicket(punchBtn, stubBtns[idx]);
+    setTimeout(function () { punchStub(idx); }, reduceMotion ? 0 : FLIGHT_MS - 80);
+  });
+
+  // ---- Kopieren / Teilen ----
+  var copyBtn = document.querySelector("[data-copy]");
+  copyBtn.addEventListener("click", function () {
+    function done() {
+      copyBtn.classList.add("is-copied");
+      copyBtn.textContent = "Kopiert ✓";
+      setTimeout(function () {
+        copyBtn.classList.remove("is-copied");
+        copyBtn.textContent = "Code kopieren";
+      }, 1800);
+    }
+    function fallback() {
+      var r = document.createRange();
+      r.selectNodeContents(document.querySelector("[data-code]"));
+      var sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(r);
+      try { document.execCommand("copy"); done(); } catch (e) {}
+      sel.removeAllRanges();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(cfg.code).then(done, fallback);
+    } else { fallback(); }
+  });
+
+  var shareBtn = document.querySelector("[data-share]");
+  var shareLabel = document.querySelector("[data-share-label]");
+  shareBtn.addEventListener("click", function () {
+    var url = location.href;
+    function flash(t) {
+      shareBtn.classList.add("is-done");
+      shareLabel.textContent = t;
+      setTimeout(function () {
+        shareBtn.classList.remove("is-done");
+        shareLabel.textContent = "Meinen Link teilen";
+      }, 1800);
+    }
+    if (navigator.share) {
+      navigator.share({ title: "Kino-Freikarten", text: "Mein Freikarten-Zähler", url: url })
+        .catch(function () {});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () { flash("Link kopiert ✓"); }, function () { flash("Kopieren nicht möglich"); });
+    } else { flash("Kopieren nicht möglich"); }
+  });
+
+  // ---- Monatswechsel & Abgleich ----
+  var shownMonth = monthKey();
+  function checkMonth() {
+    if (monthKey() === shownMonth) return;
+    shownMonth = monthKey();
+    renderMonth();
+    refreshMonth();
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && cfg) { checkMonth(); refreshMonth(); pull(); }
+  });
+  setInterval(function () {
+    if (!cfg) return;
+    checkMonth();
+    if (!document.hidden) pull();
+  }, 25000);
+
+  window.addEventListener("hashchange", function () { location.reload(); });
+
+  // ---- Start: Anker, sonst zuletzt genutzter Link, sonst Einrichtung ----
+  if (!location.hash) {
+    var last = null;
+    try { last = localStorage.getItem(LAST); } catch (e) {}
+    if (last) { location.replace(location.pathname + last); return; }
+  }
+  start();
+})();
+</script>
+</body>
+</html>
