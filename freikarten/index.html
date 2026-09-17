@@ -27,6 +27,8 @@
     --line: rgba(242, 236, 225, 0.13);
     --gold: #e8a33d;
     --gold-deep: #c77f18;
+    --steel: #9fb0c0;
+    --steel-deep: #6d7f90;
     --serif: "Fraunces", Georgia, serif;
     --sans: "IBM Plex Sans", -apple-system, "Segoe UI", Helvetica, sans-serif;
   }
@@ -63,41 +65,42 @@
   }
 
   /* ---- Einrichtung ---- */
-  .setup-intro {
-    margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--cream-dim);
-    text-align: center; text-wrap: pretty;
-  }
+  .setup-intro { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--cream-dim); text-align: center; text-wrap: pretty; }
   .field { display: flex; flex-direction: column; gap: 0.45rem; }
   .field label {
     font-size: 0.6rem; font-weight: 600; letter-spacing: 0.22em;
     text-transform: uppercase; color: var(--cream-dim);
   }
-  .field input, .field select {
-    width: 100%;
-    padding: 0.9rem 1rem;
+  .field input[type=text] {
+    width: 100%; padding: 0.9rem 1rem;
     font-family: "SF Mono", "Menlo", "Consolas", monospace;
     font-size: 1rem; letter-spacing: 0.1em;
-    color: var(--cream);
-    background: var(--ink-2);
-    border: 1px solid var(--line);
-    border-radius: 11px;
-    outline: none;
+    color: var(--cream); background: var(--ink-2);
+    border: 1px solid var(--line); border-radius: 11px; outline: none;
     transition: border-color 0.2s ease;
   }
-  .field select { font-family: var(--sans); letter-spacing: 0.04em; }
-  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field input[type=text]:focus { border-color: var(--gold); }
   .field input::placeholder { color: var(--cream-faint); letter-spacing: 0.08em; }
-  .hint { margin: 0; font-size: 0.72rem; line-height: 1.55; color: var(--cream-faint); }
-  .error {
-    margin: 0; font-size: 0.75rem; color: #ff8f6b; min-height: 1.1em;
+
+  .check {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    padding: 1rem 1.05rem;
+    background: var(--ink-2); border: 1px solid var(--line); border-radius: 12px;
+    cursor: pointer; transition: border-color 0.2s ease;
   }
+  .check:has(input:checked) { border-color: var(--steel); }
+  .check input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--steel); flex: none; cursor: pointer; }
+  .check-text { display: flex; flex-direction: column; gap: 0.2rem; }
+  .check-title { font-size: 0.88rem; font-weight: 500; color: var(--cream); }
+  .check-sub { font-size: 0.74rem; line-height: 1.5; color: var(--cream-dim); }
+
+  .hint { margin: 0; font-size: 0.72rem; line-height: 1.55; color: var(--cream-faint); }
+  .error { margin: 0; font-size: 0.75rem; color: #ff8f6b; min-height: 1.1em; }
 
   /* ---- Code-Karte ---- */
   .code-card {
-    position: relative;
-    background: var(--ink-2);
-    border: 1px solid var(--line);
-    border-radius: 14px;
+    position: relative; background: var(--ink-2);
+    border: 1px solid var(--line); border-radius: 14px;
     padding: 1.05rem 1.1rem 1.15rem;
   }
   .code-card::before, .code-card::after {
@@ -109,23 +112,19 @@
   .code-card::after { right: -12px; }
   .code-label {
     font-size: 0.6rem; font-weight: 600; letter-spacing: 0.26em;
-    text-transform: uppercase; color: var(--cream-dim); margin: 0 0 0.5rem;
-    text-align: center;
+    text-transform: uppercase; color: var(--cream-dim); margin: 0 0 0.5rem; text-align: center;
   }
   .code {
     font-family: "SF Mono", "Menlo", "Consolas", monospace;
     font-size: clamp(1rem, 5.2vw, 1.28rem);
     font-weight: 500; letter-spacing: 0.12em; text-align: center;
     margin: 0 0 0.85rem; color: var(--cream);
-    user-select: all; -webkit-user-select: all;
-    overflow-wrap: anywhere;
+    user-select: all; -webkit-user-select: all; overflow-wrap: anywhere;
   }
   .btn-gold {
-    display: block; width: 100%;
-    padding: 0.85rem 1rem;
+    display: block; width: 100%; padding: 0.85rem 1rem;
     font-family: var(--sans); font-size: 0.78rem; font-weight: 600;
-    letter-spacing: 0.2em; text-transform: uppercase;
-    color: #17110a;
+    letter-spacing: 0.2em; text-transform: uppercase; color: #17110a;
     background: linear-gradient(110deg, var(--gold) 0%, var(--gold-deep) 100%);
     border: none; border-radius: 10px; cursor: pointer;
     transition: transform 0.12s ease, filter 0.2s ease;
@@ -133,23 +132,31 @@
   .btn-gold:active { transform: scale(0.975); }
   .btn-gold.is-copied { filter: saturate(0.4) brightness(1.1); }
 
-  /* ---- Ticket-Stubs ---- */
-  .stubs {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.55rem;
-    padding: 0; margin: 0; list-style: none;
+  /* ---- Kartenblock (Freikarten / Staff) ---- */
+  .deck { display: flex; flex-direction: column; gap: 0.75rem; }
+  .deck + .deck { margin-top: 0.4rem; padding-top: 1.3rem; border-top: 1px solid var(--line); }
+  .deck-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .deck-title {
+    margin: 0; font-family: var(--sans);
+    font-size: 0.66rem; font-weight: 600; letter-spacing: 0.26em;
+    text-transform: uppercase; color: var(--accent);
   }
+  .deck-count {
+    margin: 0; font-family: var(--serif); font-weight: 650;
+    font-size: 1.15rem; color: var(--cream); font-variant-numeric: tabular-nums;
+  }
+  .deck-count small { font-size: 0.8rem; font-weight: 500; color: var(--cream-dim); }
+  .deck[data-kind="frei"]  { --accent: var(--gold);  --accent-deep: var(--gold-deep); }
+  .deck[data-kind="staff"] { --accent: var(--steel); --accent-deep: var(--steel-deep); }
+
+  .stubs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.55rem; padding: 0; margin: 0; list-style: none; }
   .stub {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    border: 1px dashed var(--cream-faint);
-    border-radius: 9px;
+    position: relative; width: 100%; aspect-ratio: 3 / 4;
+    border: 1px dashed var(--cream-faint); border-radius: 9px;
     background: var(--ink-2);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 0.15rem;
-    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem;
+    cursor: pointer; padding: 0; font-family: var(--sans);
     transition: border-color 0.2s ease, background 0.25s ease, transform 0.12s ease;
-    padding: 0; font-family: var(--sans);
   }
   .stub:active { transform: scale(0.94); }
   .stub .num { font-size: 0.58rem; font-weight: 500; letter-spacing: 0.08em; color: var(--cream-faint); }
@@ -159,19 +166,15 @@
     transition: color 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .stub .hole {
-    position: absolute; top: 6px; left: 50%;
-    width: 7px; height: 7px; border-radius: 50%;
+    position: absolute; top: 6px; left: 50%; width: 7px; height: 7px; border-radius: 50%;
     background: var(--ink); border: 1px solid transparent;
     transform: translateX(-50%) scale(0);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease;
   }
-  .stub.is-used {
-    border-style: solid; border-color: var(--gold);
-    background: linear-gradient(150deg, rgba(232, 163, 61, 0.16), rgba(199, 127, 24, 0.05));
-  }
-  .stub.is-used .mark { color: var(--gold); transform: scale(1); }
+  .stub.is-used { border-style: solid; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, var(--ink-2)); }
+  .stub.is-used .mark { color: var(--accent); transform: scale(1); }
   .stub.is-used .num { color: var(--cream-dim); }
-  .stub.is-used .hole { transform: translateX(-50%) scale(1); border-color: var(--gold); }
+  .stub.is-used .hole { transform: translateX(-50%) scale(1); border-color: var(--accent); }
 
   @keyframes punch {
     0%   { transform: rotate(0deg) scale(1); }
@@ -184,32 +187,26 @@
   .bit { position: fixed; z-index: 90; width: 7px; height: 11px; border-radius: 2px; pointer-events: none; will-change: transform, opacity; }
   .fly-ticket {
     position: fixed; z-index: 95; width: 34px; height: 22px;
-    background: linear-gradient(110deg, var(--gold), var(--gold-deep));
     border-radius: 4px; pointer-events: none; will-change: transform, opacity;
-    box-shadow: 0 4px 14px rgba(232, 163, 61, 0.4);
   }
   .fly-ticket::before { content: ""; position: absolute; inset: 3px; border: 1px dashed rgba(23, 17, 10, 0.55); border-radius: 2px; }
 
-  /* ---- Zähler + Buttons ---- */
-  .count-row { text-align: center; margin-top: 0.15rem; }
-  .count { font-family: var(--serif); font-weight: 650; font-size: 2.6rem; line-height: 1; margin: 0; font-variant-numeric: tabular-nums; }
-  .count small { font-size: 1.05rem; font-weight: 500; color: var(--cream-dim); }
-  .count-hint { margin: 0.3rem 0 0; font-size: 0.72rem; color: var(--cream-dim); letter-spacing: 0.05em; }
-
   .punch-btn {
-    width: 100%; padding: 1.15rem 1rem;
-    font-family: var(--serif); font-size: 1.12rem; font-weight: 650;
+    width: 100%; padding: 1rem;
+    font-family: var(--serif); font-size: 1.05rem; font-weight: 650;
     color: var(--cream); background: var(--ink-3);
     border: 1px solid var(--line); border-radius: 14px; cursor: pointer;
     transition: transform 0.12s ease, border-color 0.2s ease, opacity 0.2s ease;
   }
   .punch-btn:active { transform: scale(0.98); }
   .punch-btn:disabled { opacity: 0.35; cursor: default; }
-  .punch-btn span { color: var(--gold); }
+  .punch-btn span { color: var(--accent); }
+
+  .hint-small { margin: 0; font-size: 0.7rem; color: var(--cream-faint); letter-spacing: 0.04em; text-align: center; }
 
   .share-btn {
     display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    width: 100%; margin-top: -0.35rem; padding: 0.8rem 1rem;
+    width: 100%; padding: 0.8rem 1rem;
     font-family: var(--sans); font-size: 0.72rem; font-weight: 500;
     letter-spacing: 0.18em; text-transform: uppercase;
     color: var(--cream-dim); background: transparent;
@@ -228,12 +225,11 @@
   }
   .sync-dot { color: var(--gold); }
   .reset-link {
-    background: none; border: none; padding: 0; margin: 0;
-    font: inherit; color: var(--cream-faint); text-decoration: underline;
-    cursor: pointer; letter-spacing: inherit;
+    background: none; border: none; padding: 0; margin: 0; font: inherit;
+    color: var(--cream-faint); text-decoration: underline; cursor: pointer; letter-spacing: inherit;
   }
 
-  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
     .bit, .fly-ticket { display: none !important; }
@@ -256,15 +252,13 @@
     <input id="in-code" type="text" inputmode="latin" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="z. B. A12B34CD5E6FG" maxlength="40">
   </div>
 
-  <div class="field">
-    <label for="in-max">Karten pro Monat</label>
-    <select id="in-max">
-      <option value="5">5 Karten</option>
-      <option value="10" selected>10 Karten</option>
-      <option value="12">12 Karten</option>
-      <option value="15">15 Karten</option>
-    </select>
-  </div>
+  <label class="check" for="in-staff">
+    <input id="in-staff" type="checkbox">
+    <span class="check-text">
+      <span class="check-title">Zusätzlich 10 Staff-Karten</span>
+      <span class="check-sub">Für Manager: ein zweiter Zähler unter den Freikarten, ebenfalls 10 pro Monat. Zusammen also 20.</span>
+    </span>
+  </label>
 
   <p class="error" data-error></p>
   <button class="btn-gold" data-create>Seite erstellen</button>
@@ -286,14 +280,25 @@
     <button class="btn-gold" data-copy>Code kopieren</button>
   </section>
 
-  <ul class="stubs" data-stubs aria-label="Eingelöste Freikarten"></ul>
+  <section class="deck" data-kind="frei" data-deck="frei" aria-labelledby="t-frei">
+    <div class="deck-head">
+      <h2 class="deck-title" id="t-frei">Freikarten</h2>
+      <p class="deck-count"><span data-count>0</span><small> / <span data-max>10</span></small></p>
+    </div>
+    <ul class="stubs" data-stubs aria-label="Eingelöste Freikarten"></ul>
+    <button class="punch-btn" data-punch>Freikarte einlösen <span>+</span></button>
+  </section>
 
-  <div class="count-row">
-    <p class="count"><span data-count>0</span><small> / <span data-max>10</span> eingelöst</small></p>
-    <p class="count-hint">Tipp auf eine Karte, um einen Haken zurückzunehmen.</p>
-  </div>
+  <section class="deck" data-kind="staff" data-deck="staff" aria-labelledby="t-staff" hidden>
+    <div class="deck-head">
+      <h2 class="deck-title" id="t-staff">Staff-Karten</h2>
+      <p class="deck-count"><span data-count>0</span><small> / <span data-max>10</span></small></p>
+    </div>
+    <ul class="stubs" data-stubs aria-label="Eingelöste Staff-Karten"></ul>
+    <button class="punch-btn" data-punch>Staff-Karte einlösen <span>+</span></button>
+  </section>
 
-  <button class="punch-btn" data-punch>Freikarte einlösen <span>+</span></button>
+  <p class="hint-small">Tipp auf eine Karte, um einen Haken zurückzunehmen.</p>
 
   <button class="share-btn" data-share>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -319,13 +324,28 @@
   var LAST = "freikarten-letzter-link";
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var FLIGHT_MS = 420;
+  var STUECK = 10; // fix: 10 Freikarten, optional zusaetzlich 10 Staff-Karten
 
   var setupEl = document.querySelector("[data-setup]");
   var appEl = document.querySelector("[data-app]");
+  var syncEl = document.querySelector("[data-sync]");
+  var monthEl = document.querySelector("[data-month]");
+  var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 
-  // ---- Konfiguration aus dem URL-Anker lesen ----
+  function monthKey() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+  }
+  function renderMonth() {
+    var d = new Date();
+    monthEl.textContent = monthNames[d.getMonth()] + " " + d.getFullYear();
+  }
+  function setSync(text, ok) {
+    syncEl.innerHTML = ok ? '<span class="sync-dot">●</span> ' + text : text;
+  }
+
   // Der Anker (#…) wird vom Browser nie an den Server geschickt. Der Code bleibt
-  // damit auf dem Gerät und in dem Link, den die Person selbst aufbewahrt.
+  // damit auf dem Geraet und in dem Link, den die Person selbst aufbewahrt.
   function readConfig() {
     var h = location.hash.replace(/^#/, "");
     if (!h) return null;
@@ -333,9 +353,10 @@
     var id = p.get("id"), code = p.get("code");
     if (!id || !code) return null;
     if (!/^[A-Za-z0-9_-]{6,40}$/.test(id)) return null;
-    var max = parseInt(p.get("n"), 10);
-    if (!(max >= 1 && max <= 50)) max = 10;
-    return { id: id, code: code, max: max };
+    // n stammt aus einer frueheren Fassung; nur noch als Altlast beruecksichtigt.
+    var n = parseInt(p.get("n"), 10);
+    if (!(n >= 1 && n <= 50)) n = STUECK;
+    return { id: id, code: code, frei: n, staff: p.get("staff") === "1" };
   }
 
   function makeId() {
@@ -346,89 +367,10 @@
     }).join("");
   }
 
-  // ---- Einrichtung ----
-  function showSetup() {
-    setupEl.hidden = false;
-    appEl.hidden = true;
-    document.title = "Kino-Freikarten einrichten";
-  }
-
-  document.querySelector("[data-create]").addEventListener("click", function () {
-    var errEl = document.querySelector("[data-error]");
-    var code = document.getElementById("in-code").value.trim().toUpperCase();
-    if (code.length < 4) { errEl.textContent = "Bitte den vollständigen Code eintragen."; return; }
-    if (!/^[A-Z0-9-]+$/.test(code)) { errEl.textContent = "Der Code darf nur Buchstaben, Ziffern und Bindestriche enthalten."; return; }
-    errEl.textContent = "";
-    var max = parseInt(document.getElementById("in-max").value, 10) || 10;
-    var hash = "#id=" + makeId() + "&code=" + encodeURIComponent(code) + "&n=" + max;
-    try { localStorage.setItem(LAST, hash); } catch (e) {}
-    // Sauberer Neuaufbau statt location.hash zu setzen: das loest sonst zusaetzlich
-    // hashchange aus und die Seite wuerde zweimal starten.
-    location.replace(location.pathname + hash);
-  });
-
-  document.getElementById("in-code").addEventListener("keydown", function (e) {
-    if (e.key === "Enter") document.querySelector("[data-create]").click();
-  });
-
-  document.querySelector("[data-reset]").addEventListener("click", function () {
-    try { localStorage.removeItem(LAST); } catch (e) {}
-    location.hash = "";
-    location.reload();
-  });
-
-  // ---- Zähler ----
-  var cfg = null, MAX = 10, state = null, stubBtns = [];
-  var stubsEl = document.querySelector("[data-stubs]");
-  var countEl = document.querySelector("[data-count]");
-  var maxEl = document.querySelector("[data-max]");
-  var punchBtn = document.querySelector("[data-punch]");
-  var monthEl = document.querySelector("[data-month]");
-  var syncEl = document.querySelector("[data-sync]");
-  var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
-
-  function monthKey() {
-    var d = new Date();
-    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-  }
-  function effective(data) {
-    if (!data || data.month !== monthKey()) return { month: monthKey(), used: 0 };
-    return { month: data.month, used: Math.min(MAX, Math.max(0, data.used | 0)) };
-  }
-  function storeKey() { return "freikarten-" + cfg.id; }
-  function loadLocal() {
-    try {
-      var raw = localStorage.getItem(storeKey());
-      return effective(raw ? JSON.parse(raw) : null);
-    } catch (e) { return { month: monthKey(), used: 0 }; }
-  }
-  function saveLocal() {
-    try { localStorage.setItem(storeKey(), JSON.stringify(state)); } catch (e) {}
-  }
-  function renderMonth() {
-    var d = new Date();
-    monthEl.textContent = monthNames[d.getMonth()] + " " + d.getFullYear();
-  }
-  function setSync(text, ok) {
-    syncEl.innerHTML = ok ? '<span class="sync-dot">●</span> ' + text : text;
-  }
-  function render() {
-    stubBtns.forEach(function (btn, i) {
-      var used = i < state.used;
-      btn.classList.toggle("is-used", used);
-      btn.setAttribute("aria-pressed", used ? "true" : "false");
-      btn.setAttribute("aria-label", "Freikarte " + (i + 1) + (used ? " (eingelöst)" : " (frei)"));
-    });
-    countEl.textContent = state.used;
-    punchBtn.disabled = state.used >= MAX;
-    punchBtn.innerHTML = state.used >= MAX
-      ? "Alle " + MAX + " eingelöst 🎉"
-      : 'Freikarte einlösen <span>+</span>';
-  }
-
-  function confettiAt(x, y) {
+  // ---- gemeinsame Animationen ----
+  function confettiAt(x, y, color) {
     if (reduceMotion) return;
-    var colors = ["#e8a33d", "#c77f18", "#f2ece1", "#fe5e2e"];
+    var colors = [color, "#f2ece1", color, "#fe5e2e"];
     for (var i = 0; i < 14; i++) {
       var b = document.createElement("div");
       b.className = "bit";
@@ -446,12 +388,13 @@
     }
   }
 
-  // Rein dekorativ — der Zustand hängt nie an einer Animation.
-  function flyTicket(fromEl, toEl) {
+  // Rein dekorativ — der Zustand haengt nie an einer Animation.
+  function flyTicket(fromEl, toEl, grad) {
     if (reduceMotion) return;
     var f = fromEl.getBoundingClientRect(), t = toEl.getBoundingClientRect();
     var tk = document.createElement("div");
     tk.className = "fly-ticket";
+    tk.style.background = grad;
     var sx = f.left + f.width / 2 - 17, sy = f.top + f.height / 2 - 11;
     var ex = t.left + t.width / 2 - 17, ey = t.top + t.height / 2 - 11;
     tk.style.left = sx + "px"; tk.style.top = sy + "px";
@@ -464,70 +407,90 @@
     setTimeout(function () { tk.remove(); }, FLIGHT_MS + 120);
   }
 
-  function punchStub(i) {
-    var btn = stubBtns[i];
-    if (!btn) return;
-    btn.classList.remove("just-punched");
-    void btn.offsetWidth;
-    btn.classList.add("just-punched");
-    var r = btn.getBoundingClientRect();
-    confettiAt(r.left + r.width / 2, r.top + r.height / 2);
-  }
+  // ---- ein Kartenblock ----
+  function makeDeck(opts) {
+    var root = document.querySelector('[data-deck="' + opts.kind + '"]');
+    var stubsEl = root.querySelector("[data-stubs]");
+    var countEl = root.querySelector("[data-count]");
+    var maxEl = root.querySelector("[data-max]");
+    var punchBtn = root.querySelector("[data-punch]");
+    var MAX = opts.max, state = null, stubBtns = [];
+    var accent = getComputedStyle(root).getPropertyValue("--accent").trim() || "#e8a33d";
+    var grad = "linear-gradient(110deg, " + accent + ", " + accent + ")";
 
-  function persist(newUsed) {
-    state = { month: monthKey(), used: Math.min(MAX, Math.max(0, newUsed)) };
-    saveLocal();
-    render();
-    fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ slug: cfg.id, month: state.month, used: state.used })
-    }).then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      setSync("Synct auf allen Geräten mit diesem Link.", true);
-    }).catch(function () {
-      setSync("Offline — wird beim nächsten Öffnen abgeglichen.");
-    });
-  }
-
-  function pull() {
-    fetch(API + "?slug=" + encodeURIComponent(cfg.id)).then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    }).then(function (data) {
-      if (data === null && state.used > 0) { persist(state.used); return; }
-      var remote = effective(data);
-      if (remote.used !== state.used || remote.month !== state.month) {
-        state = remote; saveLocal(); renderMonth(); render();
-      }
-      setSync("Synct auf allen Geräten mit diesem Link.", true);
-    }).catch(function () {
-      setSync("Offline — lokaler Stand.");
-    });
-  }
-
-  function refreshMonth() {
-    var e = effective(state);
-    if (e.used !== state.used || e.month !== state.month) {
-      state = e; saveLocal(); renderMonth(); render();
+    function effective(data) {
+      if (!data || data.month !== monthKey()) return { month: monthKey(), used: 0 };
+      return { month: data.month, used: Math.min(MAX, Math.max(0, data.used | 0)) };
     }
-  }
+    function key() { return "freikarten-" + opts.slug; }
+    function loadLocal() {
+      try { var raw = localStorage.getItem(key()); return effective(raw ? JSON.parse(raw) : null); }
+      catch (e) { return { month: monthKey(), used: 0 }; }
+    }
+    function saveLocal() { try { localStorage.setItem(key(), JSON.stringify(state)); } catch (e) {} }
 
-  function start() {
-    cfg = readConfig();
-    if (!cfg) { showSetup(); return; }
+    function render() {
+      stubBtns.forEach(function (btn, i) {
+        var used = i < state.used;
+        btn.classList.toggle("is-used", used);
+        btn.setAttribute("aria-pressed", used ? "true" : "false");
+        btn.setAttribute("aria-label", opts.label + " " + (i + 1) + (used ? " (eingelöst)" : " (frei)"));
+      });
+      countEl.textContent = state.used;
+      punchBtn.disabled = state.used >= MAX;
+      punchBtn.innerHTML = state.used >= MAX
+        ? "Alle " + MAX + " eingelöst 🎉"
+        : opts.label + " einlösen <span>+</span>";
+    }
 
-    try { localStorage.setItem(LAST, location.hash); } catch (e) {}
+    function punchStub(i) {
+      var btn = stubBtns[i];
+      if (!btn) return;
+      btn.classList.remove("just-punched");
+      void btn.offsetWidth;
+      btn.classList.add("just-punched");
+      var r = btn.getBoundingClientRect();
+      confettiAt(r.left + r.width / 2, r.top + r.height / 2, accent);
+    }
 
-    MAX = cfg.max;
-    setupEl.hidden = true;
-    appEl.hidden = false;
-    document.title = "Kino-Freikarten";
+    function persist(newUsed) {
+      state = { month: monthKey(), used: Math.min(MAX, Math.max(0, newUsed)) };
+      saveLocal();
+      render();
+      fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: opts.slug, month: state.month, used: state.used })
+      }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        setSync("Synct auf allen Geräten mit diesem Link.", true);
+      }).catch(function () {
+        setSync("Offline — wird beim nächsten Öffnen abgeglichen.");
+      });
+    }
 
-    document.querySelector("[data-code]").textContent = cfg.code;
+    function pull() {
+      return fetch(API + "?slug=" + encodeURIComponent(opts.slug)).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }).then(function (data) {
+        if (data === null && state.used > 0) { persist(state.used); return true; }
+        var remote = effective(data);
+        if (remote.used !== state.used || remote.month !== state.month) {
+          state = remote; saveLocal(); render();
+        }
+        return true;
+      }).catch(function () { return false; });
+    }
+
+    function refreshMonth() {
+      var e = effective(state);
+      if (e.used !== state.used || e.month !== state.month) { state = e; saveLocal(); render(); }
+    }
+
+    // aufbauen
+    root.hidden = false;
     maxEl.textContent = MAX;
-    renderMonth();
-
     stubsEl.innerHTML = "";
     for (var i = 0; i < MAX; i++) {
       var li = document.createElement("li");
@@ -547,20 +510,78 @@
         if (adding) punchStub(target - 1);
       });
     });
+    punchBtn.addEventListener("click", function () {
+      refreshMonth();
+      if (state.used >= MAX) return;
+      var idx = state.used;
+      persist(idx + 1);
+      flyTicket(punchBtn, stubBtns[idx], grad);
+      setTimeout(function () { punchStub(idx); }, reduceMotion ? 0 : FLIGHT_MS - 80);
+    });
 
     state = loadLocal();
     render();
-    pull();
+
+    return { pull: pull, refreshMonth: refreshMonth };
   }
 
-  punchBtn.addEventListener("click", function () {
-    refreshMonth();
-    if (state.used >= MAX) return;
-    var idx = state.used;
-    persist(idx + 1);
-    flyTicket(punchBtn, stubBtns[idx]);
-    setTimeout(function () { punchStub(idx); }, reduceMotion ? 0 : FLIGHT_MS - 80);
+  // ---- Einrichtung ----
+  document.querySelector("[data-create]").addEventListener("click", function () {
+    var errEl = document.querySelector("[data-error]");
+    var code = document.getElementById("in-code").value.trim().toUpperCase();
+    if (code.length < 4) { errEl.textContent = "Bitte den vollständigen Code eintragen."; return; }
+    if (!/^[A-Z0-9-]+$/.test(code)) { errEl.textContent = "Der Code darf nur Buchstaben, Ziffern und Bindestriche enthalten."; return; }
+    errEl.textContent = "";
+    var staff = document.getElementById("in-staff").checked;
+    var hash = "#id=" + makeId() + "&code=" + encodeURIComponent(code) + (staff ? "&staff=1" : "");
+    try { localStorage.setItem(LAST, hash); } catch (e) {}
+    // Sauberer Neuaufbau statt location.hash zu setzen: das loest sonst zusaetzlich
+    // hashchange aus und die Seite wuerde zweimal starten.
+    location.replace(location.pathname + hash);
   });
+
+  document.getElementById("in-code").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") document.querySelector("[data-create]").click();
+  });
+
+  document.querySelector("[data-reset]").addEventListener("click", function () {
+    try { localStorage.removeItem(LAST); } catch (e) {}
+    location.replace(location.pathname);
+  });
+
+  // ---- Start ----
+  var cfg = null, decks = [];
+
+  function start() {
+    cfg = readConfig();
+    if (!cfg) {
+      setupEl.hidden = false;
+      appEl.hidden = true;
+      document.title = "Kino-Freikarten einrichten";
+      return;
+    }
+    try { localStorage.setItem(LAST, location.hash); } catch (e) {}
+
+    setupEl.hidden = true;
+    appEl.hidden = false;
+    document.title = "Kino-Freikarten";
+    document.querySelector("[data-code]").textContent = cfg.code;
+    renderMonth();
+
+    decks.push(makeDeck({ kind: "frei", slug: cfg.id, max: cfg.frei, label: "Freikarte" }));
+    if (cfg.staff) {
+      decks.push(makeDeck({ kind: "staff", slug: cfg.id + "-s", max: STUECK, label: "Staff-Karte" }));
+    }
+    pullAll();
+  }
+
+  function pullAll() {
+    Promise.all(decks.map(function (d) { return d.pull(); })).then(function (res) {
+      setSync(res.every(Boolean)
+        ? "Synct auf allen Geräten mit diesem Link."
+        : "Offline — lokaler Stand.", res.every(Boolean));
+    });
+  }
 
   // ---- Kopieren / Teilen ----
   var copyBtn = document.querySelector("[data-copy]");
@@ -599,8 +620,7 @@
       }, 1800);
     }
     if (navigator.share) {
-      navigator.share({ title: "Kino-Freikarten", text: "Mein Freikarten-Zähler", url: url })
-        .catch(function () {});
+      navigator.share({ title: "Kino-Freikarten", text: "Mein Freikarten-Zähler", url: url }).catch(function () {});
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -614,20 +634,19 @@
     if (monthKey() === shownMonth) return;
     shownMonth = monthKey();
     renderMonth();
-    refreshMonth();
+    decks.forEach(function (d) { d.refreshMonth(); });
   }
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && cfg) { checkMonth(); refreshMonth(); pull(); }
+    if (!document.hidden && cfg) { checkMonth(); decks.forEach(function (d) { d.refreshMonth(); }); pullAll(); }
   });
   setInterval(function () {
     if (!cfg) return;
     checkMonth();
-    if (!document.hidden) pull();
+    if (!document.hidden) pullAll();
   }, 25000);
 
   window.addEventListener("hashchange", function () { location.reload(); });
 
-  // ---- Start: Anker, sonst zuletzt genutzter Link, sonst Einrichtung ----
   if (!location.hash) {
     var last = null;
     try { last = localStorage.getItem(LAST); } catch (e) {}
