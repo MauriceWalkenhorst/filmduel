@@ -217,6 +217,17 @@
     transform: translateX(-50%) scale(0);
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease;
   }
+  /* Punkt unten: diese Karte trägt eine Notiz */
+  .stub .dot {
+    position: absolute; bottom: 5px; left: 50%;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--accent);
+    transform: translateX(-50%) scale(0);
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .stub.has-note .dot { transform: translateX(-50%) scale(1); }
+  .stub.has-note .num { opacity: 0.45; }
+
   .stub.is-used { border-style: solid; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 13%, var(--ink-2)); }
   .stub.is-used .mark { color: var(--accent); transform: scale(1); }
   .stub.is-used .num { color: var(--cream-dim); }
@@ -249,6 +260,81 @@
   .punch-btn span { color: var(--accent); }
 
   .hint-small { margin: 0; font-size: 0.7rem; color: var(--cream-faint); letter-spacing: 0.04em; text-align: center; }
+
+  /* ---- Notizliste unter dem Raster ---- */
+  .notelist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+  .notelist:empty { display: none; }
+  .notelist li {
+    display: flex; align-items: baseline; gap: 0.6rem;
+    font-size: 0.8rem; line-height: 1.5;
+    padding: 0.42rem 0.6rem;
+    background: var(--ink-2); border-radius: 8px;
+    border-left: 2px solid var(--accent);
+  }
+  .notelist .nl-num {
+    flex: none; font-family: var(--serif); font-weight: 650;
+    font-size: 0.82rem; color: var(--accent); min-width: 1.1rem;
+  }
+  .notelist .nl-note { color: var(--cream); overflow-wrap: anywhere; }
+  .notelist .nl-date { margin-left: auto; flex: none; font-size: 0.66rem; color: var(--cream-faint); }
+
+  /* ---- Historie ---- */
+  .hist-month { border-top: 1px solid var(--line); padding-top: 0.7rem; margin-top: 0.7rem; }
+  .hist-month:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+  .hist-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+  .hist-name { font-size: 0.82rem; font-weight: 500; color: var(--cream); }
+  .hist-count { font-family: var(--serif); font-weight: 650; font-size: 0.9rem; color: var(--gold); }
+  .hist-notes { list-style: none; margin: 0.35rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.2rem; }
+  .hist-notes li { font-size: 0.76rem; color: var(--cream-dim); line-height: 1.5; }
+  .hist-notes b { font-weight: 500; color: var(--cream-faint); margin-right: 0.35rem; }
+  .hist-empty { margin: 0; font-size: 0.78rem; color: var(--cream-faint); }
+
+  /* ---- Notiz-Overlay ---- */
+  .sheet-bg {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(8, 6, 5, 0.72);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 1rem;
+    animation: fade 0.18s ease;
+  }
+  @keyframes fade { from { opacity: 0; } }
+  @media (min-width: 30rem) { .sheet-bg { align-items: center; } }
+  .sheet {
+    width: 100%; max-width: 24rem;
+    background: var(--ink-2); border: 1px solid var(--line);
+    border-radius: 16px; padding: 1.1rem 1.15rem 1.2rem;
+    display: flex; flex-direction: column; gap: 0.6rem;
+    margin-bottom: env(safe-area-inset-bottom);
+    animation: rise 0.22s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+  @keyframes rise { from { transform: translateY(14px); opacity: 0; } }
+  .sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+  .sheet-title { margin: 0; font-family: var(--serif); font-size: 1.15rem; font-weight: 650; }
+  .sheet-x {
+    background: none; border: 0; color: var(--cream-dim);
+    font-size: 1.5rem; line-height: 1; cursor: pointer; padding: 0 0.2rem;
+  }
+  .sheet-date { margin: -0.3rem 0 0.2rem; font-size: 0.72rem; color: var(--cream-faint); }
+  .sheet-label {
+    font-size: 0.58rem; font-weight: 600; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--cream-dim);
+  }
+  .sheet textarea {
+    width: 100%; resize: vertical; min-height: 3.2rem;
+    padding: 0.75rem 0.85rem;
+    font-family: var(--sans); font-size: 16px; line-height: 1.5;
+    color: var(--cream); background: var(--ink-3);
+    border: 1px solid var(--line); border-radius: 10px; outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .sheet textarea:focus { border-color: var(--gold); }
+  .sheet textarea::placeholder { color: var(--cream-faint); }
+  .sheet-undo {
+    background: none; border: 0; padding: 0.5rem;
+    font: inherit; font-size: 0.76rem; letter-spacing: 0.1em;
+    color: var(--cream-faint); text-decoration: underline; cursor: pointer;
+  }
+  .sheet-undo:hover { color: #ff8f6b; }
 
   .share-btn {
     display: flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -321,7 +407,7 @@
     <button class="btn-gold" data-create>Meine Seite erstellen</button>
   </div>
 
-  <p class="hint"><strong>Zum Datenschutz:</strong> Dein Code wird nicht auf dem Server gespeichert. Er steht nur in deinem eigenen Link, und dieser Teil der Adresse wird von Browsern technisch nie mitgesendet. Gespeichert wird ausschließlich die Zahl der eingelösten Karten.<br><br>Bewahre den Link gut auf, denn wer ihn hat, sieht deinen Code. Mit einer Person geteilt, zählt ihr gemeinsam.</p>
+  <p class="hint"><strong>Zum Datenschutz:</strong> Dein Code wird nicht auf dem Server gespeichert. Er steht nur in deinem eigenen Link, und dieser Teil der Adresse wird von Browsern technisch nie mitgesendet.<br><br>Gespeichert werden die eingelösten Karten, ihr Datum und die Notizen, die du dazuschreibst. Nur so lassen sie sich zwischen deinen Geräten abgleichen. Schreib dort also nichts hinein, was niemand sonst lesen soll.<br><br>Bewahre den Link gut auf, denn wer ihn hat, sieht deinen Code und deine Notizen. Mit einer Person geteilt, zählt ihr gemeinsam.</p>
 </div>
 
 <!-- ---------- Zähler ---------- -->
@@ -344,6 +430,7 @@
       <p class="deck-count"><span data-count>0</span><small> / <span data-max>10</span></small></p>
     </div>
     <ul class="stubs" data-stubs aria-label="Eingelöste Freikarten"></ul>
+    <ul class="notelist" data-notelist></ul>
     <button class="punch-btn" data-punch>Freikarte einlösen <span>+</span></button>
   </section>
 
@@ -353,10 +440,16 @@
       <p class="deck-count"><span data-count>0</span><small> / <span data-max>10</span></small></p>
     </div>
     <ul class="stubs" data-stubs aria-label="Eingelöste Staff-Karten"></ul>
+    <ul class="notelist" data-notelist></ul>
     <button class="punch-btn" data-punch>Staff-Karte einlösen <span>+</span></button>
   </section>
 
-  <p class="hint-small">Tipp auf eine Karte, um einen Haken zurückzunehmen.</p>
+  <p class="hint-small">Tipp auf eine eingelöste Karte für Notiz oder Rücknahme.</p>
+
+  <details class="howto" data-history>
+    <summary>Frühere Monate</summary>
+    <div data-history-body><p class="hist-empty">Wird geladen …</p></div>
+  </details>
 
   <details class="howto" data-howto>
     <summary>Als App auf den Home-Bildschirm legen</summary>
@@ -383,6 +476,20 @@
     <span data-share-label>Meinen Link teilen</span>
   </button>
 
+  <div class="sheet-bg" data-sheet hidden>
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+      <div class="sheet-head">
+        <h2 class="sheet-title" id="sheet-title">Karte 1</h2>
+        <button class="sheet-x" data-sheet-close aria-label="Schließen">×</button>
+      </div>
+      <p class="sheet-date" data-sheet-date></p>
+      <label class="sheet-label" for="note-input">Notiz</label>
+      <textarea id="note-input" data-note-input rows="2" maxlength="200" placeholder="z. B. für Cousine, Spider-Man"></textarea>
+      <button class="btn-gold" data-note-save>Notiz speichern</button>
+      <button class="sheet-undo" data-note-undo>Karte zurücknehmen</button>
+    </div>
+  </div>
+
   <footer>
     Setzt sich am Monatsanfang automatisch zurück.<br>
     <span data-sync>Verbinde …</span><br>
@@ -392,7 +499,7 @@
 
 <script>
 (function () {
-  var API = "https://shiny-setter-795.eu-west-1.convex.site/freikarten";
+  var API = "https://grandiose-sparrow-384.eu-west-1.convex.site";
   var LAST = "freikarten-letzter-link";
   var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var FLIGHT_MS = 420;
@@ -404,14 +511,19 @@
   var monthEl = document.querySelector("[data-month]");
   var monthNames = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 
-  function monthKey() {
-    var d = new Date();
+  function monthKey(d) {
+    d = d || new Date();
     return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
   }
-  function renderMonth() {
-    var d = new Date();
-    monthEl.textContent = monthNames[d.getMonth()] + " " + d.getFullYear();
+  function monthLabel(key) {
+    var p = key.split("-");
+    return monthNames[(+p[1]) - 1] + " " + p[0];
   }
+  function dayLabel(ms) {
+    var d = new Date(ms);
+    return String(d.getDate()).padStart(2, "0") + "." + String(d.getMonth() + 1).padStart(2, "0") + ".";
+  }
+  function renderMonth() { monthEl.textContent = monthLabel(monthKey()); }
   function setSync(text, ok) {
     syncEl.innerHTML = ok ? '<span class="sync-dot">●</span> ' + text : text;
   }
@@ -425,8 +537,7 @@
     var id = p.get("id"), code = p.get("code");
     if (!id || !code) return null;
     if (!/^[A-Za-z0-9_-]{6,40}$/.test(id)) return null;
-    // n stammt aus einer frueheren Fassung; nur noch als Altlast beruecksichtigt.
-    var n = parseInt(p.get("n"), 10);
+    var n = parseInt(p.get("n"), 10); // Altlast aus einer frueheren Fassung
     if (!(n >= 1 && n <= 50)) n = STUECK;
     return { id: id, code: code, frei: n, staff: p.get("staff") === "1" };
   }
@@ -439,7 +550,7 @@
     }).join("");
   }
 
-  // ---- gemeinsame Animationen ----
+  // ---- Animationen (rein dekorativ) ----
   function confettiAt(x, y, color) {
     if (reduceMotion) return;
     var colors = [color, "#f2ece1", color, "#fe5e2e"];
@@ -460,13 +571,12 @@
     }
   }
 
-  // Rein dekorativ — der Zustand haengt nie an einer Animation.
-  function flyTicket(fromEl, toEl, grad) {
+  function flyTicket(fromEl, toEl, color) {
     if (reduceMotion) return;
     var f = fromEl.getBoundingClientRect(), t = toEl.getBoundingClientRect();
     var tk = document.createElement("div");
     tk.className = "fly-ticket";
-    tk.style.background = grad;
+    tk.style.background = color;
     var sx = f.left + f.width / 2 - 17, sy = f.top + f.height / 2 - 11;
     var ex = t.left + t.width / 2 - 17, ey = t.top + t.height / 2 - 11;
     tk.style.left = sx + "px"; tk.style.top = sy + "px";
@@ -479,40 +589,97 @@
     setTimeout(function () { tk.remove(); }, FLIGHT_MS + 120);
   }
 
+  // ---- Notiz-Overlay ----
+  var sheetBg = document.querySelector("[data-sheet]");
+  var sheetTitle = document.getElementById("sheet-title");
+  var sheetDate = document.querySelector("[data-sheet-date]");
+  var noteInput = document.querySelector("[data-note-input]");
+  var openFor = null; // { deck, index }
+
+  function openSheet(deck, index) {
+    openFor = { deck: deck, index: index };
+    var t = deck.ticket(index);
+    sheetTitle.textContent = deck.label + " " + (index + 1);
+    sheetDate.textContent = t && t.redeemedAt ? "Eingelöst am " + dayLabel(t.redeemedAt) : "";
+    noteInput.value = t ? (t.note || "") : "";
+    sheetBg.hidden = false;
+    setTimeout(function () { noteInput.focus(); }, 60);
+  }
+  function closeSheet() { sheetBg.hidden = true; openFor = null; }
+
+  document.querySelector("[data-sheet-close]").addEventListener("click", closeSheet);
+  sheetBg.addEventListener("click", function (e) { if (e.target === sheetBg) closeSheet(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !sheetBg.hidden) closeSheet(); });
+
+  document.querySelector("[data-note-save]").addEventListener("click", function () {
+    if (!openFor) return;
+    openFor.deck.saveNote(openFor.index, noteInput.value);
+    closeSheet();
+  });
+  document.querySelector("[data-note-undo]").addEventListener("click", function () {
+    if (!openFor) return;
+    openFor.deck.setCount(openFor.index);
+    closeSheet();
+  });
+
   // ---- ein Kartenblock ----
   function makeDeck(opts) {
     var root = document.querySelector('[data-deck="' + opts.kind + '"]');
     var stubsEl = root.querySelector("[data-stubs]");
+    var noteListEl = root.querySelector("[data-notelist]");
     var countEl = root.querySelector("[data-count]");
     var maxEl = root.querySelector("[data-max]");
     var punchBtn = root.querySelector("[data-punch]");
-    var MAX = opts.max, state = null, stubBtns = [];
+    var MAX = opts.max, stubBtns = [];
     var accent = getComputedStyle(root).getPropertyValue("--accent").trim() || "#e8a33d";
-    var grad = "linear-gradient(110deg, " + accent + ", " + accent + ")";
+    // { used, tickets: [{index, note, redeemedAt}] }
+    var state = { month: monthKey(), used: 0, tickets: [] };
 
-    function effective(data) {
-      if (!data || data.month !== monthKey()) return { month: monthKey(), used: 0 };
-      return { month: data.month, used: Math.min(MAX, Math.max(0, data.used | 0)) };
-    }
-    function key() { return "freikarten-" + opts.slug; }
+    function key() { return "freikarten2-" + opts.slug; }
     function loadLocal() {
-      try { var raw = localStorage.getItem(key()); return effective(raw ? JSON.parse(raw) : null); }
-      catch (e) { return { month: monthKey(), used: 0 }; }
+      try {
+        var raw = localStorage.getItem(key());
+        if (!raw) return;
+        var d = JSON.parse(raw);
+        if (d && d.month === monthKey()) state = d;
+      } catch (e) {}
     }
     function saveLocal() { try { localStorage.setItem(key(), JSON.stringify(state)); } catch (e) {} }
+
+    function ticket(i) {
+      for (var k = 0; k < state.tickets.length; k++) if (state.tickets[k].index === i) return state.tickets[k];
+      return null;
+    }
 
     function render() {
       stubBtns.forEach(function (btn, i) {
         var used = i < state.used;
+        var t = used ? ticket(i) : null;
         btn.classList.toggle("is-used", used);
+        btn.classList.toggle("has-note", !!(t && t.note));
         btn.setAttribute("aria-pressed", used ? "true" : "false");
-        btn.setAttribute("aria-label", opts.label + " " + (i + 1) + (used ? " (eingelöst)" : " (frei)"));
+        btn.setAttribute("aria-label",
+          opts.label + " " + (i + 1) + (used ? " (eingelöst" + (t && t.note ? ", Notiz: " + t.note : "") + ")" : " (frei)"));
       });
       countEl.textContent = state.used;
       punchBtn.disabled = state.used >= MAX;
       punchBtn.innerHTML = state.used >= MAX
         ? "Alle " + MAX + " eingelöst 🎉"
         : opts.label + " einlösen <span>+</span>";
+
+      noteListEl.innerHTML = "";
+      state.tickets
+        .filter(function (t) { return t.note && t.index < state.used; })
+        .sort(function (a, b) { return a.index - b.index; })
+        .forEach(function (t) {
+          var li = document.createElement("li");
+          li.innerHTML = '<span class="nl-num"></span><span class="nl-note"></span><span class="nl-date"></span>';
+          li.querySelector(".nl-num").textContent = t.index + 1;
+          li.querySelector(".nl-note").textContent = t.note;
+          li.querySelector(".nl-date").textContent = t.redeemedAt ? dayLabel(t.redeemedAt) : "";
+          li.addEventListener("click", function () { openSheet(deck, t.index); });
+          noteListEl.appendChild(li);
+        });
     }
 
     function punchStub(i) {
@@ -525,39 +692,85 @@
       confettiAt(r.left + r.width / 2, r.top + r.height / 2, accent);
     }
 
-    function persist(newUsed) {
-      state = { month: monthKey(), used: Math.min(MAX, Math.max(0, newUsed)) };
+    function applyRemote(data) {
+      state = {
+        month: data.month,
+        used: data.used,
+        tickets: (data.notes || []).map(function (n) {
+          return { index: n.index, note: n.note || "", redeemedAt: n.redeemedAt };
+        })
+      };
       saveLocal();
       render();
-      fetch(API, {
+    }
+
+    function setCount(target) {
+      target = Math.max(0, Math.min(MAX, target));
+      var prev = state.used;
+      state.used = target;
+      state.month = monthKey();
+      if (target > prev) {
+        for (var i = prev; i < target; i++) {
+          if (!ticket(i)) state.tickets.push({ index: i, note: "", redeemedAt: Date.now() });
+        }
+      } else {
+        state.tickets = state.tickets.filter(function (t) { return t.index < target; });
+      }
+      saveLocal();
+      render();
+      return fetch(API + "/count", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: opts.slug, month: state.month, used: state.used })
+        body: JSON.stringify({ slug: opts.slug, month: state.month, used: target })
       }).then(function (r) {
         if (!r.ok) throw new Error("HTTP " + r.status);
         setSync("Synct auf allen Geräten mit diesem Link.", true);
+        return true;
       }).catch(function () {
         setSync("Offline — wird beim nächsten Öffnen abgeglichen.");
+        return false;
+      });
+    }
+
+    function saveNote(index, text) {
+      var t = ticket(index);
+      var note = String(text || "").trim().slice(0, 200);
+      if (t) { t.note = note; saveLocal(); render(); }
+      return fetch(API + "/note", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: opts.slug, month: state.month, index: index, note: note })
+      }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        setSync("Synct auf allen Geräten mit diesem Link.", true);
+        return true;
+      }).catch(function () {
+        setSync("Offline — Notiz noch nicht gesichert.");
+        return false;
       });
     }
 
     function pull() {
-      return fetch(API + "?slug=" + encodeURIComponent(opts.slug)).then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        return r.json();
-      }).then(function (data) {
-        if (data === null && state.used > 0) { persist(state.used); return true; }
-        var remote = effective(data);
-        if (remote.used !== state.used || remote.month !== state.month) {
-          state = remote; saveLocal(); render();
-        }
-        return true;
-      }).catch(function () { return false; });
+      return fetch(API + "/month?slug=" + encodeURIComponent(opts.slug) + "&month=" + monthKey())
+        .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(function (data) {
+          if (data && data.ok === false) throw new Error(data.error);
+          // Lokal weiter als der Server? Dann lokalen Stand hochschieben.
+          if (data.used === 0 && state.used > 0 && state.month === monthKey()) {
+            return setCount(state.used);
+          }
+          applyRemote(data);
+          return true;
+        })
+        .catch(function () { return false; });
     }
 
     function refreshMonth() {
-      var e = effective(state);
-      if (e.used !== state.used || e.month !== state.month) { state = e; saveLocal(); render(); }
+      if (state.month !== monthKey()) {
+        state = { month: monthKey(), used: 0, tickets: [] };
+        saveLocal();
+        render();
+      }
     }
 
     // aufbauen
@@ -569,6 +782,7 @@
       li.innerHTML = '<button class="stub" type="button" aria-pressed="false">' +
         '<span class="hole" aria-hidden="true"></span>' +
         '<span class="mark" aria-hidden="true">✓</span>' +
+        '<span class="dot" aria-hidden="true"></span>' +
         '<span class="num">' + (i + 1) + '</span></button>';
       stubsEl.appendChild(li);
     }
@@ -576,25 +790,29 @@
     stubBtns.forEach(function (btn, i) {
       btn.addEventListener("click", function () {
         refreshMonth();
-        var target = i < state.used ? i : i + 1;
-        var adding = target > state.used;
-        persist(target);
-        if (adding) punchStub(target - 1);
+        if (i < state.used) { openSheet(deck, i); return; }  // eingelöst: Notiz statt Rücknahme
+        setCount(i + 1);
+        punchStub(i);
       });
     });
     punchBtn.addEventListener("click", function () {
       refreshMonth();
       if (state.used >= MAX) return;
       var idx = state.used;
-      persist(idx + 1);
-      flyTicket(punchBtn, stubBtns[idx], grad);
+      setCount(idx + 1);
+      flyTicket(punchBtn, stubBtns[idx], accent);
       setTimeout(function () { punchStub(idx); }, reduceMotion ? 0 : FLIGHT_MS - 80);
     });
 
-    state = loadLocal();
+    loadLocal();
     render();
 
-    return { pull: pull, refreshMonth: refreshMonth };
+    var deck = {
+      label: opts.label, slug: opts.slug,
+      pull: pull, refreshMonth: refreshMonth,
+      setCount: setCount, saveNote: saveNote, ticket: ticket
+    };
+    return deck;
   }
 
   // ---- Einrichtung ----
@@ -607,8 +825,6 @@
     var staff = document.getElementById("in-staff").checked;
     var hash = "#id=" + makeId() + "&code=" + encodeURIComponent(code) + (staff ? "&staff=1" : "");
     try { localStorage.setItem(LAST, hash); } catch (e) {}
-    // Sauberer Neuaufbau statt location.hash zu setzen: das loest sonst zusaetzlich
-    // hashchange aus und die Seite wuerde zweimal starten.
     location.replace(location.pathname + hash);
   });
 
@@ -645,13 +861,78 @@
       decks.push(makeDeck({ kind: "staff", slug: cfg.id + "-s", max: STUECK, label: "Staff-Karte" }));
     }
     pullAll();
+    setupHistory();
   }
 
   function pullAll() {
-    Promise.all(decks.map(function (d) { return d.pull(); })).then(function (res) {
-      setSync(res.every(Boolean)
-        ? "Synct auf allen Geräten mit diesem Link."
-        : "Offline — lokaler Stand.", res.every(Boolean));
+    return Promise.all(decks.map(function (d) { return d.pull(); })).then(function (res) {
+      var ok = res.every(Boolean);
+      setSync(ok ? "Synct auf allen Geräten mit diesem Link." : "Offline — lokaler Stand.", ok);
+      return ok;
+    });
+  }
+
+  // ---- Historie (wird erst beim Aufklappen geladen) ----
+  function setupHistory() {
+    var det = document.querySelector("[data-history]");
+    var body = document.querySelector("[data-history-body]");
+    var loaded = false;
+    det.addEventListener("toggle", function () {
+      if (!det.open || loaded) return;
+      loaded = true;
+      body.innerHTML = '<p class="hist-empty">Wird geladen …</p>';
+      Promise.all(decks.map(function (d) {
+        return fetch(API + "/history?slug=" + encodeURIComponent(d.slug) + "&month=" + monthKey())
+          .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+          .then(function (list) { return { label: d.label, list: list }; });
+      })).then(function (parts) {
+        var byMonth = {};
+        parts.forEach(function (p) {
+          (p.list || []).forEach(function (m) {
+            if (!byMonth[m.month]) byMonth[m.month] = [];
+            byMonth[m.month].push({ label: p.label, used: m.used, notes: m.notes || [] });
+          });
+        });
+        var months = Object.keys(byMonth).sort().reverse();
+        if (!months.length) {
+          body.innerHTML = '<p class="hist-empty">Noch keine abgeschlossenen Monate. Ab dem nächsten Monatswechsel findest du hier, was du eingelöst hast.</p>';
+          return;
+        }
+        body.innerHTML = "";
+        months.forEach(function (mk) {
+          var wrap = document.createElement("div");
+          wrap.className = "hist-month";
+          byMonth[mk].forEach(function (part, i) {
+            var head = document.createElement("div");
+            head.className = "hist-head";
+            var name = document.createElement("span");
+            name.className = "hist-name";
+            name.textContent = i === 0 ? monthLabel(mk) + (byMonth[mk].length > 1 ? " · " + part.label : "") : part.label;
+            var cnt = document.createElement("span");
+            cnt.className = "hist-count";
+            cnt.textContent = part.used;
+            head.appendChild(name); head.appendChild(cnt);
+            wrap.appendChild(head);
+            if (part.notes.length) {
+              var ul = document.createElement("ul");
+              ul.className = "hist-notes";
+              part.notes.forEach(function (n) {
+                var li = document.createElement("li");
+                var b = document.createElement("b");
+                b.textContent = (n.index + 1) + ".";
+                li.appendChild(b);
+                li.appendChild(document.createTextNode(n.note));
+                ul.appendChild(li);
+              });
+              wrap.appendChild(ul);
+            }
+          });
+          body.appendChild(wrap);
+        });
+      }).catch(function () {
+        body.innerHTML = '<p class="hist-empty">Konnte nicht geladen werden. Später nochmal versuchen.</p>';
+        loaded = false;
+      });
     });
   }
 
@@ -709,12 +990,12 @@
     decks.forEach(function (d) { d.refreshMonth(); });
   }
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && cfg) { checkMonth(); decks.forEach(function (d) { d.refreshMonth(); }); pullAll(); }
+    if (!document.hidden && cfg) { checkMonth(); pullAll(); }
   });
   setInterval(function () {
     if (!cfg) return;
     checkMonth();
-    if (!document.hidden) pullAll();
+    if (!document.hidden && sheetBg.hidden) pullAll();
   }, 25000);
 
   window.addEventListener("hashchange", function () { location.reload(); });
