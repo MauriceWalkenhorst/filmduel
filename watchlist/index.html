@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#151a17"><meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Deine Watchlist. Vier Stimmungen. Ein guter Filmabend.">
+<title>Abspann · Dein Filmabend</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css">
+<script type="module" src="./app.mjs"></script>
+</head>
+<body>
+<header class="header"><a class="brand" href="./" aria-label="Abspann Startseite">abspann<span>✳</span></a><button id="manage" class="quiet">Meine Watchlist <span id="total-count" class="pill">0</span></button></header>
+<main>
+<div id="notice" class="notice" role="status" hidden></div>
+<section id="choose-view">
+<div class="intro"><p class="eyebrow"><span class="live-dot"></span> DEIN ABEND. DEIN FILM.</p><h1>Weniger suchen.<br>Mehr <em>Kino.</em></h1><p class="lede">Wie soll sich dein Film heute anfühlen?<br>Du wählst die Stimmung. Der Zufall übernimmt den Rest.</p></div>
+<div id="mood-grid" class="mood-grid" aria-label="Stimmung wählen"></div>
+<div class="draw-bar"><p id="pool-hint">Wähle deine Stimmung.</p><button id="draw" class="primary" disabled>Film auswählen <span aria-hidden="true">↗</span></button></div>
+<div id="onboarding" class="onboarding"><span class="onboard-icon" aria-hidden="true">↳</span><div><strong>Deine Filme fehlen noch.</strong><p>Importiere deine Letterboxd-Watchlist. Sie bleibt in diesem Browser.</p></div><button id="first-import" class="quiet">Watchlist importieren →</button></div>
+<p class="small-note">Ein Film statt endlosem Scrollen.</p>
+</section>
+<section id="result-view" hidden aria-labelledby="film-title">
+<button id="back" class="back">← Stimmung ändern</button>
+<div class="result-layout"><div class="poster-wrap"><div id="poster-fallback" class="poster-fallback"><span class="poster-star">✳</span><span id="poster-status">Cover wird geladen …</span></div><img id="poster" hidden alt=""><span class="poster-stamp">HEUTE IM<br>WOHNZIMMER</span></div>
+<div class="result-copy"><p class="eyebrow" id="result-mood"></p><p class="pick-label">DEIN FILM FÜR HEUTE</p><h1 id="film-title" tabindex="-1"></h1><p id="film-year" class="film-year"></p><p id="film-reason" class="reason"></p><p id="film-description" class="description"></p><p id="picked-message" class="picked-message" hidden>Gute Wahl. Mach es dir gemütlich.</p><div class="result-actions"><button id="pick" class="primary">Den schaue ich <span aria-hidden="true">↗</span></button><button id="again" class="secondary">↻ Noch einmal ziehen</button></div><div class="minor-actions"><button id="seen" class="text-button">✓ Als gesehen markieren</button><a id="letterboxd-link" target="_blank" rel="noopener noreferrer">Auf Letterboxd ↗</a><button id="retry-poster" class="text-button" hidden>Cover erneut laden</button></div><p id="remaining" class="small-note"></p><button id="restart" class="secondary" hidden>Neue Runde starten</button></div></div>
+</section>
+<section id="library-view" hidden aria-labelledby="library-title">
+<button id="library-back" class="back">← Zur Filmauswahl</button><div class="section-heading"><div><p class="eyebrow">DEINE SAMMLUNG</p><h1 id="library-title">Meine Watchlist<span>.</span></h1></div><button id="backup" class="secondary">Sicherung herunterladen ↓</button></div>
+<details id="import-panel" class="import-panel"><summary>Filme importieren & Sicherung laden</summary><p>Wähle <strong>watchlist.csv</strong> und <strong>watched.csv</strong> aus deinem Letterboxd-Export. Du kannst beide zusammen auswählen. Erneute Importe ergänzen deine Sammlung.</p><label class="file-label">Letterboxd-CSV auswählen<input id="csv-files" type="file" accept=".csv,text/csv" multiple></label><label class="file-label">Sicherung laden<input id="backup-file" type="file" accept=".json,application/json"></label><p class="muted">Eine Sicherung ersetzt den aktuellen Stand nach Bestätigung. Deine Daten bleiben in diesem Browser. Ein anderes Gerät braucht deine Sicherung.</p><div id="import-errors" role="status"></div></details>
+<div class="library-tools"><input id="search" type="search" placeholder="Film suchen …" aria-label="Film suchen"><select id="filter" aria-label="Watchlist filtern"><option value="unseen">Noch nicht gesehen</option><option value="unassigned">Ohne Stimmung</option><option value="seen">Gesehen</option><option value="all">Alle Watchlist-Filme</option></select></div><p id="library-summary" class="muted"></p><p class="muted">Stimmungen sind Vorschläge. Du kannst sie für jeden Film ändern.</p><div id="film-list" class="film-list"></div>
+</section>
+</main>
+<footer><span>Gute Filme brauchen keinen Anlass.</span><details><summary>Über Abspann & Filmdaten</summary><p>Abspann ist deine eigenständige Watchlist. Filmauswahl und Sicherung bleiben lokal in diesem Browser. Zum Laden eines Covers werden Titel und Jahr an den Cover-Dienst und TMDB übermittelt.</p><p>Filmdaten und Cover: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB</a>. This product uses the TMDB API but is not endorsed or certified by TMDB.</p></details></footer>
+<dialog id="restore-dialog"><h2>Sicherung wiederherstellen?</h2><p>Der aktuelle Stand wird durch die ausgewählte Sicherung ersetzt. Lade bei Bedarf vorher eine Sicherung herunter.</p><div class="dialog-actions"><button id="cancel-restore" class="secondary">Abbrechen</button><button id="confirm-restore" class="primary">Wiederherstellen</button></div></dialog>
+</body></html>

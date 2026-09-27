@@ -2,7 +2,9 @@
   "name": "filmduel",
   "version": "1.0.0",
   "scripts": {
-    "dev": "npx convex dev"
+    "dev": "npx convex dev",
+    "watchlist:dev": "node scripts/watchlist-dev.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "@auth/core": "^0.37.4",
