@@ -8,3 +8,85 @@ const groups={
 };
 export const catalog={};
 for(const [mood,films] of Object.entries(groups))for(const [title,year] of films)(catalog[`${title}|${year}`]??=[]).push(mood);
+
+// Ergänzungen aus dem Brain; Zuordnungen als Vorschlag, 27.09.26.
+Object.assign(catalog, {
+  "I Saw the Devil|2010": [
+    "dark"
+  ],
+  "No Country for Old Men|2007": [
+    "dark"
+  ],
+  "Magnolia|1999": [
+    "deep"
+  ],
+  "Big Fish|2003": [
+    "warm",
+    "deep"
+  ],
+  "High and Low|1963": [
+    "dark",
+    "deep"
+  ],
+  "Come and See|1985": [
+    "deep"
+  ],
+  "In Bruges|2008": [
+    "dark",
+    "deep"
+  ],
+  "Up|2009": [
+    "warm",
+    "deep"
+  ],
+  "Enemy|2013": [
+    "dark"
+  ],
+  "Gone Girl|2014": [
+    "dark"
+  ],
+  "Collateral|2004": [
+    "dark",
+    "energy"
+  ],
+  "Before Sunrise|1995": [
+    "warm",
+    "deep"
+  ],
+  "Shadow of a Doubt|1943": [
+    "dark"
+  ],
+  "A Bittersweet Life|2005": [
+    "dark",
+    "energy"
+  ],
+  "The Yellow Sea|2010": [
+    "dark",
+    "energy"
+  ],
+  "Hard Boiled|1992": [
+    "energy"
+  ],
+  "Paprika|2006": [
+    "dark",
+    "energy"
+  ],
+  "Capernaum|2018": [
+    "deep"
+  ],
+  "Hunt for the Wilderpeople|2016": [
+    "warm"
+  ],
+  "Memento|2000": [
+    "dark"
+  ],
+  "Thirst|2009": [
+    "dark"
+  ],
+  "New World|2013": [
+    "dark"
+  ],
+  "The Wailing|2016": [
+    "dark"
+  ]
+});

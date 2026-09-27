@@ -1,6 +1,33 @@
 // Manuell anhand TMDB-Titel, Originaltitel und Handlung geprüft, 27.09.26.
 const verified={ 'Burning|2018':491584, 'Hunt|2022':727340, 'Minari|2020':615643, 'Aftersun|2022':965150, 'Kill|2023':1160018 };
 const norm=s=>String(s||'').normalize('NFKD').replace(/\p{Diacritic}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+// Verifizierte TMDB-IDs aus den offiziellen Letterboxd-Filmseiten, 27.09.26.
+Object.assign(verified, {
+  "I Saw the Devil|2010": 49797,
+  "No Country for Old Men|2007": 6977,
+  "Magnolia|1999": 334,
+  "Big Fish|2003": 587,
+  "High and Low|1963": 12493,
+  "Come and See|1985": 25237,
+  "In Bruges|2008": 8321,
+  "Up|2009": 14160,
+  "Enemy|2013": 181886,
+  "Gone Girl|2014": 210577,
+  "Collateral|2004": 1538,
+  "Before Sunrise|1995": 76,
+  "Shadow of a Doubt|1943": 21734,
+  "A Bittersweet Life|2005": 11344,
+  "The Yellow Sea|2010": 57361,
+  "Hard Boiled|1992": 11782,
+  "Paprika|2006": 4977,
+  "Capernaum|2018": 517814,
+  "Hunt for the Wilderpeople|2016": 371645,
+  "Memento|2000": 77,
+  "Thirst|2009": 22536,
+  "New World|2013": 165213,
+  "The Wailing|2016": 293670
+});
+
 function matchMovie(results,title,year){
  const matches=results.filter(m=>[m.title,m.original_title].some(t=>norm(t)===norm(title))&&(!year||m.release_date?.slice(0,4)===year));
  return matches.length===1?matches[0]:null;
