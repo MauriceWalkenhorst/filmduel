@@ -3,6 +3,9 @@
   "outputDirectory": ".",
   "installCommand": "npm ci --ignore-scripts",
   "framework": null,
+  "redirects": [
+    { "source": "/watchlist", "destination": "/watchlist/", "permanent": true }
+  ],
   "crons": [
     {
       "path": "/api/watchlist-cron",

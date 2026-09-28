@@ -3,12 +3,16 @@ function validSubscription(s){
  try{const u=new URL(s.endpoint);const allowed=u.hostname==='web.push.apple.com'||u.hostname==='fcm.googleapis.com'||u.hostname==='updates.push.services.mozilla.com'||u.hostname.endsWith('.notify.windows.com');return allowed&&u.protocol==='https:'&&!u.port&&!u.username&&!u.password&&s.endpoint.length<2048&&typeof s.keys?.p256dh==='string'&&typeof s.keys?.auth==='string'&&Buffer.from(s.keys.p256dh,'base64url').length===65&&Buffer.from(s.keys.auth,'base64url').length===16;}catch{return false;}
 }
 async function deliverEvents(record,events,{store,send,now=Date.now()}){
- let delivered=0,failed=0;
- for(const e of events){
-  if(Date.parse(e.startDate)<=now)continue;
-  const key=`${record.id}:${e.id}`;if(!await store.claim(key))continue;
-  try{await send(record.subscription,JSON.stringify({title:`${e.title} im Kino`,body:`${e.cinema} · ${new Date(e.startDate).toLocaleString('de-DE',{timeZone:'Europe/Berlin'})}`,url:'/watchlist/',tag:e.id}));await store.complete(key);delivered++;}
-  catch(error){await store.release(key);if([404,410].includes(error.statusCode))return {delivered,expired:true,failed:failed+1};failed++;}
+ let delivered=0,failed=0;const films=new Map(),when=d=>new Date(d).toLocaleString('de-DE',{timeZone:'Europe/Berlin'});
+ for(const e of events){if(Date.parse(e.startDate)<=now)continue;const film=String(e.movieId??e.title);films.set(film,[...(films.get(film)||[]),e]);}
+ for(const [film,list] of films){
+  // Eine Nachricht pro Film mit allen neuen Terminen, statt einer pro Vorstellung.
+  const fresh=[];for(const e of list){const key=`${record.id}:${e.id}`;if(await store.claim(key))fresh.push({e,key});}
+  if(!fresh.length)continue;
+  const sorted=fresh.map(x=>x.e).sort((a,b)=>Date.parse(a.startDate)-Date.parse(b.startDate)),first=sorted[0];
+  const body=sorted.length===1?`${first.cinema} · ${when(first.startDate)}`:`${sorted.length} neue Termine · ab ${when(first.startDate)} · ${[...new Set(sorted.map(e=>e.cinema))].join(', ')}`;
+  try{await send(record.subscription,JSON.stringify({title:`${first.title} im Kino`,body,url:'/watchlist/',tag:`film:${film}`}));for(const x of fresh)await store.complete(x.key);delivered++;}
+  catch(error){for(const x of fresh)await store.release(x.key);if([404,410].includes(error.statusCode))return {delivered,expired:true,failed:failed+1};failed++;}
  }
  return {delivered,failed};
 }

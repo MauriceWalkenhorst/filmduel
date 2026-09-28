@@ -43,3 +43,15 @@ test('marketplace REST variables enable push without treating the Redis TCP URL 
  delete process.env.WATCHLIST_KV_REST_API_URL;assert.equal(Boolean(push.configured()),false);
  }finally{for(const key of Object.keys(process.env))delete process.env[key];Object.assign(process.env,before);}
 });
+
+test('several new screenings of one film arrive as a single notification per film',async()=>{
+ const completed=[],sent=[];
+ const store={claim:async key=>key!=='s:old',complete:async key=>completed.push(key),release:async()=>{}};
+ const e=(id,movieId,title,startDate,cinema)=>({id,movieId,title,startDate,cinema});
+ const events=[e('a',1,'Heat','2030-01-02T18:00:00Z','Capitol'),e('b',1,'Heat','2030-01-01T20:00:00Z','Metropolis'),e('old',1,'Heat','2030-01-01T10:00:00Z','Capitol'),e('c',1,'Heat','2030-01-03T18:00:00Z','Capitol'),e('d',2,'Burning','2030-01-01T18:00:00Z','Casablanca')];
+ const result=await push.deliverEvents({id:'s',subscription:{}},events,{store,send:async(_,p)=>sent.push(JSON.parse(p)),now:Date.parse('2026-09-28')});
+ assert.equal(sent.length,2);assert.equal(result.delivered,2);
+ assert.deepEqual(completed.sort(),['s:a','s:b','s:c','s:d']);
+ assert.equal(sent[0].title,'Heat im Kino');assert.match(sent[0].body,/^3 neue Termine · ab /);assert.match(sent[0].body,/Metropolis, Capitol$/);
+ assert.equal(sent[1].title,'Burning im Kino');assert.match(sent[1].body,/^Casablanca · /);
+});
