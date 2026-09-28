@@ -13,7 +13,7 @@ if(!process.env.TMDB_READ_TOKEN&&process.env.WATCHLIST_TOKEN_FILE){
  if(token)process.env.TMDB_READ_TOKEN=token[0];
 }
 const types={'.html':'text/html; charset=utf-8','.mjs':'text/javascript; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.json':'application/json','.webmanifest':'application/manifest+json'};
-const publicFiles=new Set(['watchlist/sw.js','watchlist/cinema.mjs','watchlist/manifest.webmanifest','watchlist/streaming.mjs','watchlist/index.html','watchlist/app.mjs','watchlist/core.mjs','watchlist/catalog.mjs','watchlist/styles.css','watchlist/icon.svg','index.html','freikarten/index.html']);
+const publicFiles=new Set(['watchlist/icons/abspann-512.png','watchlist/icons/abspann-192.png','watchlist/icons/apple-touch-icon.png','watchlist/icons/favicon-32.png','watchlist/sw.js','watchlist/cinema.mjs','watchlist/manifest.webmanifest','watchlist/streaming.mjs','watchlist/index.html','watchlist/app.mjs','watchlist/core.mjs','watchlist/catalog.mjs','watchlist/styles.css','watchlist/icon.svg','index.html','freikarten/index.html']);
 http.createServer(async(req,res)=>{
  const u=new URL(req.url,'http://localhost');
  if(['/api/watchlist-poster','/api/watchlist-streaming','/api/watchlist-cinema','/api/watchlist-push'].includes(u.pathname)){
