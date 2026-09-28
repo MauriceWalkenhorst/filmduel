@@ -3,8 +3,8 @@ import {createCinema} from './cinema.mjs';
 import {createStreaming} from './streaming.mjs';
 import {catalog} from './catalog.mjs';
 const $=id=>document.getElementById(id);
-let state=emptyState(),storageBlocked=false,mood=null,current=null,drawn={},posterRequest=0,posterAbort=null,pendingRestore=null;
-try{state=loadState(localStorage);}catch(e){storageBlocked=true;notice(e.message);}
+let state=emptyState(),storageBlocked=false,mood=null,current=null,drawn={},posterRequest=0,posterAbort=null,pendingRestore=null,noticeTimer;
+try{state=loadState(localStorage);}catch(e){storageBlocked=true;notice(e.message,null,true);}
 const streaming=createStreaming({getFilms:()=>state.films,onChange:()=>renderHome(),onNotice:notice});
 const cinema=createCinema({notice});
 $('watch-cinema').onclick=()=>current&&cinema.add(current);
@@ -15,7 +15,7 @@ const icons=[
  '<path d="m27 3-17 25h13l-2 17 18-26H26Z"/>',
  '<path d="M3 14c8-13 14 13 22 0s14 13 22 0M3 25c8-13 14 13 22 0s14 13 22 0M3 36c8-13 14 13 22 0s14 13 22 0"/>'
 ];
-function notice(message,action){const el=$('notice');el.replaceChildren(document.createTextNode(message));el.hidden=false;if(action){const b=document.createElement('button');b.textContent=action.label;b.onclick=action.run;el.append(b);}}
+function notice(message,action,sticky=false){const el=$('notice');el.replaceChildren(document.createTextNode(message));el.hidden=false;if(action){const b=document.createElement('button');b.textContent=action.label;b.onclick=()=>{el.hidden=true;action.run();};el.append(b);}clearTimeout(noticeTimer);if(!sticky)noticeTimer=setTimeout(()=>{el.hidden=true;},action?8000:5000);}
 function commit(next,{restoring=false}={}){if(storageBlocked&&!restoring){notice('Bitte zuerst eine gültige Sicherung wiederherstellen. Die vorhandenen Daten bleiben geschützt.');return false;}try{saveState(localStorage,next);state=next;storageBlocked=false;return true;}catch(e){notice(e.message);return false;}}
 function show(view){for(const id of ['choose','result','library'])$(`${id}-view`).hidden=id!==view;window.scrollTo({top:0,behavior:'instant'});}
 function renderHome(){
@@ -53,7 +53,7 @@ function renderResult(){
 async function loadPoster(film){
  const request=++posterRequest;posterAbort?.abort();posterAbort=new AbortController();
  $('poster').hidden=true;$('poster').removeAttribute('src');$('poster').alt=`Filmcover: ${film.title} (${film.year||'Jahr unbekannt'})`;
- $('poster-fallback').hidden=false;$('poster-status').textContent='Cover wird geladen …';$('retry-poster').hidden=true;$('film-description').textContent='';
+ $('poster-fallback').hidden=false;$('poster-status').textContent='Cover wird geladen …';$('retry-poster').hidden=true;$('film-description').textContent='';$('film-description').classList.remove('expanded');
  try{
   const r=await fetch(`/api/watchlist-poster?${new URLSearchParams({title:film.title,year:film.year})}`,{signal:posterAbort.signal});
   const data=await r.json();if(request!==posterRequest)return;
@@ -61,7 +61,7 @@ async function loadPoster(film){
   $('poster').onload=()=>{if(request!==posterRequest)return;$('poster').hidden=false;$('poster-fallback').hidden=true;};
   $('poster').onerror=()=>{if(request!==posterRequest)return;$('poster').hidden=true;$('poster-fallback').hidden=false;$('poster-status').textContent='Cover konnte nicht geladen werden.';$('retry-poster').hidden=false;};
   $('poster').src=data.poster;
-  if(data.releaseDate&&data.releaseDate>new Date().toISOString().slice(0,10))$('film-description').textContent='Dieser Film ist noch angekündigt. Prüfe vor dem Filmabend, ob er bereits verfügbar ist.';
+  const upcoming=data.releaseDate&&data.releaseDate>new Date().toISOString().slice(0,10);$('film-description').textContent=[data.overview,upcoming?'Dieser Film ist noch angekündigt. Prüfe vor dem Filmabend, ob er bereits verfügbar ist.':''].filter(Boolean).join(' ');
  }catch(e){if(request!==posterRequest||e.name==='AbortError')return;$('poster-status').textContent=e.message;$('retry-poster').hidden=false;}
 }
 function setSeen(id,value){
@@ -92,6 +92,7 @@ $('manage').onclick=()=>openLibrary();$('first-import').onclick=()=>openLibrary(
 $('pick').onclick=()=>{if(current&&commit({...state,selected:current.id})){ $('pick').textContent='Für heute ausgewählt ✓';$('picked-message').hidden=false;}};
 $('seen').onclick=()=>{if(current&&setSeen(current.id,true)){posterAbort?.abort();current=null;show('choose');}};
 $('retry-poster').onclick=()=>{if(current){loadPoster(current);streaming.show(current);}};
+$('film-description').onclick=()=>$('film-description').classList.toggle('expanded');
 $('search').oninput=renderLibrary;$('filter').onchange=renderLibrary;
 $('csv-files').onchange=async event=>{
  const files=[...event.target.files];

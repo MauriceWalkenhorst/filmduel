@@ -14,8 +14,8 @@ export function createCinema({notice}){
   const registration=await navigator.serviceWorker.getRegistration('/watchlist/'),subscription=await registration?.pushManager.getSubscription();if(!subscription)throw Error('Push-Abonnement fehlt. Bitte erneut aktivieren.');
   await request('/api/watchlist-push',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({location,movies,subscription:subscription.toJSON()})});
  }
- async function add(film){try{const m=await request(`/api/watchlist-cinema?${new URLSearchParams({action:'movie',title:film.title,year:film.year})}`);if(!movies.some(x=>x.id===m.id))movies.push(m);save();render();if(active)await sync();notice(`${film.title} für den Kinoalarm vorgemerkt.${active?'':' Push ist noch nicht aktiviert.'}`);}catch(e){notice(e.message);}}
- $('add-cinema-film').onclick=()=>add({title:$('cinema-film-title').value.trim(),year:$('cinema-film-year').value.trim()});
+ async function add(film){try{const m=await request(`/api/watchlist-cinema?${new URLSearchParams({action:'movie',title:film.title,year:film.year})}`);if(!movies.some(x=>x.id===m.id))movies.push(m);save();render();if(active)await sync();notice(`${film.title} für den Kinoalarm vorgemerkt.${active?'':' Push ist noch nicht aktiviert.'}`);return true;}catch(e){notice(e.message);return false;}}
+ $('add-cinema-film').onclick=async()=>{if(await add({title:$('cinema-film-title').value.trim(),year:$('cinema-film-year').value.trim()})){$('cinema-film-title').value='';$('cinema-film-year').value='';}};
  $('find-location').onclick=async()=>{
   $('find-location').disabled=true;
   try{const data=await request(`/api/watchlist-cinema?${new URLSearchParams({action:'places',q:$('location-query').value})}`);$('location-options').replaceChildren();if(!data.places.length)$('location-options').textContent='Kein Ort gefunden.';for(const p of data.places){const b=document.createElement('button');b.className='secondary';b.textContent=p.name;b.onclick=async()=>{location=p;save();render();$('location-options').replaceChildren();if(active)await sync().catch(e=>notice(e.message));};$('location-options').append(b);}}catch(e){notice(e.message);}finally{$('find-location').disabled=false;}
@@ -28,7 +28,7 @@ export function createCinema({notice}){
    const norm=s=>s.normalize('NFKD').replace(/\p{Diacritic}/gu,'').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
    const hits=data.events.filter(e=>movies.filter(m=>[m.title,...m.aliases].some(t=>norm(t)===norm(e.title))).length===1);
    if(!hits.length){const p=document.createElement('p');p.textContent='Keine passenden Termine in den geprüften Spielplänen gefunden.';el.append(p);}
-   for(const e of hits){const p=document.createElement('p'),a=document.createElement('a');a.href=e.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=`${e.title} · ${e.cinema} · ${new Date(e.startDate).toLocaleString('de-DE')} · ${e.distanceKm} km ↗`;p.append(a);el.append(p);}
+   for(const e of hits){const p=document.createElement('p'),a=document.createElement('a');a.href=e.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=`${e.title} · ${e.cinema} · ${new Date(e.startDate).toLocaleString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Berlin'})} Uhr · ${e.distanceKm} km ↗`;p.append(a);el.append(p);}
   }catch(e){$('cinema-results').textContent=e.message;}finally{$('check-cinemas').disabled=false;}
  };
  async function disable(){await request('/api/watchlist-push',{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});const reg=await navigator.serviceWorker.getRegistration('/watchlist/');await (await reg?.pushManager.getSubscription())?.unsubscribe();active=false;save();render();$('push-status').textContent='Kinoalarm deaktiviert. Servereintrag gelöscht.';}
