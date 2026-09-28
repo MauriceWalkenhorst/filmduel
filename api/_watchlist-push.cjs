@@ -12,9 +12,11 @@ async function deliverEvents(record,events,{store,send,now=Date.now()}){
  }
  return {delivered,failed};
 }
-function configured(){return ['WATCHLIST_REDIS_URL','WATCHLIST_REDIS_TOKEN','WATCHLIST_VAPID_PUBLIC','WATCHLIST_VAPID_PRIVATE','WATCHLIST_VAPID_SUBJECT','WATCHLIST_CRON_SECRET'].every(k=>process.env[k]);}
+const restUrl=()=>process.env.WATCHLIST_KV_REST_API_URL||process.env.WATCHLIST_REDIS_URL;
+const restToken=()=>process.env.WATCHLIST_KV_REST_API_TOKEN||process.env.WATCHLIST_REDIS_TOKEN;
+function configured(){return Boolean(/^https:\/\//.test(restUrl()||'')&&restToken()&&['WATCHLIST_VAPID_PUBLIC','WATCHLIST_VAPID_PRIVATE','WATCHLIST_VAPID_SUBJECT','WATCHLIST_CRON_SECRET'].every(k=>process.env[k]));}
 async function redis(...command){
- const r=await fetch(process.env.WATCHLIST_REDIS_URL,{method:'POST',headers:{Authorization:`Bearer ${process.env.WATCHLIST_REDIS_TOKEN}`,'Content-Type':'application/json'},body:JSON.stringify(command),signal:AbortSignal.timeout(8000)});
+ const r=await fetch(restUrl(),{method:'POST',headers:{Authorization:`Bearer ${restToken()}`,'Content-Type':'application/json'},body:JSON.stringify(command),signal:AbortSignal.timeout(8000)});
  if(!r.ok)throw Error('Speicher nicht erreichbar.');const data=await r.json();if(data.error)throw Error('Speicherfehler.');return data.result;
 }
 const prefix='abspann:v2:';

@@ -2,5 +2,16 @@
   "buildCommand": null,
   "outputDirectory": ".",
   "installCommand": "npm ci --ignore-scripts",
-  "framework": null
+  "framework": null,
+  "crons": [
+    {
+      "path": "/api/watchlist-cron",
+      "schedule": "0 7 * * *"
+    }
+  ],
+  "functions": {
+    "api/watchlist-cron.js": {
+      "maxDuration": 300
+    }
+  }
 }

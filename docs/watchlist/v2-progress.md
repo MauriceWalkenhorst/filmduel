@@ -15,3 +15,7 @@ Push: Hosting enthält nur TMDB_READ_TOKEN; separater dauerhafter Speicher fehlt
 
 Browserprüfung lokal Port4174: Sicherung mit211 Filmen importiert; Romancing the Stone zeigt Disney Plus, Leihe/Kauf und Quellenhinweis. Ortssuche Dortmund auswählbar; The Handmaiden2016 vorgemerkt; 3/3 Kinoquellen liefern173 Termine und passenden Treffer Die Taschendiebin29.09.2619:45,17.3km. Handy390px hat keinen horizontalen Überlauf.
 Review: Streaming-Refresh nach Import/Restore/Seen ergänzt. Versand-Lease statt dauerhafter Vorabmarkierung, Abschluss nach erfolgreichem Versand; Registrierung auf100 Geräte/60 Änderungen pro Stunde begrenzt, Endpoint-Deduplizierung. Testausbau23+ Tests. Push live mangels Redis/VAPID/Cron noch nicht möglich.
+
+Push-Einrichtung28.09.26: Maurice bestätigte Upstash-Nutzungsbedingungen. Dedizierter Speicher abspann-kinoalarm, store_hjdxcxTzOPCzozyk, Frankfurt, Free, autoUpgrade:false, prodPack:false, eviction:false (API geprüft). Produktionsumgebung verbunden, VAPID und Cron-Schlüssel verschlüsselt gesetzt. Kein Geheimnis in Git/Brain.
+25Unit-Tests grün. Echter Redis-Integrationstest: Anmeldung, gespeicherte Filmdaten, Endpoint-Dubletten, Abmeldung, Cron-Autorisierung, Testnachricht ohne Abo abgewiesen; Testeinträge gelöscht. Noch keine echte Handy-Zustellung bestätigt. Testnachricht-Button zur Prüfung durch Nutzer.
+Täglicher Vercel Cron07:00UTC vorgesehen (Hobby innerhalb dieser Stunde). Kino-Treffer nach Erkennung, nicht Echtzeit.

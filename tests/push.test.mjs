@@ -33,3 +33,13 @@ test('registration rejects a full store but permits updating an existing device'
  await assert.rejects(()=>push.admitRegistration('new',store),/Kapazität/);
  assert.equal(await push.admitRegistration('old',{exists:async()=>true,count:async()=>100}),true);
 });
+
+test('marketplace REST variables enable push without treating the Redis TCP URL as HTTP',()=>{
+ const before={...process.env};
+ try{
+ for(const key of Object.keys(process.env))if(key.startsWith('WATCHLIST_'))delete process.env[key];
+ Object.assign(process.env,{WATCHLIST_KV_REST_API_URL:'https://example.upstash.io',WATCHLIST_KV_REST_API_TOKEN:'secret',WATCHLIST_REDIS_URL:'rediss://not-http',WATCHLIST_VAPID_PUBLIC:'public',WATCHLIST_VAPID_PRIVATE:'private',WATCHLIST_VAPID_SUBJECT:'https://filmduel.space/watchlist/',WATCHLIST_CRON_SECRET:'secret'});
+ assert.equal(Boolean(push.configured()),true);
+ delete process.env.WATCHLIST_KV_REST_API_URL;assert.equal(Boolean(push.configured()),false);
+ }finally{for(const key of Object.keys(process.env))delete process.env[key];Object.assign(process.env,before);}
+});

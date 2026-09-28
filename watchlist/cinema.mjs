@@ -6,7 +6,7 @@ export function createCinema({notice}){
  function render(){
   $('cinema-location').textContent=location?`${location.name} · 100 km Luftlinie`:'Noch kein Standort gewählt.';
   $('watched-movies').replaceChildren(...movies.map(m=>{const row=document.createElement('p'),b=document.createElement('button');b.className='quiet';b.textContent='Entfernen';b.onclick=async()=>{movies=movies.filter(x=>x.id!==m.id);save();render();if(active)await sync().catch(e=>notice(e.message));};row.append(document.createTextNode(m.title+' '),b);return row;}));
-  $('push-disable').hidden=!active;
+  $('push-disable').hidden=!active;$('push-test').hidden=!active;
  }
  async function sync(){
   if(!active)return;
@@ -32,6 +32,7 @@ export function createCinema({notice}){
   }catch(e){$('cinema-results').textContent=e.message;}finally{$('check-cinemas').disabled=false;}
  };
  async function disable(){await request('/api/watchlist-push',{method:'DELETE',headers:{Authorization:`Bearer ${token}`}});const reg=await navigator.serviceWorker.getRegistration('/watchlist/');await (await reg?.pushManager.getSubscription())?.unsubscribe();active=false;save();render();$('push-status').textContent='Kinoalarm deaktiviert. Servereintrag gelöscht.';}
+ $('push-test').onclick=async()=>{try{await request('/api/watchlist-push',{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify({action:'test'})});notice('Testnachricht an den Push-Dienst übergeben. Prüfe die Mitteilungen auf deinem Gerät.');}catch(e){notice(e.message);}};
  $('push-disable').onclick=()=>disable().catch(e=>notice(e.message));
  $('push-enable').onclick=async()=>{
   try{

@@ -1,10 +1,10 @@
 # Kinoalarm in Betrieb nehmen
 
-Noch nicht aktiv: Ein eigener Redis-REST-Speicher ist erforderlich. Bestehende Convex-Instanzen nicht verändern. API und Worker sind vorbereitet; echte Zustellung muss nach Einrichtung auf einem Handy geprüft werden.
+Stand 28.09.26: Ein eigener Upstash-Free-Speicher abspann-kinoalarm in Frankfurt wurde nach persönlicher Bestätigung der Nutzungsbedingungen eingerichtet. Automatische Tarifhochstu­fung ist deaktiviert. Bestehende Convex-Instanzen nicht verändern. API und Worker sind vorbereitet; echte Zustellung muss nach Einrichtung auf einem Handy geprüft werden.
 
 Servervariablen in Vercel (niemals ins Git):
 
-- WATCHLIST_REDIS_URL / WATCHLIST_REDIS_TOKEN: Redis REST, z.B. eigener Upstash-Speicher
+- WATCHLIST_KV_REST_API_URL / WATCHLIST_KV_REST_API_TOKEN: durch Vercel-Marketplace verbunden. WATCHLIST_REDIS_URL aus der Integration ist eine TCP-URL und darf nicht als REST-URL verwendet werden.
 - WATCHLIST_VAPID_PUBLIC / WATCHLIST_VAPID_PRIVATE: `web-push.generateVAPIDKeys()`
 - WATCHLIST_VAPID_SUBJECT: Betreiber-Kontakt-URL oder mailto
 - WATCHLIST_CRON_SECRET: langer zufälliger Bearer-Schlüssel für den Worker

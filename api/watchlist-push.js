@@ -12,7 +12,15 @@ module.exports=async(req,res)=>{
   if(req.method==='DELETE'){const old=await redis('GET',prefix+'sub:'+id);if(old){const record=typeof old==='string'?JSON.parse(old):old;await redis('DEL',prefix+'endpoint:'+idFor(record.subscription.endpoint));}await redis('DEL',prefix+'sub:'+id);await redis('SREM',prefix+'subscriptions',id);return res.status(200).json({removed:true});}
   const requests=await redis('INCR',prefix+'registrations:'+Math.floor(Date.now()/3600000));if(requests===1)await redis('EXPIRE',prefix+'registrations:'+Math.floor(Date.now()/3600000),7200);if(requests>60)return res.status(429).json({error:'Zu viele Änderungen. Bitte später erneut versuchen.'});
   await admitRegistration(id,{exists:async key=>Boolean(await redis('EXISTS',prefix+'sub:'+key)),count:()=>redis('SCARD',prefix+'subscriptions')});
-  const b=req.body;if(!b||JSON.stringify(b).length>100000||!validSubscription(b.subscription)||!Array.isArray(b.movies)||!b.movies.length||b.movies.length>300)return res.status(400).json({error:'Ungültiges Push-Abonnement oder keine Filme ausgewählt.'});
+  const b=req.body;
+  if(b?.action==='test'){
+   const raw=await redis('GET',prefix+'sub:'+id);if(!raw)return res.status(404).json({error:'Bitte zuerst Benachrichtigungen aktivieren.'});
+   const record=typeof raw==='string'?JSON.parse(raw):raw;
+   const webpush=require('web-push');webpush.setVapidDetails(process.env.WATCHLIST_VAPID_SUBJECT,process.env.WATCHLIST_VAPID_PUBLIC,process.env.WATCHLIST_VAPID_PRIVATE);
+   await webpush.sendNotification(record.subscription,JSON.stringify({title:'Abspann Kinoalarm',body:'Deine Benachrichtigungen sind eingerichtet. Neue passende Kinotermine erscheinen hier.',tag:'abspann-test',url:'/watchlist/'}),{TTL:300,timeout:10000});
+   return res.status(200).json({sent:true});
+  }
+  if(!b||JSON.stringify(b).length>100000||!validSubscription(b.subscription)||!Array.isArray(b.movies)||!b.movies.length||b.movies.length>300)return res.status(400).json({error:'Ungültiges Push-Abonnement oder keine Filme ausgewählt.'});
   const location=coordinates(b.location?.lat,b.location?.lon);
   const movies=b.movies.map(m=>{if(!Number.isInteger(m.id)||m.id<1||typeof m.title!=='string'||m.title.length>200||!Array.isArray(m.aliases)||m.aliases.length>10||m.aliases.some(a=>typeof a!=='string'||a.length>200))throw Error('Ungültiger Film.');return {id:m.id,title:m.title,aliases:m.aliases};});
   const record={id,subscription:b.subscription,location,movies,updatedAt:new Date().toISOString()};
