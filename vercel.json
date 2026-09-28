@@ -1,6 +1,6 @@
 {
   "buildCommand": null,
   "outputDirectory": ".",
-  "installCommand": "echo skip",
+  "installCommand": "npm ci --ignore-scripts",
   "framework": null
 }

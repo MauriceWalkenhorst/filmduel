@@ -87,3 +87,14 @@ export async function importFileBatch(getState,files,catalog={}) {
  if(next.selected&&!next.films.some(f=>f.id===next.selected&&!f.seen))next.selected=null;
  return {state:next,errors,imported};
 }
+
+export function mergeBackups(current,incoming){
+ const a=validateBackup(current),b=validateBackup(incoming);
+ const films=new Map(a.films.map(f=>[f.id,f]));
+ for(const f of b.films){const prev=films.get(f.id);films.set(f.id,prev?{...prev,seen:prev.seen||f.seen,inWatchlist:prev.inWatchlist||f.inWatchlist,moods:[...new Set([...prev.moods,...f.moods])]}:f);}
+ const selected=[a.selected,b.selected].find(id=>id&&films.get(id)?.inWatchlist&&!films.get(id)?.seen)||null;
+ return validateBackup({version:1,films:[...films.values()],selected});
+}
+export function filterStreaming(films,services,offers){
+ return films.filter(f=>offers[f.id]?.flatrate?.some(p=>services.includes(p.id)));
+}

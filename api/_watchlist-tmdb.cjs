@@ -48,3 +48,15 @@ async function posterLookup({title,year},{token,fetcher=fetch}={}){
  }catch{return {status:502,body:{error:'Cover konnte nicht geladen werden. Bitte erneut versuchen.'}};}
 }
 module.exports={matchMovie,posterLookup};
+
+async function providersLookup(input,options={}){
+ const movie=await posterLookup(input,options);if(movie.status!==200)return movie;
+ try{
+  const response=await (options.fetcher||fetch)(`https://api.themoviedb.org/3/movie/${movie.body.id}/watch/providers`,{headers:{Authorization:`Bearer ${options.token}`},signal:AbortSignal.timeout(8000)});
+  if(!response.ok)throw Error();
+  const data=await response.json(),de=data.results?.DE||{};
+  const list=key=>(Array.isArray(de[key])?de[key]:[]).filter(p=>Number.isInteger(p.provider_id)&&typeof p.provider_name==='string').map(p=>({id:p.provider_id,name:p.provider_name}));
+  return {status:200,body:{id:movie.body.id,region:'DE',flatrate:list('flatrate'),rent:list('rent'),buy:list('buy'),free:list('free'),ads:list('ads'),link:`https://www.themoviedb.org/movie/${movie.body.id}/watch?locale=DE`,checkedAt:new Date().toISOString()}};
+ }catch{return {status:502,body:{error:'Streaming-Angebote konnten nicht geprüft werden.'}};}
+}
+module.exports.providersLookup=providersLookup;

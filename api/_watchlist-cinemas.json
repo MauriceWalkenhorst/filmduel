@@ -1,0 +1,23 @@
+[
+  {
+    "id": "casablanca-bochum",
+    "name": "Casablanca Bochum",
+    "lat": 51.47677,
+    "lon": 7.2163847,
+    "url": "https://casablanca.bochumerkinos.de/programm"
+  },
+  {
+    "id": "capitol-bochum",
+    "name": "Capitol Bochum",
+    "lat": 51.4794616,
+    "lon": 7.2168576,
+    "url": "https://capitol.bochumerkinos.de/programm"
+  },
+  {
+    "id": "metropolis-bochum",
+    "name": "Metropolis-Theater Bochum",
+    "lat": 51.4789694,
+    "lon": 7.2231586,
+    "url": "https://metropolis.bochumerkinos.de/programm"
+  }
+]
