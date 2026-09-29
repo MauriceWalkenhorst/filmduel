@@ -1,10 +1,16 @@
-import {MOODS,mergeBackups,emptyState,importFileBatch,eligibleFilms,drawFilm,loadState,saveState,validateBackup} from './core.mjs';
+import {MOODS,mergeBackups,emptyState,importFileBatch,eligibleFilms,drawFilm,loadState,saveState,validateBackup,starterState,dropStarter} from './core.mjs';
+import {starterFilms} from './starter.mjs';
 import {createCinema} from './cinema.mjs';
 import {createStreaming} from './streaming.mjs';
 import {catalog} from './catalog.mjs';
 const $=id=>document.getElementById(id);
 let state=emptyState(),storageBlocked=false,mood=null,current=null,drawn={},posterRequest=0,posterAbort=null,pendingRestore=null,noticeTimer;
 try{state=loadState(localStorage);}catch(e){storageBlocked=true;notice(e.message,null,true);}
+// Ohne eigene Daten startet Abspann mit der NYT-Liste; der erste eigene Watchlist-Import ersetzt sie.
+const STARTER_KEY='watchlist.starter.v1',starterIds=new Set(starterFilms.map(f=>f[0]));
+let starterActive=false;try{starterActive=localStorage.getItem(STARTER_KEY)==='1';}catch{}
+if(!storageBlocked&&!state.films.length){state=starterState(starterFilms);starterActive=true;try{saveState(localStorage,state);localStorage.setItem(STARTER_KEY,'1');}catch{}}
+function endStarter(){starterActive=false;try{localStorage.removeItem(STARTER_KEY);}catch{}}
 const streaming=createStreaming({getFilms:()=>state.films,onChange:()=>renderHome(),onNotice:notice});
 const cinema=createCinema({notice});
 $('watch-cinema').onclick=()=>current&&cinema.add(current);
@@ -20,7 +26,10 @@ function commit(next,{restoring=false}={}){if(storageBlocked&&!restoring){notice
 function show(view){for(const id of ['choose','result','library'])$(`${id}-view`).hidden=id!==view;window.scrollTo({top:0,behavior:'instant'});}
 function renderHome(){
  $('total-count').textContent=state.films.filter(f=>f.inWatchlist&&!f.seen).length;
- $('onboarding').hidden=state.films.some(f=>f.inWatchlist);
+ $('onboarding').hidden=!starterActive&&state.films.some(f=>f.inWatchlist);
+ $('onboarding-title').textContent=starterActive?'Start mit der NYT-Liste.':'Deine Filme fehlen noch.';
+ $('onboarding-text').textContent=starterActive?'Hier sind die 100 besten Filme des 21. Jahrhunderts laut New York Times. Importierst du deine Letterboxd-Watchlist, ersetzt sie diese Liste.':'Importiere deine Letterboxd-Watchlist. Sie bleibt in diesem Browser.';
+ $('first-import').textContent=starterActive?'Eigene Watchlist importieren →':'Watchlist importieren →';
  $('mood-grid').replaceChildren(...MOODS.map((m,i)=>{
   const b=document.createElement('button');b.className='mood-card';b.setAttribute('aria-pressed',String(mood===m.id));
   b.innerHTML=`<span class="number">0${i+1}</span><svg class="mood-icon" viewBox="0 0 48 48" aria-hidden="true">${icons[i]}</svg><span class="mood-title">${m.label}</span><span class="mood-caption">${m.description}</span><span class="mood-count">${eligibleFilms(poolFilms(),m.id).length} FILME</span>`;
@@ -97,8 +106,9 @@ $('search').oninput=renderLibrary;$('filter').onchange=renderLibrary;
 $('csv-files').onchange=async event=>{
  const files=[...event.target.files];
  try{
-  const result=await importFileBatch(()=>state,files,catalog);
-  if(commit(result.state)){
+  const replacing=starterActive&&files.some(f=>/^watchlist(?:\s*\(\d+\))?\.csv$/i.test(f.name));
+  const result=await importFileBatch(()=>replacing?dropStarter(state,starterIds):state,files,catalog);
+  if(commit(result.state)){if(replacing)endStarter();
    $('import-errors').textContent=result.errors.slice(0,20).join(' ');
    notice(`${result.imported} Filmeinträge eingelesen.${result.errors.length?` ${result.errors.length} fehlerhafte Zeilen übersprungen.`:''}`);
    streaming.refresh();renderHome();renderLibrary();
@@ -112,6 +122,6 @@ $('backup-file').onchange=async event=>{
  try{const file=event.target.files[0];if(!file)return;if(file.size>10_000_000)throw Error('Sicherung ist zu groß.');pendingRestore=validateBackup(JSON.parse(await file.text()));$('restore-dialog').showModal();}catch(e){notice(`Sicherung nicht geladen: ${e.message}`);}finally{event.target.value='';}
 };
 $('cancel-restore').onclick=()=>{pendingRestore=null;$('restore-dialog').close();};
-$('confirm-restore').onclick=()=>{if(pendingRestore&&commit($('restore-mode').value==='replace'?pendingRestore:mergeBackups(state,pendingRestore),{restoring:true})){drawn={};current=null;streaming.refresh();renderHome();renderLibrary();notice('Sicherung wiederhergestellt.');}pendingRestore=null;$('restore-dialog').close();};
+$('confirm-restore').onclick=()=>{const base=starterActive?dropStarter(state,starterIds):state;if(pendingRestore&&commit($('restore-mode').value==='replace'?pendingRestore:mergeBackups(base,pendingRestore),{restoring:true})){endStarter();drawn={};current=null;streaming.refresh();renderHome();renderLibrary();notice('Sicherung wiederhergestellt.');}pendingRestore=null;$('restore-dialog').close();};
 renderHome();
 if(state.selected){current=state.films.find(f=>f.id===state.selected);mood=current.moods[0]||null;if(mood)drawn[mood]=[current.id];renderResult();show('result');}

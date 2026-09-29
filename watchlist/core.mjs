@@ -98,3 +98,14 @@ export function mergeBackups(current,incoming){
 export function filterStreaming(films,services,offers){
  return films.filter(f=>offers[f.id]?.flatrate?.some(p=>services.includes(p.id)));
 }
+
+// Startliste für neue Nutzer ohne eigene Watchlist.
+export function starterState(list){
+ return validateBackup({version:1,films:list.map(([id,title,year,moods])=>({id,title,year,moods:[...moods],seen:false,inWatchlist:true})),selected:null});
+}
+// Entfernt die Startliste; gesehene Filme bleiben als gesehen, damit sie nicht wieder gezogen werden.
+export function dropStarter(state,starterIds){
+ const films=state.films.flatMap(f=>!starterIds.has(f.id)?[f]:f.seen?[{...f,inWatchlist:false}]:[]);
+ const selected=films.some(f=>f.id===state.selected&&f.inWatchlist&&!f.seen)?state.selected:null;
+ return {...state,films,selected};
+}
