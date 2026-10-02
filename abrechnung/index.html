@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; worker-src 'self' blob:; connect-src 'none'; font-src 'none'; form-action 'none'; base-uri 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#f7f9fc">
+  <title>Abrechnungsprüfer</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230b2545'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="sprunglink" href="#inhalt">Zum Inhalt springen</a>
+
+  <header class="kopf">
+    <div class="rahmen kopf-innen">
+      <div class="marke">
+        <svg class="marke-zeichen" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9"/><path d="M9 16.5l4.5 4.5L23 11.5"/></svg>
+        <span>Abrechnungsprüfer</span>
+      </div>
+      <p class="lokal">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>Nur lokal<span class="lang"> im Browser</span></span>
+      </p>
+    </div>
+  </header>
+
+  <main class="rahmen" id="inhalt">
+    <section class="auswahl" aria-labelledby="titel">
+      <div class="held">
+        <p class="vorzeile"><span class="punkt" aria-hidden="true"></span>Quinyx und ADP im Abgleich</p>
+        <h1 id="titel">Stimmt deine Abrechnung?</h1>
+        <p class="einleitung">Wähle deinen Quinyx-Stundenexport und deine ADP-Verdienstabrechnung für denselben Monat. Der Abrechnungsprüfer vergleicht die Stunden Tag für Tag und rechnet jede Grundlohnposition nach.</p>
+        <ul class="versprechen" aria-label="Datenschutz">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Kein Upload</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Keine Speicherung</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Keine KI, kein Tracking</li>
+        </ul>
+      </div>
+
+      <div class="dateifelder">
+        <div class="dateifeld" id="feld-quinyx" data-zustand="leer">
+          <div class="dateifeld-kopf">
+            <span class="schritt" aria-hidden="true"><span class="schritt-zahl">1</span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <div>
+              <h2>Quinyx-Stundenexport</h2>
+              <p class="format">XLSX · Bericht „PunchedHours“ für einen Monat</p>
+            </div>
+          </div>
+          <label class="waehler">
+            <input type="file" id="datei-quinyx" class="unsichtbar" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-describedby="status-quinyx">
+            <span class="waehler-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M4 9h16M4 15h16M10 3v18"/></svg></span>
+            <span class="waehler-text">
+              <span class="waehler-aktion" id="aktion-quinyx">Datei auswählen</span>
+              <span class="waehler-name" id="name-quinyx">oder hierher ziehen</span>
+            </span>
+          </label>
+          <p class="dateistatus" id="status-quinyx" aria-live="polite">Wartet auf Datei</p>
+          <dl class="erkannt" id="erkannt-quinyx" hidden></dl>
+        </div>
+
+        <div class="dateifeld" id="feld-adp" data-zustand="leer">
+          <div class="dateifeld-kopf">
+            <span class="schritt" aria-hidden="true"><span class="schritt-zahl">2</span><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>
+            <div>
+              <h2>ADP-Verdienstabrechnung</h2>
+              <p class="format">PDF · Original aus ADP, kein Scan</p>
+            </div>
+          </div>
+          <label class="waehler">
+            <input type="file" id="datei-adp" class="unsichtbar" accept=".pdf,application/pdf" aria-describedby="status-adp">
+            <span class="waehler-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3H7a2.5 2.5 0 0 0-2.5 2.5v13A2.5 2.5 0 0 0 7 21h10a2.5 2.5 0 0 0 2.5-2.5V8.5z"/><path d="M14 3v5.5h5.5M8.5 13h7M8.5 17h4.5"/></svg></span>
+            <span class="waehler-text">
+              <span class="waehler-aktion" id="aktion-adp">Datei auswählen</span>
+              <span class="waehler-name" id="name-adp">oder hierher ziehen</span>
+            </span>
+          </label>
+          <p class="dateistatus" id="status-adp" aria-live="polite">Wartet auf Datei</p>
+          <dl class="erkannt" id="erkannt-adp" hidden></dl>
+        </div>
+      </div>
+
+      <div class="abgleich" id="abgleich" role="alert" hidden></div>
+
+      <div class="aktionen">
+        <button type="button" id="pruefen" class="knopf primaer" disabled>
+          Abrechnung prüfen
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button type="button" id="zuruecksetzen" class="knopf sekundaer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+          Neue Prüfung
+        </button>
+      </div>
+    </section>
+
+    <section class="ergebnis" id="ergebnis" aria-label="Prüfergebnis" hidden></section>
+    <p class="nur-screenreader" id="ansage" aria-live="polite"></p>
+  </main>
+
+  <footer class="fuss">
+    <div class="rahmen">
+      <p>Geprüft werden die Übernahme der Stunden und die Rechenwerte der Positionen. Stundensätze, Zuschlagsansprüche, Steuern und Sozialabgaben werden nicht geprüft. Das Ergebnis ersetzt keine Beratung durch die Personalabteilung oder den Betriebsrat.</p>
+    </div>
+  </footer>
+
+  <script src="js/libs/pdf.min.js"></script>
+  <script src="js/libs/xlsx.full.min.js"></script>
+  <script src="js/zahlen.js"></script>
+  <script src="js/quinyx.js"></script>
+  <script src="js/adp.js"></script>
+  <script src="js/vergleich.js"></script>
+  <script src="js/dateien.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
