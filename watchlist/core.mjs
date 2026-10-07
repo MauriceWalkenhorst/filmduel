@@ -109,3 +109,33 @@ export function dropStarter(state,starterIds){
  const selected=films.some(f=>f.id===state.selected&&f.inWatchlist&&!f.seen)?state.selected:null;
  return {...state,films,selected};
 }
+
+// Erscheinungsstatus. Angekündigte Filme bleiben aus der Auswahl, bis ihr Datum erreicht ist.
+// Geprüft werden nur Filme mit leerem, laufendem oder künftigem Jahr; ältere gelten als erschienen.
+// today und date sind lokale Kalenderdaten "YYYY-MM-DD"; known = {date, checked} aus dem Zwischenspeicher.
+const validDay = value => typeof value==='string' && /^\d{4}-\d{2}-\d{2}$/.test(value);
+export const RELEASE_RECHECK_DAYS=7;
+export const needsReleaseCheck=(film,today)=>film.year===''||film.year>=today.slice(0,4);
+export function releaseInfo(film,known,today){
+ if(!needsReleaseCheck(film,today))return {upcoming:false,date:null};
+ const date=validDay(known?.date)?known.date:null;
+ // Ohne Jahr kennt Letterboxd noch keinen Termin; ein vergangenes TMDB-Datum wäre dann eher ein gleichnamiger älterer Film.
+ if(film.year==='')return date&&date>today?{upcoming:true,date}:{upcoming:true,date:null};
+ if(date)return {upcoming:date>today,date};
+ return {upcoming:film.year>today.slice(0,4),date:null};
+}
+export function shouldRecheckRelease(film,known,today){
+ if(!needsReleaseCheck(film,today))return false;
+ if(!known||!validDay(known.checked))return true;
+ if(film.year!==''&&validDay(known.date)&&known.date<=today)return false;
+ return (Date.parse(today)-Date.parse(known.checked))/86400000>=RELEASE_RECHECK_DAYS;
+}
+export const filterReleased=(films,releases,today)=>films.filter(f=>!releaseInfo(f,releases[f.id],today).upcoming);
+export function validateReleases(raw){
+ const out={};
+ if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+ for(const [id,v] of Object.entries(raw).slice(0,20000)){
+  if(validURI(id)&&v&&(v.date===''||validDay(v.date))&&validDay(v.checked))out[id]={date:v.date,checked:v.checked};
+ }
+ return out;
+}

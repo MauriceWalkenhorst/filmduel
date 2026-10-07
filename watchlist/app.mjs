@@ -2,6 +2,7 @@ import {MOODS,mergeBackups,emptyState,importFileBatch,eligibleFilms,drawFilm,loa
 import {starterFilms} from './starter.mjs';
 import {createCinema} from './cinema.mjs';
 import {createStreaming} from './streaming.mjs';
+import {createReleases} from './releases.mjs';
 import {catalog} from './catalog.mjs';
 const $=id=>document.getElementById(id);
 let state=emptyState(),storageBlocked=false,mood=null,current=null,drawn={},posterRequest=0,posterAbort=null,pendingRestore=null,noticeTimer;
@@ -14,7 +15,11 @@ function endStarter(){starterActive=false;try{localStorage.removeItem(STARTER_KE
 const streaming=createStreaming({getFilms:()=>state.films,onChange:()=>renderHome(),onNotice:notice});
 const cinema=createCinema({notice});
 $('watch-cinema').onclick=()=>current&&cinema.add(current);
-const poolFilms=()=>streaming.filter(state.films);
+const releases=createReleases({getFilms:()=>state.films,onChange:()=>{renderHome();if(!$('library-view').hidden)renderLibrary();}});
+// Angekündigte Filme zuerst heraus, danach optional der Abo-Filter.
+const poolFilms=()=>streaming.filter(releases.filter(state.films));
+const formatDay=d=>new Date(`${d}T00:00`).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+const releaseText=film=>{const r=releases.info(film);return r.upcoming?(r.date?`Erscheint am ${formatDay(r.date)}`:'Erscheint demnächst · Termin offen'):'';};
 const icons=[
  '<circle cx="24" cy="24" r="9"/><path d="M24 2v7M24 39v7M2 24h7M39 24h7M8 8l5 5M35 35l5 5M8 40l5-5M35 13l5-5"/>',
  '<path d="M33 6a19 19 0 1 0 9 30A20 20 0 0 1 33 6Z"/><path d="m12 6 2 4 4 2-4 2-2 4-2-4-4-2 4-2Z"/>',
@@ -39,6 +44,8 @@ function renderHome(){
  $('draw').disabled=!mood||!pool.length;
  const exhausted=pool.length>0&&pool.every(f=>(drawn[mood]||[]).includes(f.id));
  $('draw').textContent=exhausted?'Neue Runde starten ↗':'Film auswählen ↗';
+ const upcoming=state.films.filter(f=>f.inWatchlist&&!f.seen&&releases.info(f).upcoming).length;
+ $('upcoming-hint').hidden=!upcoming;$('upcoming-hint').textContent=upcoming===1?'1 angekündigter Film ist noch nicht erschienen und wartet unter „Demnächst“.':`${upcoming} angekündigte Filme sind noch nicht erschienen und warten unter „Demnächst“.`;
  $('pool-hint').textContent=!mood?'Wähle deine Stimmung.':pool.length?`${pool.length} passende Filme. Einer wird deiner.`:'Kein ungesehener Film für diese Stimmung. Ändere die Stimmung oder ergänze deine Watchlist.';
 }
 function chooseFilm(reset=false){
@@ -70,7 +77,7 @@ async function loadPoster(film){
   $('poster').onload=()=>{if(request!==posterRequest)return;$('poster').hidden=false;$('poster-fallback').hidden=true;};
   $('poster').onerror=()=>{if(request!==posterRequest)return;$('poster').hidden=true;$('poster-fallback').hidden=false;$('poster-status').textContent='Cover konnte nicht geladen werden.';$('retry-poster').hidden=false;};
   $('poster').src=data.poster;
-  const upcoming=data.releaseDate&&data.releaseDate>new Date().toISOString().slice(0,10);$('film-description').textContent=[data.overview,upcoming?'Dieser Film ist noch angekündigt. Prüfe vor dem Filmabend, ob er bereits verfügbar ist.':''].filter(Boolean).join(' ');
+  releases.record(film,data.releaseDate);const upcoming=releases.info(film).upcoming;$('film-description').textContent=[data.overview,upcoming?'Dieser Film ist noch angekündigt. Prüfe vor dem Filmabend, ob er bereits verfügbar ist.':''].filter(Boolean).join(' ');
  }catch(e){if(request!==posterRequest||e.name==='AbortError')return;$('poster-status').textContent=e.message;$('retry-poster').hidden=false;}
 }
 function setSeen(id,value){
@@ -81,13 +88,17 @@ function setSeen(id,value){
 function renderLibrary(){
  const query=$('search').value.trim().toLocaleLowerCase();const filter=$('filter').value;
  const all=state.films.filter(f=>f.inWatchlist);
- const fs=all.filter(f=>(filter==='all'||filter==='seen'&&f.seen||filter==='unseen'&&!f.seen||filter==='unassigned'&&!f.seen&&!f.moods.length)&&f.title.toLocaleLowerCase().includes(query)).sort((a,b)=>a.title.localeCompare(b.title,'de'));
- $('library-summary').textContent=`${fs.length} angezeigt · ${all.filter(f=>!f.seen).length} ungesehen · ${all.filter(f=>!f.seen&&!f.moods.length).length} ohne Stimmung`;
+ const fs=all.filter(f=>(filter==='all'||filter==='seen'&&f.seen||filter==='unseen'&&!f.seen||filter==='unassigned'&&!f.seen&&!f.moods.length||filter==='upcoming'&&!f.seen&&releases.info(f).upcoming)&&f.title.toLocaleLowerCase().includes(query));
+ // Demnächst nach Termin sortiert, offene Termine zuletzt; sonst alphabetisch.
+ const byDate=(a,b)=>(releases.info(a).date||'9999')<(releases.info(b).date||'9999')?-1:(releases.info(a).date||'9999')>(releases.info(b).date||'9999')?1:a.title.localeCompare(b.title,'de');
+ fs.sort(filter==='upcoming'?byDate:(a,b)=>a.title.localeCompare(b.title,'de'));
+ const upcomingCount=all.filter(f=>!f.seen&&releases.info(f).upcoming).length;
+ $('library-summary').textContent=`${fs.length} angezeigt · ${all.filter(f=>!f.seen).length} ungesehen · ${all.filter(f=>!f.seen&&!f.moods.length).length} ohne Stimmung${upcomingCount?` · ${upcomingCount} demnächst`:''}`;
  $('film-list').replaceChildren();
  if(!fs.length){const p=document.createElement('p');p.className='empty';p.textContent='Hier ist es noch still. Importiere Filme oder ändere deinen Filter.';$('film-list').append(p);return;}
  for(const film of fs){
   const row=document.createElement('article');row.className='film-row';
-  const text=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=film.title;p.textContent=`${film.year||'Jahr offen'}${film.seen?' · Gesehen':''}`;text.append(h,p);
+  const text=document.createElement('div'),h=document.createElement('h3'),p=document.createElement('p');h.textContent=film.title;p.textContent=[film.year||'Jahr offen',film.seen?'Gesehen':'',film.seen?'':releaseText(film)].filter(Boolean).join(' · ');text.append(h,p);
   const tags=document.createElement('div');tags.className='tag-options';tags.setAttribute('role','group');tags.setAttribute('aria-label',`Stimmungen für ${film.title}`);
   for(const m of MOODS){const label=document.createElement('label');const input=document.createElement('input');input.type='checkbox';input.checked=film.moods.includes(m.id);input.setAttribute('aria-label',`${film.title}: ${m.label}`);input.onchange=()=>{const next={...state,films:state.films.map(f=>f.id===film.id?{...f,moods:input.checked?[...f.moods,m.id]:f.moods.filter(x=>x!==m.id)}:f)};if(commit(next)){renderHome();renderLibrary();}else input.checked=!input.checked;};label.append(input,document.createTextNode(m.short));tags.append(label);}
   const b=document.createElement('button');b.className='secondary';b.textContent=film.seen?'Wieder ungesehen':'Gesehen';b.setAttribute('aria-label',`${film.title}: ${b.textContent}`);b.onclick=()=>{if(setSeen(film.id,!film.seen))renderLibrary();};const watch=document.createElement('button');watch.className='quiet';watch.textContent='Kinoalarm vormerken';watch.onclick=()=>cinema.add(film);row.append(text,tags,b,watch);$('film-list').append(row);
@@ -111,7 +122,7 @@ $('csv-files').onchange=async event=>{
   if(commit(result.state)){if(replacing)endStarter();
    $('import-errors').textContent=result.errors.slice(0,20).join(' ');
    notice(`${result.imported} Filmeinträge eingelesen.${result.errors.length?` ${result.errors.length} fehlerhafte Zeilen übersprungen.`:''}`);
-   streaming.refresh();renderHome();renderLibrary();
+   streaming.refresh();releases.refresh();renderHome();renderLibrary();
   }
  }catch(e){notice(`Import abgebrochen: ${e.message}`);}finally{event.target.value='';}
 };
@@ -122,6 +133,6 @@ $('backup-file').onchange=async event=>{
  try{const file=event.target.files[0];if(!file)return;if(file.size>10_000_000)throw Error('Sicherung ist zu groß.');pendingRestore=validateBackup(JSON.parse(await file.text()));$('restore-dialog').showModal();}catch(e){notice(`Sicherung nicht geladen: ${e.message}`);}finally{event.target.value='';}
 };
 $('cancel-restore').onclick=()=>{pendingRestore=null;$('restore-dialog').close();};
-$('confirm-restore').onclick=()=>{const base=starterActive?dropStarter(state,starterIds):state;if(pendingRestore&&commit($('restore-mode').value==='replace'?pendingRestore:mergeBackups(base,pendingRestore),{restoring:true})){endStarter();drawn={};current=null;streaming.refresh();renderHome();renderLibrary();notice('Sicherung wiederhergestellt.');}pendingRestore=null;$('restore-dialog').close();};
-renderHome();
+$('confirm-restore').onclick=()=>{const base=starterActive?dropStarter(state,starterIds):state;if(pendingRestore&&commit($('restore-mode').value==='replace'?pendingRestore:mergeBackups(base,pendingRestore),{restoring:true})){endStarter();drawn={};current=null;streaming.refresh();releases.refresh();renderHome();renderLibrary();notice('Sicherung wiederhergestellt.');}pendingRestore=null;$('restore-dialog').close();};
+renderHome();releases.refresh();
 if(state.selected){current=state.films.find(f=>f.id===state.selected);mood=current.moods[0]||null;if(mood)drawn[mood]=[current.id];renderResult();show('result');}
