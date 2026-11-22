@@ -14,7 +14,7 @@ export const CATS = [
   { id:'animation', label:'Animation',  abbr:'ANI',  color:'#f472b6' },
   { id:'superhero', label:'Superheld',  abbr:'HERO', color:'#ef4444' },
   { id:'oscars',    label:'Oscars',     abbr:'OSC',  color:'#fde047' },
-  { id:'german',    label:'Deutsch',    abbr:'DE',   color:'#000000' }, // maybe dark grey? let's use tailwind colors
+  { id:'german',    label:'Deutsch',    abbr:'DE',   color:'#f5f5f4' },
   { id:'comedy',    label:'Komödie',    abbr:'COM',  color:'#facc15' },
   { id:'musical',   label:'Musical',    abbr:'MUS',  color:'#ec4899' },
   { id:'scifi',     label:'Sci-Fi',     abbr:'SCI',  color:'#2dd4bf' },

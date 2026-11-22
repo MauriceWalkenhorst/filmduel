@@ -64,7 +64,7 @@ window.onlineLogout = async function () {
 // Dashboard
 // ───────────────────────────────────────────
 
-window.loadDashboard = async function () {
+window.loadDashboard = async function (opts = {}) {
   clearOnlineTimer();
   if (!getCurrentUser()) { show('s-login'); return; }
 
@@ -112,6 +112,8 @@ window.loadDashboard = async function () {
     list.innerHTML = '<div class="font-condensed text-c-muted text-sm text-center py-6">Fehler beim Laden</div>';
   }
 
+  // Beim automatischen Start nur wechseln, solange niemand den Startbildschirm verlassen hat
+  if (opts.auto && !document.getElementById('s-start')?.classList.contains('active')) return;
   show('s-dashboard');
 };
 
@@ -612,5 +614,5 @@ if ('serviceWorker' in navigator) {
 // App-Start: gespeichertes Token → direkt ins Dashboard
 (async () => {
   const user = await initAuth();
-  if (user) await loadDashboard();
+  if (user) await loadDashboard({ auto: true });
 })();
