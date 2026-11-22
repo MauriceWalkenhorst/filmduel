@@ -70,3 +70,7 @@ sonst trifft es ab der ersten selbst angelegten Seite die falsche Zeile.
 mindestens 36). Format pro Frage: `{ q, a: [4 Antworten], c: Index der
 richtigen, d: 1–3, f: Fun-Fact }`. Neue Kategorien zusätzlich in `CAT_FILTER`
 in `app.js` eintragen, sonst fehlen sie im jeweiligen Tab.
+
+Neue Fragen **nur ans Ende** einer Kategorie anhängen. Online-Duelle speichern
+die Positionen der Fragen (`questionIndices`); wer mittendrin einfügt oder
+löscht, verschiebt die Fragen laufender Duelle.
