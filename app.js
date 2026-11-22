@@ -574,11 +574,11 @@ window.showRes = function() {
 
     rs.innerHTML = `
       <div class="bg-c-card border ${s1>s2?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
-        <span class="font-display text-2xl">${G.p1}</span>
+        <span class="font-display text-2xl">${esc(G.p1)}</span>
         <span class="font-display text-4xl font-bold text-c-gold">${s1}</span>
       </div>
       <div class="bg-c-card border ${s2>s1?'border-c-gold':'border-c-border'} rounded-2xl p-4 flex justify-between items-center">
-        <span class="font-display text-2xl">${G.p2}</span>
+        <span class="font-display text-2xl">${esc(G.p2)}</span>
         <span class="font-display text-4xl font-bold text-c-gold">${s2}</span>
       </div>
     `;
