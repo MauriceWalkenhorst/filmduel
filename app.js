@@ -586,9 +586,12 @@ window.showRes = function() {
     rc.innerHTML = '';
     const rows = [];
     for (let r=1; r<=G.rounds; r++) {
-      const r1 = G.history.find(h => h.p === 1 && h.r === r);
-      const r2 = G.history.find(h => h.p === 2 && h.r === r);
-      if (!r1 || !r2) continue;
+      const h1 = G.history.filter(h => h.p === 1 && h.r === r);
+      const h2 = G.history.filter(h => h.p === 2 && h.r === r);
+      if (!h1.length || !h2.length) continue;
+      const sum = hs => hs.reduce((n, h) => n + h.pts, 0);
+      const r1 = { cat: h1[0].cat, pts: sum(h1) };
+      const r2 = { cat: h2[0].cat, pts: sum(h2) };
       const c1 = CATS.find(c => c.id === r1.cat);
       const c2 = CATS.find(c => c.id === r2.cat);
       rows.push(`
