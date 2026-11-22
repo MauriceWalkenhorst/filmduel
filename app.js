@@ -64,6 +64,10 @@ export function show(id, dir = 'forward') {
   window.scrollTo(0, 0);
 }
 
+export function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+
 export function pname(n) { return n===1 ? G.p1 : G.p2; }
 
 export function shuffle(arr) {
@@ -391,8 +395,8 @@ window.showHand = function() {
   document.getElementById('hand-pts').textContent = `+${G.rndPts[G.player === 1 ? 2 : 1]}`;
   const hs = document.getElementById('hand-scores');
   hs.innerHTML = `
-    <div class="flex justify-between items-center text-lg"><span class="text-c-text font-medium">${G.p1}</span><span class="font-display font-bold text-c-gold">${G.scores[1]}</span></div>
-    <div class="flex justify-between items-center text-lg"><span class="text-c-text font-medium">${G.p2}</span><span class="font-display font-bold text-c-gold">${G.scores[2]}</span></div>
+    <div class="flex justify-between items-center text-lg"><span class="text-c-text font-medium">${esc(G.p1)}</span><span class="font-display font-bold text-c-gold">${G.scores[1]}</span></div>
+    <div class="flex justify-between items-center text-lg"><span class="text-c-text font-medium">${esc(G.p2)}</span><span class="font-display font-bold text-c-gold">${G.scores[2]}</span></div>
   `;
   document.getElementById('hand-next').textContent = pname(G.player).toUpperCase();
   show('s-hand');
@@ -491,7 +495,7 @@ window.showRes = function() {
 
     rs.innerHTML = `
       <div class="bg-c-card border border-c-gold rounded-2xl p-5 flex flex-col items-center gap-2">
-        <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">${G.p1}</span>
+        <span class="font-condensed text-xs uppercase tracking-widest text-c-muted">${esc(G.p1)}</span>
         <span class="font-display text-6xl font-bold text-c-gold">${s1}</span>
         <span class="font-condensed text-c-muted text-sm">${s1} von ${maxPossible} Punkten (${pct}%)</span>
       </div>
@@ -552,7 +556,7 @@ window.showRes = function() {
       <div class="flex items-center justify-between text-sm py-1 border-b border-c-border last:border-0">
         <div class="flex items-center gap-2">
           <span class="font-condensed text-xs text-c-faint w-4">${i + 1}.</span>
-          <span class="font-medium">${sc.name}</span>
+          <span class="font-medium">${esc(sc.name)}</span>
           <span class="font-condensed text-xs text-c-muted">${sc.rating}</span>
         </div>
         <div class="flex items-center gap-2">
@@ -645,7 +649,7 @@ window.openHSModal = function() {
     list.innerHTML = scores.map((s, i) => `
       <div class="flex items-center gap-3 py-2 border-b border-c-border last:border-0">
         <span class="font-display text-lg font-bold ${i === 0 ? 'text-c-gold' : 'text-c-muted'} w-5">${i + 1}</span>
-        <span class="font-body flex-1 truncate">${s.name || 'Anon'}</span>
+        <span class="font-body flex-1 truncate">${esc(s.name || 'Anon')}</span>
         <span class="font-condensed text-xs text-c-muted">${s.rounds}Rd</span>
         <span class="font-display font-bold ${i === 0 ? 'text-c-gold' : 'text-c-text'}">${s.pct}%</span>
         <span class="font-condensed text-xs text-c-muted">${s.rating}</span>

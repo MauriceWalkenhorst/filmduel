@@ -905,7 +905,7 @@ async function showLeaderboard() {
       <div class="flex items-center gap-3 bg-c-card border border-c-border rounded-2xl px-4 py-3">
         <div class="font-display text-xl w-8 text-center">${medals[i] ?? `#${i + 1}`}</div>
         <div class="flex-1 min-w-0">
-          <div class="font-display text-base font-bold text-c-text truncate">${p.name}</div>
+          <div class="font-display text-base font-bold text-c-text truncate">${String(p.name ?? '').replace(/[&<>"']/g, ch => '&#' + ch.charCodeAt(0) + ';')}</div>
           <div class="font-condensed text-xs text-c-muted uppercase tracking-wide">${p.games} Spiele</div>
         </div>
         <div class="text-right">
@@ -1179,7 +1179,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Version label -->
 <div style="position:fixed;bottom:10px;right:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;color:#706a62;opacity:0.5;pointer-events:none;z-index:9999">v2.1</div>
 
-<script type="module" src="./app.js?v=7"></script>
-<script type="module" src="./online.js?v=6"></script>
+<script type="module" src="./app.js?v=8"></script>
+<script type="module" src="./online.js?v=7"></script>
 </body>
 </html>

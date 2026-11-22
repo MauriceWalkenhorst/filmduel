@@ -1,7 +1,7 @@
 // online.js — Online-Multiplayer-Modus
 import { client, initAuth, renderGoogleButton, signOut, getCurrentUser, updateCurrentUser } from './auth.js';
 import { CATS, Q } from './categories.js';
-import { shuffle, G } from './app.js';
+import { shuffle, G, esc } from './app.js';
 
 // ───────────────────────────────────────────
 // Auth-Handlers
@@ -126,7 +126,7 @@ function renderGamesList(games, myId) {
     const myTurn = (isChallenger && g.status === 'pending') ||
                    (!isChallenger && g.status === 'challenger_done');
     const cat = CATS.find(c => c.id === g.category);
-    const opponentName = isChallenger ? (g.opponentName || 'Zufallsgegner') : (g.challengerName || '?');
+    const opponentName = esc(isChallenger ? (g.opponentName || 'Zufallsgegner') : (g.challengerName || '?'));
     return `
       <div class="bg-c-card border border-c-border rounded-2xl px-4 py-3 flex items-center justify-between cursor-pointer active:scale-95 transition-transform"
            onclick="openOnlineGame('${g._id}')">
@@ -535,7 +535,7 @@ async function showOnlineResult(game, myId) {
           <div class="font-condensed text-c-text text-xs leading-tight mb-2">${q.q}</div>
           <div class="flex gap-3">
             <span class="font-condensed text-xs ${myOk ? 'text-green-400' : 'text-red-400'}">${myOk ? '✓' : '✗'} Du ${myPts > 0 ? myPts + 'P' : ''}${ptIcon(myPts)}</span>
-            <span class="font-condensed text-xs ${theirOk ? 'text-green-400' : 'text-red-400'}">${theirOk ? '✓' : '✗'} ${isChallenger ? p2Name : p1Name} ${theirPts > 0 ? theirPts + 'P' : ''}${ptIcon(theirPts)}</span>
+            <span class="font-condensed text-xs ${theirOk ? 'text-green-400' : 'text-red-400'}">${theirOk ? '✓' : '✗'} ${esc(isChallenger ? p2Name : p1Name)} ${theirPts > 0 ? theirPts + 'P' : ''}${ptIcon(theirPts)}</span>
             <span class="font-condensed text-xs text-c-muted ml-auto">${q.a[q.c]}</span>
           </div>
         </div>`;
