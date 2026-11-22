@@ -25,7 +25,7 @@ window.TSEC = 20;
 
 const CAT_FILTER = {
   all:  null,
-  film: ['arthouse','directors','world','noir','cult','tech','horror','indie','oscars','german','comedy','scifi','nineties','worldcinema','animation','fff'],
+  film: ['arthouse','directors','world','noir','cult','tech','horror','indie','oscars','german','comedy','scifi','nineties','worldcinema','animation','fff','y2025','y2026'],
   more: ['series','superhero','musical'],
 };
 let _activeCatTab = 'all';

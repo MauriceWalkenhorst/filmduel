@@ -66,7 +66,7 @@ sonst trifft es ab der ersten selbst angelegten Seite die falsche Zeile.
 
 ## Fragenkatalog
 
-`categories.js` enthält `CATS` (19 Kategorien) und `Q` (702 Fragen, je Kategorie
+`categories.js` enthält `CATS` (21 Kategorien) und `Q` (774 Fragen, je Kategorie
 mindestens 36). Format pro Frage: `{ q, a: [4 Antworten], c: Index der
 richtigen, d: 1–3, f: Fun-Fact }`. Neue Kategorien zusätzlich in `CAT_FILTER`
 in `app.js` eintragen, sonst fehlen sie im jeweiligen Tab.
