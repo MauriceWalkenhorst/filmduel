@@ -156,7 +156,7 @@ window.initChallengeSetup = function () {
   setChallengeRounds(5);
 
   const grid = document.getElementById('cs-cats');
-  const visibleCats = shuffle([...CATS]).slice(0, 5);
+  const visibleCats = CATS;
   grid.innerHTML = visibleCats.map(c =>
     `<button class="cs-cat-btn rounded-xl p-2 text-center border border-c-border text-xs font-condensed uppercase tracking-wide transition-all"
              data-id="${c.id}"
